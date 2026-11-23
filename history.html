@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติข้อมูลตรวจเช็ค</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f4f8; padding: 20px; max-width: 900px; margin: 0 auto; }
+        .back-link { display: inline-block; color: #2563eb; text-decoration: none; margin-bottom: 20px; font-size: 0.95rem; }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 1.3rem; color: #1e3a8a; margin-bottom: 20px; text-align: center; }
+        
+        .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        
+        .search-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        .search-bar input { flex: 1; min-width: 200px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
+        .btn { padding: 10px 16px; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-success { background: #16a34a; color: white; }
+        .btn-danger { background: #dc2626; color: white; }
+        .btn-secondary { background: #e2e8f0; color: #374151; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #d1d5db; padding: 10px 8px; text-align: left; font-size: 0.85rem; }
+        th { background: #f3f4f6; font-weight: bold; color: #1f2937; white-space: nowrap; }
+        tr:hover { background: #f9fafb; }
+        
+        .empty-state { text-align: center; padding: 40px 20px; color: #6b7280; }
+        .empty-state p { margin-top: 10px; font-size: 0.95rem; }
+        
+        .stats { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
+        .stat-box { background: #eff6ff; padding: 12px 16px; border-radius: 8px; text-align: center; min-width: 100px; }
+        .stat-num { font-size: 1.4rem; font-weight: bold; color: #1e40af; }
+        .stat-label { font-size: 0.8rem; color: #3b82f6; }
+        
+        .action-links { font-size: 0.8rem; }
+        .action-links a { color: #2563eb; text-decoration: none; margin-right: 8px; }
+        .action-links a:hover { text-decoration: underline; }
+        .action-links .del { color: #dc2626; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← กลับหน้าหลัก</a>
+    <h1>📂 ประวัติข้อมูลตรวจเช็ค</h1>
+
+    <!-- สรุปจำนวนข้อมูล -->
+    <div class="card">
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-num" id="totalCount">0</div>
+                <div class="stat-label">รายการทั้งหมด</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" id="thisMonth">0</div>
+                <div class="stat-label">เดือนนี้</div>
+            </div>
+        </div>
+
+        <!-- ค้นหา + ปุ่มส่งออก -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 ค้นหาด้วย Part No / ชื่อ / ลูกค้า...">
+            <button class="btn btn-primary" onclick="searchRecords()">ค้นหา</button>
+            <button class="btn btn-success" onclick="exportToCSV()">📥 ส่งออก Excel (CSV)</button>
+            <button class="btn btn-danger" onclick="clearAllData()">🗑️ ล้างข้อมูลทั้งหมด</button>
+        </div>
+
+        <!-- ตารางแสดงข้อมูล -->
+        <div id="tableContainer">
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>วันที่บันทึก</th>
+                        <th>วันที่ตรวจ</th>
+                        <th>Part No</th>
+                        <th>Part Name</th>
+                        <th>ลูกค้า</th>
+                        <th>ผู้ตรวจ</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- ข้อมูลจะแสดงที่นี่ -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="emptyMsg" class="empty-state" style="display: none;">
+            <p>📭 ยังไม่มีข้อมูลประวัติ</p>
+            <p style="font-size: 0.85rem;">เริ่มบันทึกข้อมูลจากหน้าแบบฟอร์มก่อนครับ</p>
+        </div>
+    </div>
+
+    <script>
+        // โหลดข้อมูลเมื่อเปิดหน้า
+        let allRecords = [];
+        
+        window.onload = function() {
+            loadRecords();
+            document.getElementById('searchInput').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') searchRecords();
+            });
+        };
+
+        // โหลดข้อมูลจาก localStorage
+        function loadRecords() {
+            const stored = localStorage.getItem('pmHistory');
+            allRecords = stored ? JSON.parse(stored) : [];
+            
+            updateStats();
+            renderTable(allRecords);
+        }
+
+        // อัพเดตตัวเลขสถิติ
+        function updateStats() {
+            document.getElementById('totalCount').textContent = allRecords.length;
+            
+            const now = new Date();
+            const thisMonthRecords = allRecords.filter(r => {
+                const d = new Date(r.id);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
+            document.getElementById('thisMonth').textContent = thisMonthRecords.length;
+        }
+
+        // แสดงตาราง
+        function renderTable(records) {
+            const tbody = document.getElementById('tableBody');
+            const emptyMsg = document.getElementById('emptyMsg');
+            const tableContainer = document.getElementById('tableContainer');
+            
+            tbody.innerHTML = '';
+            
+            if (records.length === 0) {
+                tableContainer.style.display = 'none';
+                emptyMsg.style.display = 'block';
+                return;
+            }
+            
+            tableContainer.style.display = 'block';
+            emptyMsg.style.display = 'none';
+            
+            records.forEach(record => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${record.savedAt || '-'}</td>
+                    <td>${record.checkDate || '-'}</td>
+                    <td><strong>${record.partNo || '-'}</strong></td>
+                    <td>${record.partName || '-'}</td>
+                    <td>${record.customer || '-'}</td>
+                    <td>${record.checkedBy || '-'}</td>
+                    <td class="action-links">
+                        <a href="javascript:viewRecord(${record.id})">ดู</a>
+                        <a href="javascript:deleteRecord(${record.id})" class="del">ลบ</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ค้นหา
+        function searchRecords() {
+            const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!keyword) {
+                renderTable(allRecords);
+                return;
+            }
+            
+            const filtered = allRecords.filter(r =>
+                (r.partNo && r.partNo.toLowerCase().includes(keyword)) ||
+                (r.partName && r.partName.toLowerCase().includes(keyword)) ||
+                (r.customer && r.customer.toLowerCase().includes(keyword)) ||
+                (r.checkedBy && r.checkedBy.toLowerCase().includes(keyword))
+            );
+            renderTable(filtered);
+        }
+
+        // ดูรายละเอียดรายการ
+        function viewRecord(id) {
+            const record = allRecords.find(r => r.id === id);
+            if (!record) return;
+            
+            let detail = `📋 รายละเอียด\n\n`;
+            detail += `วันที่บันทึก: ${record.savedAt || '-'}\n`;
+            detail += `วันที่ตรวจ: ${record.checkDate || '-'}\n`;
+            detail += `Part No: ${record.partNo || '-'}\n`;
+            detail += `Part Name: ${record.partName || '-'}\n`;
+            detail += `ลูกค้า: ${record.customer || '-'}\n`;
+            detail += `Process: ${record.process || '-'}\n`;
+            detail += `PM ตาม Plan: ${record.pmPlan ? '✅' : '❌'}\n`;
+            detail += `PM ตาม Tool life: ${record.pmTool ? '✅' : '❌'}\n`;
+            detail += `Progressive Die: ${record.dieProg ? '✅' : '❌'}\n`;
+            detail += `Singer Die: ${record.dieSinger ? '✅' : '❌'}\n`;
+            detail += `Compound Die: ${record.dieComp ? '✅' : '❌'}\n`;
+            detail += `แผ่นพื้นใหม่: ${record.plateNew ? '✅' : '❌'}\n`;
+            detail += `แผ่นพื้นเก่า: ${record.plateOld ? '✅' : '❌'}\n`;
+            detail += `จำนวนช็อต: ${record.passedShots || '-'}\n`;
+            detail += `ผู้ตรวจ: ${record.checkedBy || '-'}\n`;
+            detail += `ผู้อนุมัติ: ${record.approvedBy || '-'}\n`;
+            detail += `หมายเหตุ: ${record.remarks || '-'}\n`;
+            
+            alert(detail);
+        }
+
+        // ลบรายการเดียว
+        function deleteRecord(id) {
+            if (!confirm('⚠️ ต้องการลบรายการนี้ใช่หรือไม่?')) return;
+            
+            allRecords = allRecords.filter(r => r.id !== id);
+            localStorage.setItem('pmHistory', JSON.stringify(allRecords));
+            loadRecords();
+        }
+
+        // ล้างข้อมูลทั้งหมด
+        function clearAllData() {
+            if (!confirm('⚠️ แน่ใจหรือไม่? จะลบข้อมูลทั้งหมด ไม่สามารถกู้คืนได้!')) return;
+            if (!confirm('⚠️ ยืนยันอีกครั้ง ต้องการลบทั้งหมด?')) return;
+            
+            localStorage.removeItem('pmHistory');
+            allRecords = [];
+            loadRecords();
+            alert('✅ ล้างข้อมูลเรียบร้อย');
+        }
+
+        // ส่งออกเป็น CSV (เปิดใน Excel ได้เลย)
+        function exportToCSV() {
+            if (allRecords.length === 0) { alert('ไม่มีข้อมูลที่จะส่งออก'); return; }
+            
+            let csv = '\uFEFF'; // UTF-8 BOM ให้ภาษาไทยแสดงถูกใน Excel
+            
+            // หัวคอลัมน์
+            const headers = [
+                'วันที่บันทึก', 'วันที่ตรวจ', 'Part No', 'Part Name', 'ลูกค้า', 'Process',
+                'PM ตาม Plan', 'PM ตาม Tool life', 'Progressive Die', 'Singer Die', 'Compound Die',
+                'แผ่นพื้นใหม่', 'แผ่นพื้นเก่า', 'จำนวนช็อต', 'ผู้ตรวจ', 'ผู้อนุมัติ', 'หมายเหตุ'
+            ];
+            csv += headers.join(',') + '\n';
+            
+            // ข้อมูลแต่ละแถว
+            allRecords.forEach(r => {
+                const row = [
+                    `"${r.savedAt || ''}"`,
+                    `"${r.checkDate || ''}"`,
+                    `"${r.partNo || ''}"`,
+                    `"${r.partName || ''}"`,
+                    `"${r.customer || ''}"`,
+                    `"${r.process || ''}"`,
+                    r.pmPlan ? '✅' : '',
+                    r.pmTool ? '✅' : '',
+                    r.dieProg ? '✅' : '',
+                    r.dieSinger ? '✅' : '',
+                    r.dieComp ? '✅' : '',
+                    r.plateNew ? '✅' : '',
+                    r.plateOld ? '✅' : '',
+                    `"${r.passedShots || ''}"`,
+                    `"${r.checkedBy || ''}"`,
+                    `"${r.approvedBy || ''}"`,
+                    `"${(r.remarks || '').replace(/"/g, '""')}"`
+                ];
+                csv += row.join(',') + '\n';
+            });
+            
+            // สร้างไฟล์และดาวน์โหลด
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const today = new Date().toISOString().slice(0,10);
+            a.download = `PM_Checklist_${today}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert(`✅ ส่งออกข้อมูลเรียบร้อย! ทั้งหมด ${allRecords.length} รายการ\nเปิดไฟล์ด้วย Excel ได้เลยครับ`);
+        }
+    </script>
+</body>
+</html>

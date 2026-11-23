@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สแกน QR Code</title>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f4f8; padding: 20px; max-width: 700px; margin: 0 auto; }
+        .back-link { display: inline-block; color: #2563eb; text-decoration: none; margin-bottom: 20px; font-size: 0.95rem; }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 1.3rem; color: #1e3a8a; margin-bottom: 20px; text-align: center; }
+        .card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        #reader { width: 100%; border-radius: 8px; overflow: hidden; margin: 15px 0; border: 2px solid #e2e8f0; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: #e2e8f0; color: #374151; margin-top: 10px; }
+        .btn-success { background: #16a34a; color: white; margin-top: 15px; }
+        .status { text-align: center; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.9rem; }
+        .status-ready { background: #dbeafe; color: #1e40af; }
+        .status-ok { background: #dcfce7; color: #166534; }
+        .status-warn { background: #fef3c7; color: #92400e; }
+        .form-group label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 5px; margin-top: 15px; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
+        .result-box { background: #f8fafc; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #16a34a; }
+        .result-box h3 { font-size: 1rem; color: #166534; margin-bottom: 10px; }
+        .result-box p { margin: 4px 0; font-size: 0.9rem; }
+        .hidden { display: none !important; }
+        .divider { text-align: center; margin: 25px 0; color: #94a3b8; font-size: 0.9rem; position: relative; }
+        .divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: #e2e8f0; }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← กลับหน้าหลัก</a>
+    <h1>📷 สแกน QR Code</h1>
+
+    <div class="card">
+        <div id="reader"></div>
+        <div id="status" class="status status-ready">กดปุ่มด้านล่างเพื่อเปิดกล้อง</div>
+        
+        <button class="btn btn-primary" id="startBtn" onclick="startScan()">🔍 เปิดกล้อง & สแกน</button>
+        <button class="btn btn-secondary hidden" id="stopBtn" onclick="stopScan()">🔴 ปิดกล้อง</button>
+
+        <div class="divider">หรือ</div>
+
+        <div class="form-group">
+            <label>พิมพ์รหัส Part Number:</label>
+            <input type="text" id="manualCode" placeholder="เช่น DIE-001">
+        </div>
+        <button class="btn btn-primary" style="margin-top: 10px;" onclick="loadManual()">➡️ โหลดข้อมูล</button>
+
+        <div id="resultArea" class="result-box hidden">
+            <h3 id="resultTitle">✅ ข้อมูล Part</h3>
+            <p><strong>Part No:</strong> <span id="r-partNo"></span></p>
+            <p><strong>Part Name:</strong> <span id="r-partName"></span></p>
+            <p><strong>Customer:</strong> <span id="r-customer"></span></p>
+            <p><strong>Process:</strong> <span id="r-process"></span></p>
+            <button class="btn btn-success" onclick="goToChecklist()">📝 ไปกรอกแบบฟอร์มนี้เลย →</button>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // ฐานข้อมูล Part — เพิ่ม/แก้ไข ตรงนี้ได้เลย
+        // =============================================
+        const partDatabase = {
+            "DIE-001": { partName: "แผ่นข้างประตูหน้า", customer: "TSI", process: "Progressive" },
+            "DIE-002": { partName: "แผ่นพื้นหลัง", customer: "TSI", process: "Progressive" },
+            "DIE-003": { partName: "แผ่นบังฝ้า", customer: "SMC", process: "Single" }
+            // เพิ่มตามรูปแบบ:
+            // "รหัสPart": { partName: "ชื่อ", customer: "ลูกค้า", process: "ประเภท" }
+        };
+
+        let html5QrCode = null;
+        let currentPartData = null;
+
+        function startScan() {
+            if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                onSuccess,
+                () => {}
+            ).then(() => {
+                document.getElementById('startBtn').classList.add('hidden');
+                document.getElementById('stopBtn').classList.remove('hidden');
+                document.getElementById('status').textContent = 'กำลังสแกน...';
+            }).catch(err => {
+                document.getElementById('status').textContent = '❌ เปิดกล้องไม่ได้: ใช้วิธีพิมพ์รหัสแทน';
+            });
+        }
+
+        function stopScan() {
+            if (html5QrCode) html5QrCode.stop().then(() => {
+                document.getElementById('startBtn').classList.remove('hidden');
+                document.getElementById('stopBtn').classList.add('hidden');
+                document.getElementById('status').textContent = 'กดปุ่มเพื่อเปิดกล้อง';
+            });
+        }
+
+        function onSuccess(decodedText) {
+            stopScan();
+            lookupPart(decodedText);
+        }
+
+        function loadManual() {
+            const code = document.getElementById('manualCode').value.trim();
+            if (!code) { alert('กรุณากรอกรหัส Part'); return; }
+            lookupPart(code);
+        }
+
+        function lookupPart(code) {
+            const cleanCode = code.toUpperCase();
+            const data = partDatabase[cleanCode];
+            
+            document.getElementById('resultArea').classList.remove('hidden');
+            document.getElementById('r-partNo').textContent = cleanCode;
+            
+            if (data) {
+                currentPartData = { partNo: cleanCode, ...data };
+                document.getElementById('r-partName').textContent = data.partName;
+                document.getElementById('r-customer').textContent = data.customer;
+                document.getElementById('r-process').textContent = data.process;
+                document.getElementById('resultTitle').textContent = '✅ พบข้อมูล Part นี้';
+                document.getElementById('resultTitle').style.color = '#166534';
+                document.getElementById('status').className = 'status status-ok';
+                document.getElementById('status').textContent = 'พบข้อมูลในระบบ';
+            } else {
+                currentPartData = { partNo: cleanCode, partName: "", customer: "", process: "" };
+                document.getElementById('r-partName').textContent = '(ไม่พบในระบบ — กรอกเองได้)';
+                document.getElementById('r-customer').textContent = "-";
+                document.getElementById('r-process').textContent = "-";
+                document.getElementById('resultTitle').textContent = '⚠️ ไม่พบในระบบ';
+                document.getElementById('resultTitle').style.color = '#92400e';
+                document.getElementById('status').className = 'status status-warn';
+                document.getElementById('status').textContent = 'ส่งไปกรอกข้อมูลเพิ่มเองได้';
+            }
+        }
+
+        function goToChecklist() {
+            if (!currentPartData) { alert('ไม่มีข้อมูล Part'); return; }
+            sessionStorage.setItem('scanPartData', JSON.stringify(currentPartData));
+            window.location.href = 'checklist.html';
+        }
+    </script>
+</body>
+</html>
