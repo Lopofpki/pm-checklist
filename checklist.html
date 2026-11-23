@@ -7,147 +7,139 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         body { background: #f0f4f8; padding: 20px; max-width: 750px; margin: 0 auto; }
-        .back-link { display: inline-block; color: #2563eb; text-decoration: none; margin-bottom: 20px; font-size: 0.95rem; }
-        .back-link:hover { text-decoration: underline; }
         h1 { font-size: 1.3rem; color: #1e3a8a; margin-bottom: 20px; text-align: center; }
-        .card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; }
         .card-title { font-size: 1rem; font-weight: bold; color: #1e3a8a; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; }
         .form-group label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 5px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
-        .form-group input[readonly] { background: #f1f5f9; font-weight: 600; }
-        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 10px; }
-        .checkbox-item { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; }
-
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
+        .section { padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        .pm-bg { background: #eff6ff; }
+        .die-bg { background: #f0fdf4; }
+        .plate-bg { background: #fffbeb; }
+        .section-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; }
+        .checkbox-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+        label { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #d1d5db; padding: 10px 12px; text-align: left; font-size: 0.9rem; }
-        th { background: #f3f4f6; font-weight: bold; color: #1f2937; }
-        .col-no { width: 55px; text-align: center; color: #374151; font-weight: 500; }
-        .col-res { width: 130px; text-align: center; }
-        td select { width: 100%; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.9rem; background: white; }
-        td select:focus { outline: none; border-color: #2563eb; }
-
-        textarea { width: 100%; min-height: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; margin-top: 5px; resize: vertical; }
-        .btn { padding: 12px 20px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; }
-        .btn-primary { background: #2563eb; color: white; }
-        .btn-success { background: #16a34a; color: white; }
-        .btn-secondary { background: #e2e8f0; color: #374151; }
-        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-group button { flex: 1; }
-        .note { font-size: 0.85rem; color: #64748b; margin-bottom: 12px; }
+        th { background: #f3f4f6; font-weight: bold; }
+        select { padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 4px; width: 100%; }
+        textarea { width: 100%; min-height: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 5px; }
+        button { padding: 12px 20px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        .btn-success { background: #16a34a; color: white; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <a href="scan.html" class="back-link">← กลับหน้าสแกน QR</a>
     <h1>📝 แบบฟอร์มตรวจเช็ค</h1>
 
     <div class="card">
         <h3 class="card-title">ข้อมูลทั่วไป</h3>
         <div class="form-grid">
-            <div class="form-group"><label>PART Number</label><input type="text" id="partNo"></div>
-            <div class="form-group"><label>PART NAME</label><input type="text" id="partName"></div>
-            <div class="form-group"><label>CUSTOMER</label><input type="text" id="customer"></div>
-            <div class="form-group"><label>Date</label><input type="date" id="checkDate"></div>
-            <div class="form-group"><label>Process</label><input type="text" id="process" placeholder="Progressive/Single/Compound"></div>
-            <div class="form-group"><label>Passed Shots</label><input type="text" id="passedShots"></div>
+            <div class="form-group">
+                <label>PART Number</label>
+                <input type="text" id="partNo" readonly>
+            </div>
+            <div class="form-group">
+                <label>PART NAME</label>
+                <input type="text" id="partName" readonly>
+            </div>
+            <div class="form-group">
+                <label>CUSTOMER</label>
+                <input type="text" id="customer" readonly>
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="checkDate">
+            </div>
+            <div class="form-group">
+                <label>Process</label>
+                <input type="text" id="process" readonly>
+            </div>
+            <div class="form-group">
+                <label>Passed Shots</label>
+                <input type="text" id="passedShots">
+            </div>
         </div>
+    </div>
 
-        <div style="margin-top: 15px;">
-            <div style="padding: 12px; background: #eff6ff; border-radius: 8px; margin-bottom: 10px;">
-                <p style="font-weight: 600; font-size: 0.9rem; color: #1e40af; margin-bottom: 8px;">ประเภท PM</p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
-                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer;">
-                        <input type="checkbox" id="pmPlan"> PM ตาม Plan
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer;">
-                        <input type="checkbox" id="pmTool"> PM ตาม Tool life
-                    </label>
-                </div>
-            </div>
+    <div class="card section pm-bg">
+        <p class="section-title" style="color:#1e40af;">ประเภท PM</p>
+        <div class="checkbox-row">
+            <label><input type="checkbox" id="pmPlan"> PM ตาม Plan</label>
+            <label><input type="checkbox" id="pmTool"> PM ตาม Tool life</label>
+        </div>
+    </div>
 
-            <div style="padding: 12px; background: #f0fdf4; border-radius: 8px; margin-bottom: 10px;">
-                <p style="font-weight: 600; font-size: 0.9rem; color: #166534; margin-bottom: 8px;">Type DIE (ชนิดแม่พิมพ์)</p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
-                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer;">
-                        <input type="checkbox" id="dieProg"> Progressive Die
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer;">
-                        <input type="checkbox" id="dieSinger"> Singer Die
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer;">
-                        <input type="checkbox" id="dieComp"> Compound Die
-                    </label>
-                </div>
-            </div>
+    <div class="card section die-bg">
+        <p class="section-title" style="color:#166534;">Type DIE (ชนิดแม่พิมพ์)</p>
+        <div class="checkbox-row">
+            <label><input type="checkbox" id="dieProg"> Progressive Die</label>
+            <label><input type="checkbox" id="dieSinger"> Singer Die</label>
+            <label><input type="checkbox" id="dieComp"> Compound Die</label>
+        </div>
+    </div>
 
-            <div style="padding: 12px; background: #fffbeb; border-radius: 8px;">
-                <p style="font-weight: 600; font-size: 0.9rem; color: #92400e; margin-bottom: 8px;">ชนิดแผ่นพื้นแม่พิมพ์</p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
-                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer;">
-                        <input type="checkbox" id="plateNew"> แผ่นพื้นใหม่
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer;">
-                        <input type="checkbox" id="plateOld"> แผ่นพื้นเก่า
-                    </label>
-                </div>
-            </div>
+    <div class="card section plate-bg">
+        <p class="section-title" style="color:#92400e;">ชนิดแผ่นพื้นแม่พิมพ์</p>
+        <div class="checkbox-row">
+            <label><input type="checkbox" id="plateNew"> แผ่นพื้นใหม่</label>
+            <label><input type="checkbox" id="plateOld"> แผ่นพื้นเก่า</label>
         </div>
     </div>
 
     <div class="card">
         <h3 class="card-title">📋 รายการตรวจเช็ค</h3>
-        <p class="note"><strong>PM</strong> = ผ่าน &nbsp;|&nbsp; <strong>O</strong> = สภาพดี &nbsp;|&nbsp; <strong>NA</strong> = ไม่มีในแม่พิมพ์นี้</p>
-        
         <table>
             <thead>
                 <tr>
-                    <th class="col-no">#</th>
+                    <th>#</th>
                     <th>รายการตรวจเช็ค</th>
-                    <th class="col-res">ผลตรวจ</th>
+                    <th style="width:120px;">ผลตรวจ</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr><td class="col-no">1</td><td>Bolt, Stripper Bolt</td><td class="col-res"><select id="c1"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">2</td><td>Balance Blocks</td><td class="col-res"><select id="c2"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">3</td><td>Tag</td><td class="col-res"><select id="c3"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">4</td><td>Pilot</td><td class="col-res"><select id="c4"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">5</td><td>Stopper</td><td class="col-res"><select id="c5"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">6</td><td>Locater</td><td class="col-res"><select id="c6"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">7</td><td>Guide Mat, Guide Lifters</td><td class="col-res"><select id="c7"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">8</td><td>Ball Guide Set, Guide Pin/Bush</td><td class="col-res"><select id="c8"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">9</td><td>Holder, Backing Plate</td><td class="col-res"><select id="c9"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">10</td><td>Backing Plate</td><td class="col-res"><select id="c10"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">11</td><td>Forming Bending Plate</td><td class="col-res"><select id="c11"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">12</td><td>Forming, Bending Die</td><td class="col-res"><select id="c12"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">13</td><td>Button die, Insert Die</td><td class="col-res"><select id="c13"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">14</td><td>Check dimension - Vernier Caliper</td><td class="col-res"><select id="c14"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">15</td><td>Backing Die Plate</td><td class="col-res"><select id="c15"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">16</td><td>Trim Edge</td><td class="col-res"><select id="c16"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">17</td><td>Galvanize Build-Up</td><td class="col-res"><select id="c17"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">18</td><td>Punch M-Boss</td><td class="col-res"><select id="c18"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">19</td><td>Die M-Boss</td><td class="col-res"><select id="c19"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">20</td><td>Air Blow</td><td class="col-res"><select id="c20"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">21</td><td>Nitrogen</td><td class="col-res"><select id="c21"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">22</td><td>Coil Spring</td><td class="col-res"><select id="c22"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">23</td><td>Punch, Insert Punch (Micrometer)</td><td class="col-res"><select id="c23"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">24</td><td>Check Punch Final / Timing</td><td class="col-res"><select id="c24"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">25</td><td>Flatness & Depth Check</td><td class="col-res"><select id="c25"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">26</td><td>Backing Punch Plate</td><td class="col-res"><select id="c26"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">27</td><td>Punch Marking</td><td class="col-res"><select id="c27"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">28</td><td>Wear Plates</td><td class="col-res"><select id="c28"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">29</td><td>Returns & Stops</td><td class="col-res"><select id="c29"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">30</td><td>Scrap</td><td class="col-res"><select id="c30"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">31</td><td>Slug</td><td class="col-res"><select id="c31"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
-                <tr><td class="col-no">32</td><td>Start Coil / Feed Start</td><td class="col-res"><select id="c32"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+            <tbody id="checklist-body">
+                <tr><td>1</td><td>Bolt, Stripper Bolt</td><td><select id="c1"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>2</td><td>Balance Blocks</td><td><select id="c2"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>3</td><td>Tag</td><td><select id="c3"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>4</td><td>Pilot</td><td><select id="c4"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>5</td><td>Stopper</td><td><select id="c5"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>6</td><td>Locater</td><td><select id="c6"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>7</td><td>Guide Mat, Guide Lifters</td><td><select id="c7"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>8</td><td>Ball Guide Set, Guide Pin/Bush</td><td><select id="c8"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>9</td><td>Holder, Backing Plate</td><td><select id="c9"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>10</td><td>Backing Plate</td><td><select id="c10"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>11</td><td>Forming Bending Plate</td><td><select id="c11"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>12</td><td>Forming, Bending Die</td><td><select id="c12"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>13</td><td>Button die, Insert Die</td><td><select id="c13"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>14</td><td>Check dimension - Vernier Caliper</td><td><select id="c14"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>15</td><td>Backing Die Plate</td><td><select id="c15"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>16</td><td>Trim Edge</td><td><select id="c16"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>17</td><td>Galvanize Build-Up</td><td><select id="c17"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>18</td><td>Punch M-Boss</td><td><select id="c18"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>19</td><td>Die M-Boss</td><td><select id="c19"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>20</td><td>Air Blow</td><td><select id="c20"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>21</td><td>Nitrogen</td><td><select id="c21"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>22</td><td>Coil Spring</td><td><select id="c22"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>23</td><td>Punch, Insert Punch (Micrometer)</td><td><select id="c23"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>24</td><td>Check Punch Final / Timing</td><td><select id="c24"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>25</td><td>Flatness & Depth Check</td><td><select id="c25"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>26</td><td>Backing Punch Plate</td><td><select id="c26"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>27</td><td>Punch Marking</td><td><select id="c27"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>28</td><td>Wear Plates</td><td><select id="c28"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>29</td><td>Returns & Stops</td><td><select id="c29"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>30</td><td>Scrap</td><td><select id="c30"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>31</td><td>Slug</td><td><select id="c31"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
+                <tr><td>32</td><td>Start Coil / Feed Start</td><td><select id="c32"><option></option><option>PM</option><option>O</option><option>NA</option></select></td></tr>
             </tbody>
         </table>
     </div>
 
     <div class="card">
+        <h3 class="card-title">อื่นๆ</h3>
         <div class="form-grid">
-            <div class="form-group" style="grid-column: span 2;">
+            <div style="grid-column: 1 / -1;">
                 <label>Remarks / Comments</label>
-                <textarea id="remarks" placeholder="บันทึกปัญหา ข้อสังเกต หรือสิ่งที่ต้องดำเนินการ..."></textarea>
+                <textarea id="remarks" rows="3"></textarea>
             </div>
             <div class="form-group">
                 <label>Technician / Checked By</label>
@@ -158,21 +150,76 @@
                 <input type="text" id="approvedBy">
             </div>
         </div>
-        <div class="btn-group">
-            <button class="btn btn-secondary" onclick="window.location.href='scan.html'">📷 สแกน QR</button>
-            <button class="btn btn-primary" onclick="window.location.href='index.html'">🏠 กลับหน้าหลัก</button>
-            <button class="btn btn-success" onclick="saveChecklist()">💾 บันทึกข้อมูล</button>
-        </div>
+        <button class="btn-success" onclick="saveChecklist()">💾 บันทึกข้อมูล</button>
     </div>
 
     <script>
-        // ✅ วันที่วันนี้
+        // วันที่วันนี้
         document.getElementById('checkDate').valueAsDate = new Date();
 
-        // ✅ ฐานข้อมูล Part
+        // ฐานข้อมูล Part
         const partDatabase = {
             "DIE-001": { partName: "แผ่นข้างประตูหน้า", customer: "TSI", process: "Progressive" }
         };
 
-        // ✅ อ่านค่า Part จาก URL เมื่อสแกน QR เข้ามา
-        window.onload
+        // ✅ อ่านค่า Part จาก URL ทันทีที่หน้าโหลด
+        window.onload = function() {
+            console.log("✅ หน้าโหลดแล้ว กำลังอ่านค่า...");
+            
+            const params = new URLSearchParams(window.location.search);
+            const partNo = params.get('p');
+            
+            console.log("📦 Part No จาก URL:", partNo);
+            
+            if (partNo) {
+                document.getElementById('partNo').value = partNo;
+                const data = partDatabase[partNo];
+                if (data) {
+                    document.getElementById('partName').value = data.partName || '';
+                    document.getElementById('customer').value = data.customer || '';
+                    document.getElementById('process').value = data.process || '';
+                    console.log("✅ ข้อมูล Part แสดงเรียบร้อย!");
+                } else {
+                    console.log("⚠️ ไม่พบข้อมูล Part นี้ในระบบ");
+                    alert("⚠️ ไม่พบข้อมูล Part: " + partNo);
+                }
+            } else {
+                console.log("⚠️ ไม่มีค่า Part ใน URL");
+                alert("⚠️ ไม่มีรหัส Part ในลิงก์\nใช้ลิงก์แบบนี้นะครับ:\nchecklist.html?p=DIE-001");
+            }
+        };
+
+        // บันทึกข้อมูล
+        function saveChecklist() {
+            const partNo = document.getElementById('partNo').value;
+            if (!partNo) { alert('⚠️ ไม่มี Part Number'); return; }
+
+            const record = {
+                id: Date.now(),
+                savedAt: new Date().toLocaleString('th-TH'),
+                partNo: partNo,
+                partName: document.getElementById('partName').value,
+                customer: document.getElementById('customer').value,
+                process: document.getElementById('process').value,
+                passedShots: document.getElementById('passedShots').value,
+                checkDate: document.getElementById('checkDate').value,
+                pmPlan: document.getElementById('pmPlan').checked,
+                pmTool: document.getElementById('pmTool').checked,
+                dieProg: document.getElementById('dieProg').checked,
+                dieSinger: document.getElementById('dieSinger').checked,
+                dieComp: document.getElementById('dieComp').checked,
+                remarks: document.getElementById('remarks').value,
+                checkedBy: document.getElementById('checkedBy').value,
+                approvedBy: document.getElementById('approvedBy').value
+            };
+
+            const history = JSON.parse(localStorage.getItem('pmHistory') || '[]');
+            history.unshift(record);
+            localStorage.setItem('pmHistory', JSON.stringify(history));
+
+            alert('✅ บันทึกเรียบร้อย!');
+            console.log('บันทึก:', record);
+        }
+    </script>
+</body>
+</html>
