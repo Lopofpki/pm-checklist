@@ -52,15 +52,15 @@
             </div>
             <div class="form-group">
                 <label>Date</label>
-                <input type="date" id="checkDate" readonly>
+                <input type="text" id="checkDate" readonly style="background: #e8f0fe; font-weight: 600; color: #1e40af;">
             </div>
             <div class="form-group">
                 <label>เวลาเริ่มงาน</label>
-                <input type="time" id="startTime">
+                <input type="text" id="startTime" placeholder="08:30">
             </div>
             <div class="form-group">
                 <label>เวลาเสร็จงาน</label>
-                <input type="time" id="endTime">
+                <input type="text" id="endTime" placeholder="17:30">
             </div>
             <div class="form-group">
                 <label>Process</label>
@@ -166,108 +166,113 @@
     </div>
 
        <script>        
-        // ตั้งวันที่วันนี้อัตโนมัติ และล็อกไม่ให้แก้ไข
-        window.onload = function() {
-    // ตั้งวันที่รูปแบบ วว/ดด/ปปปป
-    const today = new Date();
-    const d = String(today.getDate()).padStart(2, '0');
-    const m = String(today.getMonth() + 1).padStart(2, '0');
-    const y = today.getFullYear();
-    document.getElementById('checkDate').value = `${d}/${m}/${y}`;
+    // ฐานข้อมูล Part — เพิ่มได้ตามต้องการครับ
+    const partDatabase = {
+        "DIE-001": {
+            partName: "แผ่นข้างประตูหน้า",
+            customer: "TSI",
+            process: "Progressive"
+        }
+        // เพิ่ม Part ต่อตรงนี้ ตามรูปแบบ:
+        // , "DIE-002": { partName: "ชื่อ Part", customer: "ลูกค้า", process: "ชนิด" }
+    };
 
-    // ส่วนที่เหลือเดิมปล่อยไว้เหมือนเดิม
-    const urlParams = new URLSearchParams(window.location.search);
-    const partNo = urlParams.get('p');
-    // ... ส่วนที่เหลือเหมือนเดิม
-};
+    // ตรวจสอบรูปแบบเวลา
+    function parseTime(timeStr) {
+        if (!/^\d{1,2}:\d{2}$/.test(timeStr)) return null;
+        const [h, m] = timeStr.split(':').map(Number);
+        if (h < 0 || h > 23 || m < 0 || m > 59) return null;
+        return { h, m };
+    }
 
-
-        // ฐานข้อมูล Part — เพิ่มได้ตามต้องการครับ
-        const partDatabase = {
-            "DIE-001": {
-                partName: "แผ่นข้างประตูหน้า",
-                customer: "TSI",
-                process: "Progressive"
-            }
-            // เพิ่ม Part ต่อตรงนี้ ตามรูปแบบ:
-            // , "DIE-002": { partName: "ชื่อ Part", customer: "ลูกค้า", process: "ชนิด" }
-        };
+    // เริ่มทำงานเมื่อหน้าโหลดเสร็จ
+    window.onload = function() {
+        // ตั้งวันที่รูปแบบ วว/ดด/ปปปป
+        const today = new Date();
+        const d = String(today.getDate()).padStart(2, '0');
+        const m = String(today.getMonth() + 1).padStart(2, '0');
+        const y = today.getFullYear();
+        document.getElementById('checkDate').value = `${d}/${m}/${y}`;
 
         // อ่านค่า Part จาก URL
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const partNo = urlParams.get('p');
-            
-            console.log("🔍 URL ทั้งหมด:", window.location.href);
-            console.log("📦 ค่า p ที่อ่านได้:", partNo);
+        const urlParams = new URLSearchParams(window.location.search);
+        const partNo = urlParams.get('p');
+        
+        console.log("🔍 URL ทั้งหมด:", window.location.href);
+        console.log("📦 ค่า p ที่อ่านได้:", partNo);
 
-            if (partNo && partDatabase[partNo]) {
-                document.getElementById('partNo').value = partNo;
-                document.getElementById('partName').value = partDatabase[partNo].partName;
-                document.getElementById('customer').value = partDatabase[partNo].customer;
-                document.getElementById('process').value = partDatabase[partNo].process;
-                console.log("✅ Part โหลดสำเร็จ:", partNo);
-            } else {
-                alert("⚠️ ไม่มีรหัส Part ในลิงก์\n\nใช้ลิงก์แบบนี้นะครับ:\nchecklist.html?p=DIE-001");
-            }
-        };
+        if (partNo && partDatabase[partNo]) {
+            document.getElementById('partNo').value = partNo;
+            document.getElementById('partName').value = partDatabase[partNo].partName;
+            document.getElementById('customer').value = partDatabase[partNo].customer;
+            document.getElementById('process').value = partDatabase[partNo].process;
+            console.log("✅ Part โหลดสำเร็จ:", partNo);
+        } else {
+            alert("⚠️ ไม่มีรหัส Part ในลิงก์\n\nใช้ลิงก์แบบนี้นะครับ:\nchecklist.html?p=DIE-001");
+        }
+    };
 
-        // บันทึกข้อมูล — แสดงเวลาทำงานเป็นนาทีอย่างเดียว
-        function saveChecklist() {
-            const partNo = document.getElementById('partNo').value;
-            if (!partNo) {
-                alert('⚠️ ไม่มี Part Number กรุณาสแกน QR อีกครั้ง');
+    // บันทึกข้อมูล — แสดงเวลาทำงานเป็นนาทีอย่างเดียว
+    function saveChecklist() {
+        const partNo = document.getElementById('partNo').value;
+        if (!partNo) {
+            alert('⚠️ ไม่มี Part Number กรุณาสแกน QR อีกครั้ง');
+            return;
+        }
+
+        const startTime = document.getElementById('startTime').value.trim();
+        const endTime = document.getElementById('endTime').value.trim();
+
+        // คำนวณเวลาทำงาน — แสดงเป็นนาทีอย่างเดียว
+        let workDurationMin = "";
+        if (startTime && endTime) {
+            const start = parseTime(startTime);
+            const end = parseTime(endTime);
+            if (!start || !end) {
+                alert('⚠️ รูปแบบเวลาไม่ถูกต้อง\nใช้แบบ: 08:30 หรือ 14:00');
                 return;
             }
-
-            const startTime = document.getElementById('startTime').value;
-            const endTime = document.getElementById('endTime').value;
-
-            // คำนวณเวลาทำงาน — แสดงเป็นนาทีอย่างเดียว
-            let workDurationMin = "";
-            if (startTime && endTime) {
-                const [startH, startM] = startTime.split(':').map(Number);
-                const [endH, endM] = endTime.split(':').map(Number);
-                const startMin = startH * 60 + startM;
-                const endMin = endH * 60 + endM;
-                let diffMin = endMin - startMin;
-                
-                // ถ้าเวลาเสร็จน้อยกว่าเวลาเริ่ม (ข้ามวัน)
-                if (diffMin < 0) diffMin += 24 * 60;
-                
-                workDurationMin = `${diffMin} นาที`;
-            }
-
-            const record = {
-                id: Date.now(),
-                savedDate: new Date().toLocaleString('th-TH'),
-                partNo: partNo,
-                partName: document.getElementById('partName').value,
-                customer: document.getElementById('customer').value,
-                process: document.getElementById('process').value,
-                passedShots: document.getElementById('passedShots').value,
-                checkDate: document.getElementById('checkDate').value,
-                startTime: startTime,
-                endTime: endTime,
-                workDuration: workDurationMin,
-                pmPlan: document.getElementById('pmPlan').checked,
-                pmTool: document.getElementById('pmTool').checked,
-                dieProg: document.getElementById('dieProg').checked,
-                dieSinger: document.getElementById('dieSinger').checked,
-                dieComp: document.getElementById('dieComp').checked,
-                plateNew: document.getElementById('plateNew').checked,
-                plateOld: document.getElementById('plateOld').checked,
-                remarks: document.getElementById('remarks').value,
-                checkedBy: document.getElementById('checkedBy').value,
-                approvedBy: document.getElementById('approvedBy').value
-            };
-
-            const history = JSON.parse(localStorage.getItem('pmHistory') || '[]');
-            history.unshift(record);
-            localStorage.setItem('pmHistory', JSON.stringify(history));
-
-            alert(`✅ บันทึกข้อมูลเรียบร้อยแล้ว!\n⏱️ เวลาทำงาน: ${workDurationMin || '-'}`);
+            const startMin = start.h * 60 + start.m;
+            const endMin = end.h * 60 + end.m;
+            let diffMin = endMin - startMin;
+            
+            // ถ้าเวลาเสร็จน้อยกว่าเวลาเริ่ม (ข้ามวัน)
+            if (diffMin < 0) diffMin += 24 * 60;
+            
+            workDurationMin = `${diffMin} นาที`;
         }
-    </script>
+
+        const record = {
+            id: Date.now(),
+            savedDate: new Date().toLocaleString('th-TH'),
+            partNo: partNo,
+            partName: document.getElementById('partName').value,
+            customer: document.getElementById('customer').value,
+            process: document.getElementById('process').value,
+            passedShots: document.getElementById('passedShots').value,
+            checkDate: document.getElementById('checkDate').value,
+            startTime: startTime,
+            endTime: endTime,
+            workDuration: workDurationMin,
+            pmPlan: document.getElementById('pmPlan').checked,
+            pmTool: document.getElementById('pmTool').checked,
+            dieProg: document.getElementById('dieProg').checked,
+            dieSinger: document.getElementById('dieSinger').checked,
+            dieComp: document.getElementById('dieComp').checked,
+            plateNew: document.getElementById('plateNew').checked,
+            plateOld: document.getElementById('plateOld').checked,
+            remarks: document.getElementById('remarks').value,
+            checkedBy: document.getElementById('checkedBy').value,
+            approvedBy: document.getElementById('approvedBy').value
+        };
+
+        const history = JSON.parse(localStorage.getItem('pmHistory') || '[]');
+        history.unshift(record);
+        localStorage.setItem('pmHistory', JSON.stringify(history));
+
+        alert(`✅ บันทึกข้อมูลเรียบร้อยแล้ว!\n⏱️ เวลาทำงาน: ${workDurationMin || '-'}`);
+    }
+</script>
+
 
 
