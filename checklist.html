@@ -167,7 +167,20 @@
 
        <script>        
         // ตั้งวันที่วันนี้อัตโนมัติ และล็อกไม่ให้แก้ไข
-        document.getElementById('checkDate').valueAsDate = new Date();
+        window.onload = function() {
+    // ตั้งวันที่รูปแบบ วว/ดด/ปปปป
+    const today = new Date();
+    const d = String(today.getDate()).padStart(2, '0');
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const y = today.getFullYear();
+    document.getElementById('checkDate').value = `${d}/${m}/${y}`;
+
+    // ส่วนที่เหลือเดิมปล่อยไว้เหมือนเดิม
+    const urlParams = new URLSearchParams(window.location.search);
+    const partNo = urlParams.get('p');
+    // ... ส่วนที่เหลือเหมือนเดิม
+};
+
 
         // ฐานข้อมูล Part — เพิ่มได้ตามต้องการครับ
         const partDatabase = {
