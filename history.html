@@ -92,188 +92,197 @@
     </div>
 
     <script>
-        // โหลดข้อมูลเมื่อเปิดหน้า
-        let allRecords = [];
+      // โหลดข้อมูลเมื่อเปิดหน้า
+    let allRecords = [];
+    
+    window.onload = function() {
+        loadRecords();
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') searchRecords();
+        });
+    };
+
+    // โหลดข้อมูลจาก localStorage
+    function loadRecords() {
+        const stored = localStorage.getItem('pmHistory');
+        allRecords = stored ? JSON.parse(stored) : [];
         
-        window.onload = function() {
-            loadRecords();
-            document.getElementById('searchInput').addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') searchRecords();
-            });
-        };
+        updateStats();
+        renderTable(allRecords);
+    }
 
-        // โหลดข้อมูลจาก localStorage
-        function loadRecords() {
-            const stored = localStorage.getItem('pmHistory');
-            allRecords = stored ? JSON.parse(stored) : [];
-            
-            updateStats();
+    // อัพเดตตัวเลขสถิติ
+    function updateStats() {
+        document.getElementById('totalCount').textContent = allRecords.length;
+        
+        const now = new Date();
+        const thisMonthRecords = allRecords.filter(r => {
+            // ใช้ savedDate ที่บันทึกจากหน้าฟอร์ม
+            if (!r.savedDate) return false;
+            const d = new Date(r.savedDate.split('/').reverse().join('-'));
+            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        });
+        document.getElementById('thisMonth').textContent = thisMonthRecords.length;
+    }
+
+    // แสดงตาราง
+    function renderTable(records) {
+        const tbody = document.getElementById('tableBody');
+        const emptyMsg = document.getElementById('emptyMsg');
+        const tableContainer = document.getElementById('tableContainer');
+        
+        tbody.innerHTML = '';
+        
+        if (records.length === 0) {
+            tableContainer.style.display = 'none';
+            emptyMsg.style.display = 'block';
+            return;
+        }
+        
+        tableContainer.style.display = 'block';
+        emptyMsg.style.display = 'none';
+        
+        records.forEach(record => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${record.savedDate || '-'}</td>
+                <td>${record.checkDate || '-'}</td>
+                <td><strong>${record.partNo || '-'}</strong></td>
+                <td>${record.partName || '-'}</td>
+                <td>${record.customer || '-'}</td>
+                <td>${record.checkedBy || '-'}</td>
+                <td class="action-links">
+                    <a href="javascript:viewRecord(${record.id})">ดู</a>
+                    <a href="javascript:deleteRecord(${record.id})" class="del">ลบ</a>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ค้นหา
+    function searchRecords() {
+        const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+        if (!keyword) {
             renderTable(allRecords);
+            return;
         }
+        
+        const filtered = allRecords.filter(r =>
+            (r.partNo && r.partNo.toLowerCase().includes(keyword)) ||
+            (r.partName && r.partName.toLowerCase().includes(keyword)) ||
+            (r.customer && r.customer.toLowerCase().includes(keyword)) ||
+            (r.checkedBy && r.checkedBy.toLowerCase().includes(keyword))
+        );
+        renderTable(filtered);
+    }
 
-        // อัพเดตตัวเลขสถิติ
-        function updateStats() {
-            document.getElementById('totalCount').textContent = allRecords.length;
-            
-            const now = new Date();
-            const thisMonthRecords = allRecords.filter(r => {
-                const d = new Date(r.id);
-                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-            });
-            document.getElementById('thisMonth').textContent = thisMonthRecords.length;
-        }
+    // ดูรายละเอียดรายการ
+    function viewRecord(id) {
+        const record = allRecords.find(r => r.id === id);
+        if (!record) return;
+        
+        let detail = `📋 รายละเอียด\n\n`;
+        detail += `วันที่บันทึก: ${record.savedDate || '-'}\n`;
+        detail += `วันที่ตรวจ: ${record.checkDate || '-'}\n`;
+        detail += `Part No: ${record.partNo || '-'}\n`;
+        detail += `Part Name: ${record.partName || '-'}\n`;
+        detail += `ลูกค้า: ${record.customer || '-'}\n`;
+        detail += `Process: ${record.process || '-'}\n`;
+        detail += `เวลาเริ่ม: ${record.startTime || '-'}\n`;
+        detail += `เวลาเสร็จ: ${record.endTime || '-'}\n`;
+        detail += `เวลาทำงาน: ${record.workDuration || '-'}\n`;
+        detail += `จำนวนช็อต: ${record.passedShots || '-'}\n`;
+        detail += `PM ตาม Plan: ${record.pmPlan ? '✅' : '❌'}\n`;
+        detail += `PM ตาม Tool life: ${record.pmTool ? '✅' : '❌'}\n`;
+        detail += `Progressive Die: ${record.dieProg ? '✅' : '❌'}\n`;
+        detail += `Singer Die: ${record.dieSinger ? '✅' : '❌'}\n`;
+        detail += `Compound Die: ${record.dieComp ? '✅' : '❌'}\n`;
+        detail += `แม่พิมพ์ใหม่: ${record.plateNew ? '✅' : '❌'}\n`;
+        detail += `แม่พิมพ์เก่า: ${record.plateOld ? '✅' : '❌'}\n`;
+        detail += `ผู้ตรวจ: ${record.checkedBy || '-'}\n`;
+        detail += `ผู้อนุมัติ: ${record.approvedBy || '-'}\n`;
+        detail += `หมายเหตุ: ${record.remarks || '-'}\n`;
+        
+        alert(detail);
+    }
 
-        // แสดงตาราง
-        function renderTable(records) {
-            const tbody = document.getElementById('tableBody');
-            const emptyMsg = document.getElementById('emptyMsg');
-            const tableContainer = document.getElementById('tableContainer');
-            
-            tbody.innerHTML = '';
-            
-            if (records.length === 0) {
-                tableContainer.style.display = 'none';
-                emptyMsg.style.display = 'block';
-                return;
-            }
-            
-            tableContainer.style.display = 'block';
-            emptyMsg.style.display = 'none';
-            
-            records.forEach(record => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${record.savedAt || '-'}</td>
-                    <td>${record.checkDate || '-'}</td>
-                    <td><strong>${record.partNo || '-'}</strong></td>
-                    <td>${record.partName || '-'}</td>
-                    <td>${record.customer || '-'}</td>
-                    <td>${record.checkedBy || '-'}</td>
-                    <td class="action-links">
-                        <a href="javascript:viewRecord(${record.id})">ดู</a>
-                        <a href="javascript:deleteRecord(${record.id})" class="del">ลบ</a>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+    // ลบรายการเดียว
+    function deleteRecord(id) {
+        if (!confirm('⚠️ ต้องการลบรายการนี้ใช่หรือไม่?')) return;
+        
+        allRecords = allRecords.filter(r => r.id !== id);
+        localStorage.setItem('pmHistory', JSON.stringify(allRecords));
+        loadRecords();
+    }
 
-        // ค้นหา
-        function searchRecords() {
-            const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-            if (!keyword) {
-                renderTable(allRecords);
-                return;
-            }
-            
-            const filtered = allRecords.filter(r =>
-                (r.partNo && r.partNo.toLowerCase().includes(keyword)) ||
-                (r.partName && r.partName.toLowerCase().includes(keyword)) ||
-                (r.customer && r.customer.toLowerCase().includes(keyword)) ||
-                (r.checkedBy && r.checkedBy.toLowerCase().includes(keyword))
-            );
-            renderTable(filtered);
-        }
+    // ล้างข้อมูลทั้งหมด
+    function clearAllData() {
+        if (!confirm('⚠️ แน่ใจหรือไม่? จะลบข้อมูลทั้งหมด ไม่สามารถกู้คืนได้!')) return;
+        if (!confirm('⚠️ ยืนยันอีกครั้ง ต้องการลบทั้งหมด?')) return;
+        
+        localStorage.removeItem('pmHistory');
+        allRecords = [];
+        loadRecords();
+        alert('✅ ล้างข้อมูลเรียบร้อย');
+    }
 
-        // ดูรายละเอียดรายการ
-        function viewRecord(id) {
-            const record = allRecords.find(r => r.id === id);
-            if (!record) return;
-            
-            let detail = `📋 รายละเอียด\n\n`;
-            detail += `วันที่บันทึก: ${record.savedAt || '-'}\n`;
-            detail += `วันที่ตรวจ: ${record.checkDate || '-'}\n`;
-            detail += `Part No: ${record.partNo || '-'}\n`;
-            detail += `Part Name: ${record.partName || '-'}\n`;
-            detail += `ลูกค้า: ${record.customer || '-'}\n`;
-            detail += `Process: ${record.process || '-'}\n`;
-            detail += `PM ตาม Plan: ${record.pmPlan ? '✅' : '❌'}\n`;
-            detail += `PM ตาม Tool life: ${record.pmTool ? '✅' : '❌'}\n`;
-            detail += `Progressive Die: ${record.dieProg ? '✅' : '❌'}\n`;
-            detail += `Singer Die: ${record.dieSinger ? '✅' : '❌'}\n`;
-            detail += `Compound Die: ${record.dieComp ? '✅' : '❌'}\n`;
-            detail += `แผ่นพื้นใหม่: ${record.plateNew ? '✅' : '❌'}\n`;
-            detail += `แผ่นพื้นเก่า: ${record.plateOld ? '✅' : '❌'}\n`;
-            detail += `จำนวนช็อต: ${record.passedShots || '-'}\n`;
-            detail += `ผู้ตรวจ: ${record.checkedBy || '-'}\n`;
-            detail += `ผู้อนุมัติ: ${record.approvedBy || '-'}\n`;
-            detail += `หมายเหตุ: ${record.remarks || '-'}\n`;
-            
-            alert(detail);
-        }
-
-        // ลบรายการเดียว
-        function deleteRecord(id) {
-            if (!confirm('⚠️ ต้องการลบรายการนี้ใช่หรือไม่?')) return;
-            
-            allRecords = allRecords.filter(r => r.id !== id);
-            localStorage.setItem('pmHistory', JSON.stringify(allRecords));
-            loadRecords();
-        }
-
-        // ล้างข้อมูลทั้งหมด
-        function clearAllData() {
-            if (!confirm('⚠️ แน่ใจหรือไม่? จะลบข้อมูลทั้งหมด ไม่สามารถกู้คืนได้!')) return;
-            if (!confirm('⚠️ ยืนยันอีกครั้ง ต้องการลบทั้งหมด?')) return;
-            
-            localStorage.removeItem('pmHistory');
-            allRecords = [];
-            loadRecords();
-            alert('✅ ล้างข้อมูลเรียบร้อย');
-        }
-
-        // ส่งออกเป็น CSV (เปิดใน Excel ได้เลย)
-        function exportToCSV() {
-            if (allRecords.length === 0) { alert('ไม่มีข้อมูลที่จะส่งออก'); return; }
-            
-            let csv = '\uFEFF'; // UTF-8 BOM ให้ภาษาไทยแสดงถูกใน Excel
-            
-            // หัวคอลัมน์
-            const headers = [
-                'วันที่บันทึก', 'วันที่ตรวจ', 'Part No', 'Part Name', 'ลูกค้า', 'Process',
-                'PM ตาม Plan', 'PM ตาม Tool life', 'Progressive Die', 'Singer Die', 'Compound Die',
-                'แผ่นพื้นใหม่', 'แผ่นพื้นเก่า', 'จำนวนช็อต', 'ผู้ตรวจ', 'ผู้อนุมัติ', 'หมายเหตุ'
+    // ส่งออกเป็น CSV (เปิดใน Excel ได้เลย)
+    function exportToCSV() {
+        if (allRecords.length === 0) { alert('ไม่มีข้อมูลที่จะส่งออก'); return; }
+        
+        let csv = '\uFEFF'; // UTF-8 BOM ให้ภาษาไทยแสดงถูกใน Excel
+        
+        // หัวคอลัมน์
+        const headers = [
+            'วันที่บันทึก', 'วันที่ตรวจ', 'Part No', 'Part Name', 'ลูกค้า', 'Process',
+            'เวลาเริ่ม', 'เวลาเสร็จ', 'เวลาทำงาน', 'จำนวนช็อต',
+            'PM ตาม Plan', 'PM ตาม Tool life', 'Progressive Die', 'Singer Die', 'Compound Die',
+            'แม่พิมพ์ใหม่', 'แม่พิมพ์เก่า', 'ผู้ตรวจ', 'ผู้อนุมัติ', 'หมายเหตุ'
+        ];
+        csv += headers.join(',') + '\n';
+        
+        // ข้อมูลแต่ละแถว
+        allRecords.forEach(r => {
+            const row = [
+                `"${r.savedDate || ''}"`,
+                `"${r.checkDate || ''}"`,
+                `"${r.partNo || ''}"`,
+                `"${r.partName || ''}"`,
+                `"${r.customer || ''}"`,
+                `"${r.process || ''}"`,
+                `"${r.startTime || ''}"`,
+                `"${r.endTime || ''}"`,
+                `"${r.workDuration || ''}"`,
+                `"${r.passedShots || ''}"`,
+                r.pmPlan ? '✅' : '',
+                r.pmTool ? '✅' : '',
+                r.dieProg ? '✅' : '',
+                r.dieSinger ? '✅' : '',
+                r.dieComp ? '✅' : '',
+                r.plateNew ? '✅' : '',
+                r.plateOld ? '✅' : '',
+                `"${r.checkedBy || ''}"`,
+                `"${r.approvedBy || ''}"`,
+                `"${(r.remarks || '').replace(/"/g, '""')}"`
             ];
-            csv += headers.join(',') + '\n';
-            
-            // ข้อมูลแต่ละแถว
-            allRecords.forEach(r => {
-                const row = [
-                    `"${r.savedAt || ''}"`,
-                    `"${r.checkDate || ''}"`,
-                    `"${r.partNo || ''}"`,
-                    `"${r.partName || ''}"`,
-                    `"${r.customer || ''}"`,
-                    `"${r.process || ''}"`,
-                    r.pmPlan ? '✅' : '',
-                    r.pmTool ? '✅' : '',
-                    r.dieProg ? '✅' : '',
-                    r.dieSinger ? '✅' : '',
-                    r.dieComp ? '✅' : '',
-                    r.plateNew ? '✅' : '',
-                    r.plateOld ? '✅' : '',
-                    `"${r.passedShots || ''}"`,
-                    `"${r.checkedBy || ''}"`,
-                    `"${r.approvedBy || ''}"`,
-                    `"${(r.remarks || '').replace(/"/g, '""')}"`
-                ];
-                csv += row.join(',') + '\n';
-            });
-            
-            // สร้างไฟล์และดาวน์โหลด
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            const today = new Date().toISOString().slice(0,10);
-            a.download = `PM_Checklist_${today}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            alert(`✅ ส่งออกข้อมูลเรียบร้อย! ทั้งหมด ${allRecords.length} รายการ\nเปิดไฟล์ด้วย Excel ได้เลยครับ`);
-        }
+            csv += row.join(',') + '\n';
+        });
+        
+        // สร้างไฟล์และดาวน์โหลด
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const today = new Date().toLocaleDateString('th-TH').replace(/\//g, '-');
+        a.download = `PM_Checklist_${today}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        alert(`✅ ส่งออกข้อมูลเรียบร้อย! ทั้งหมด ${allRecords.length} รายการ\nเปิดไฟล์ด้วย Excel ได้เลยครับ`);
+    }
     </script>
 </body>
 </html>
