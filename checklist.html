@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แบบฟอร์มตรวจเช็คแม่พิมพ์</title>
+    <title>แบบฟอร์มตรวจเช็ค</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         body { background: #f0f4f8; padding: 20px; max-width: 750px; margin: 0 auto; }
@@ -13,7 +13,7 @@
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; }
         .form-group label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 5px; }
         .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
-        .form-group input[readonly] { background: #e8f0fe; font-weight: 600; color: #1e40af; cursor: not-allowed; }
+        .form-group input[readonly] { background: #e8f0fe; font-weight: 600; color: #1e40af; }
         .section { padding: 14px; border-radius: 8px; margin-bottom: 12px; }
         .pm-bg { background: #eff6ff; }
         .die-bg { background: #f0fdf4; }
@@ -52,7 +52,7 @@
             </div>
             <div class="form-group">
                 <label>Date</label>
-                <input type="text" id="checkDate" readonly style="background: #e8f0fe; font-weight: 600; color: #1e40af; cursor: not-allowed;">
+                <input type="date" id="checkDate" readonly>
             </div>
             <div class="form-group">
                 <label>เวลาเริ่มงาน</label>
@@ -91,7 +91,7 @@
     </div>
 
     <div class="card section plate-bg">
-        <p class="section-title" style="color:#92400e;">ชนิดแแม่พิมพ์</p>
+        <p class="section-title" style="color:#92400e;">ชนิดแม่พิมพ์แม่พิมพ์</p>
         <div class="checkbox-row">
             <label><input type="checkbox" id="plateNew"> แม่พิมพ์ใหม่</label>
             <label><input type="checkbox" id="plateOld"> แม่พิมพ์เก่า</label>
@@ -100,11 +100,11 @@
 
     <div class="card">
         <h3 class="card-title">📋 รายการตรวจเช็ค</h3>
-        <p class="note"><strong>PM</strong> = ผ่าน &nbsp;|&nbsp; <strong>O</strong> = สภาพดี &nbsp;|&nbsp; <strong>NA</strong> = ไม่มีในแม่พิมพ์นี้</p>
+        <p class="note"></p>
         <table>
             <thead>
                 <tr>
-                    <th style="width:50px;">#</th>
+                    <th style="width:50px;">ลำดับ</th>
                     <th>รายการตรวจเช็ค</th>
                     <th style="width:110px; text-align:center;">ผลตรวจ</th>
                 </tr>
@@ -165,14 +165,8 @@
         <button class="btn-success" onclick="saveChecklist()">💾 บันทึกข้อมูล</button>
     </div>
 
-         <script>        
-        // ตั้งวันที่วันนี้อัตโนมัติ รูปแบบ วว/ดด/ปปปป และล็อกไม่ให้แก้ไข
-        function formatDateThai(date) {
-            const d = String(date.getDate()).padStart(2, '0');
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const y = date.getFullYear();
-            return `${d}/${m}/${y}`;
-        }
+       <script>        
+        // ตั้งวันที่วันนี้อัตโนมัติ และล็อกไม่ให้แก้ไข
         document.getElementById('checkDate').valueAsDate = new Date();
 
         // ฐานข้อมูล Part — เพิ่มได้ตามต้องการครับ
@@ -182,26 +176,30 @@
                 customer: "TSI",
                 process: "Progressive"
             }
+            // เพิ่ม Part ต่อตรงนี้ ตามรูปแบบ:
+            // , "DIE-002": { partName: "ชื่อ Part", customer: "ลูกค้า", process: "ชนิด" }
         };
 
         // อ่านค่า Part จาก URL
         window.onload = function() {
-            // แปลงวันที่เป็นรูปแบบ วว/ดด/ปปปป สำหรับแสดงผล
-            const today = new Date();
-            const d = String(today.getDate()).padStart(2, '0');
-            const m = String(today.getMonth() + 1).padStart(2, '0');
-            const y = today.getFullYear();
-            // สร้าง input แบบ text เพื่อแสดงรูปแบบ วว/ดด/ปปปป
-            const dateInput = document.getElementById('checkDate');
-            if (dateInput.type === 'date') {
-                // ถ้ายังเป็น type date ให้เปลี่ยนเป็น text เพื่อแสดงรูปแบบที่ต้องการ
-                dateInput.type = 'text';
-                dateInput.value = `${d}/${m}/${y}`;
-                dateInput.readOnly = true;
+            const urlParams = new URLSearchParams(window.location.search);
+            const partNo = urlParams.get('p');
+            
+            console.log("🔍 URL ทั้งหมด:", window.location.href);
+            console.log("📦 ค่า p ที่อ่านได้:", partNo);
+
+            if (partNo && partDatabase[partNo]) {
+                document.getElementById('partNo').value = partNo;
+                document.getElementById('partName').value = partDatabase[partNo].partName;
+                document.getElementById('customer').value = partDatabase[partNo].customer;
+                document.getElementById('process').value = partDatabase[partNo].process;
+                console.log("✅ Part โหลดสำเร็จ:", partNo);
+            } else {
+                alert("⚠️ ไม่มีรหัส Part ในลิงก์\n\nใช้ลิงก์แบบนี้นะครับ:\nchecklist.html?p=DIE-001");
             }
         };
 
-        // บันทึกข้อมูล — เวลาเป็น 24 ชม. และแสดงเวลาทำงานเป็นนาที
+        // บันทึกข้อมูล — แสดงเวลาทำงานเป็นนาทีอย่างเดียว
         function saveChecklist() {
             const partNo = document.getElementById('partNo').value;
             if (!partNo) {
@@ -227,9 +225,6 @@
                 workDurationMin = `${diffMin} นาที`;
             }
 
-            // อ่านค่าวันที่
-            const checkDate = document.getElementById('checkDate').value;
-
             const record = {
                 id: Date.now(),
                 savedDate: new Date().toLocaleString('th-TH'),
@@ -238,7 +233,7 @@
                 customer: document.getElementById('customer').value,
                 process: document.getElementById('process').value,
                 passedShots: document.getElementById('passedShots').value,
-                checkDate: checkDate,
+                checkDate: document.getElementById('checkDate').value,
                 startTime: startTime,
                 endTime: endTime,
                 workDuration: workDurationMin,
@@ -258,7 +253,8 @@
             history.unshift(record);
             localStorage.setItem('pmHistory', JSON.stringify(history));
 
-            alert(`✅ บันทึกข้อมูลเรียบร้อยแล้ว!\n📅 วันที่: ${checkDate}\n⏱️ เวลาทำงาน: ${workDurationMin || '-'}`);
+            alert(`✅ บันทึกข้อมูลเรียบร้อยแล้ว!\n⏱️ เวลาทำงาน: ${workDurationMin || '-'}`);
         }
     </script>
+
 
