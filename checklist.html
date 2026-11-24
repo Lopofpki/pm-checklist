@@ -165,8 +165,8 @@
         <button class="btn-success" onclick="saveChecklist()">💾 บันทึกข้อมูล</button>
     </div>
 
-        <script>        
-        // ตั้งวันที่วันนี้อัตโนมัติ
+     <script>        
+        // ตั้งวันที่วันนี้อัตโนมัติ และล็อกไม่ให้แก้ไข
         document.getElementById('checkDate').valueAsDate = new Date();
 
         // ฐานข้อมูล Part — เพิ่มได้ตามต้องการครับ
@@ -176,6 +176,8 @@
                 customer: "TSI",
                 process: "Progressive"
             }
+            // เพิ่ม Part ต่อตรงนี้ ตามรูปแบบ:
+            // , "DIE-002": { partName: "ชื่อ Part", customer: "ลูกค้า", process: "ชนิด" }
         };
 
         // อ่านค่า Part จาก URL
@@ -197,7 +199,7 @@
             }
         };
 
-        // บันทึกข้อมูล — เพิ่มเวลาเริ่ม-เสร็จ และคำนวณเวลาทำงาน
+        // บันทึกข้อมูล — แสดงเวลาทำงานเป็นนาทีอย่างเดียว
         function saveChecklist() {
             const partNo = document.getElementById('partNo').value;
             if (!partNo) {
@@ -208,8 +210,8 @@
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
 
-            // คำนวณเวลาทำงาน
-            let workDuration = "";
+            // คำนวณเวลาทำงาน — แสดงเป็นนาทีอย่างเดียว
+            let workDurationMin = "";
             if (startTime && endTime) {
                 const [startH, startM] = startTime.split(':').map(Number);
                 const [endH, endM] = endTime.split(':').map(Number);
@@ -220,9 +222,7 @@
                 // ถ้าเวลาเสร็จน้อยกว่าเวลาเริ่ม (ข้ามวัน)
                 if (diffMin < 0) diffMin += 24 * 60;
                 
-                const hours = Math.floor(diffMin / 60);
-                const minutes = diffMin % 60;
-                workDuration = `${hours} ชม. ${minutes} น.`;
+                workDurationMin = `${diffMin} นาที`;
             }
 
             const record = {
@@ -236,7 +236,7 @@
                 checkDate: document.getElementById('checkDate').value,
                 startTime: startTime,
                 endTime: endTime,
-                workDuration: workDuration,
+                workDuration: workDurationMin,
                 pmPlan: document.getElementById('pmPlan').checked,
                 pmTool: document.getElementById('pmTool').checked,
                 dieProg: document.getElementById('dieProg').checked,
@@ -253,6 +253,6 @@
             history.unshift(record);
             localStorage.setItem('pmHistory', JSON.stringify(history));
 
-            alert(`✅ บันทึกข้อมูลเรียบร้อยแล้ว!\n⏱️ เวลาทำงาน: ${workDuration || '-'}`);
+            alert(`✅ บันทึกข้อมูลเรียบร้อยแล้ว!\n⏱️ เวลาทำงาน: ${workDurationMin || '-'}`);
         }
     </script>
