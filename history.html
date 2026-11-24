@@ -228,43 +228,55 @@
     }
 
     // ส่งออกเป็น CSV (เปิดใน Excel ได้เลย)
+        // ส่งออกเป็น CSV ตามรูปแบบบริษัท
     function exportToCSV() {
         if (allRecords.length === 0) { alert('ไม่มีข้อมูลที่จะส่งออก'); return; }
         
         let csv = '\uFEFF'; // UTF-8 BOM ให้ภาษาไทยแสดงถูกใน Excel
         
-        // หัวคอลัมน์
+        // หัวคอลัมน์ ตามรูปแบบของคุณ
         const headers = [
-            'วันที่บันทึก', 'วันที่ตรวจ', 'Part No', 'Part Name', 'ลูกค้า', 'Process',
-            'เวลาเริ่ม', 'เวลาเสร็จ', 'เวลาทำงาน', 'จำนวนช็อต',
-            'PM ตาม Plan', 'PM ตาม Tool life', 'Progressive Die', 'Singer Die', 'Compound Die',
-            'แม่พิมพ์ใหม่', 'แม่พิมพ์เก่า', 'ผู้ตรวจ', 'ผู้อนุมัติ', 'หมายเหตุ'
+            'Date',
+            'Customer',
+            'Part No.',
+            'ประเภทของการซ่อม',
+            'สถานที่ซ่อม',
+            'สาเหตุ',
+            'M/C',
+            'Die Step',
+            'Repair of cause',
+            'สถานะ',
+            'Cause of problem',
+            'Details of repair',
+            'เวลาซ่อม_เริ่ม',
+            'เวลาซ่อม_เสร็จ',
+            'เวลารวมซ่อม',
+            'ซ่อมโดย'
         ];
         csv += headers.join(',') + '\n';
         
         // ข้อมูลแต่ละแถว
         allRecords.forEach(r => {
             const row = [
-                `"${r.savedDate || ''}"`,
                 `"${r.checkDate || ''}"`,
-                `"${r.partNo || ''}"`,
-                `"${r.partName || ''}"`,
                 `"${r.customer || ''}"`,
+                `"${r.partNo || ''}"`,
+                // ประเภทของการซ่อม
+                `"${(r.pmPlan ? 'PM ตาม Plan' : '')}${(r.pmPlan && r.pmTool ? ' / ' : '')}${(r.pmTool ? 'PM ตาม Tool life' : '')}"`,
+                // สถานที่ซ่อม — แสดงชนิดแม่พิมพ์
+                `"${(r.dieProg ? 'Progressive Die' : '')}${(r.dieProg && r.dieSinger ? ' / ' : '')}${(r.dieSinger ? 'Singer Die' : '')}${((r.dieProg || r.dieSinger) && r.dieComp ? ' / ' : '')}${(r.dieComp ? 'Compound Die' : '')}"`,
+                // สาเหตุ — แสดงประเภทแม่พิมพ์
+                `"${r.plateNew ? 'แม่พิมพ์ใหม่' : ''}${r.plateNew && r.plateOld ? ' / ' : ''}${r.plateOld ? 'แม่พิมพ์เก่า' : ''}"`,
                 `"${r.process || ''}"`,
+                `"${r.passedShots || ''}"`,
+                `"${''}"`, // Repair of cause — เพิ่มเองได้ถ้ามี
+                `"${''}"`, // สถานะ — เพิ่มเองได้ถ้ามี
+                `"${''}"`, // Cause of problem — เพิ่มเองได้ถ้ามี
+                `"${(r.remarks || '').replace(/"/g, '""')}"`,
                 `"${r.startTime || ''}"`,
                 `"${r.endTime || ''}"`,
                 `"${r.workDuration || ''}"`,
-                `"${r.passedShots || ''}"`,
-                r.pmPlan ? '✅' : '',
-                r.pmTool ? '✅' : '',
-                r.dieProg ? '✅' : '',
-                r.dieSinger ? '✅' : '',
-                r.dieComp ? '✅' : '',
-                r.plateNew ? '✅' : '',
-                r.plateOld ? '✅' : '',
-                `"${r.checkedBy || ''}"`,
-                `"${r.approvedBy || ''}"`,
-                `"${(r.remarks || '').replace(/"/g, '""')}"`
+                `"${r.checkedBy || ''}"`
             ];
             csv += row.join(',') + '\n';
         });
@@ -275,7 +287,7 @@
         const a = document.createElement('a');
         a.href = url;
         const today = new Date().toLocaleDateString('th-TH').replace(/\//g, '-');
-        a.download = `PM_Checklist_${today}.csv`;
+        a.download = `PM_Repair_Report_${today}.csv`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
