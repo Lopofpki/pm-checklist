@@ -52,7 +52,7 @@
             </div>
             <div class="form-group">
                 <label>Date</label>
-                <input type="date" id="checkDate" readonly>
+                <input type="text" id="checkDate" readonly style="background: #e8f0fe; font-weight: 600; color: #1e40af; cursor: not-allowed;">
             </div>
             <div class="form-group">
                 <label>เวลาเริ่มงาน</label>
@@ -91,10 +91,10 @@
     </div>
 
     <div class="card section plate-bg">
-        <p class="section-title" style="color:#92400e;">🧱 ชนิดแผ่นพื้นแม่พิมพ์</p>
+        <p class="section-title" style="color:#92400e;">ชนิดแแม่พิมพ์</p>
         <div class="checkbox-row">
-            <label><input type="checkbox" id="plateNew"> แผ่นพื้นใหม่</label>
-            <label><input type="checkbox" id="plateOld"> แผ่นพื้นเก่า</label>
+            <label><input type="checkbox" id="plateNew"> แม่พิมพ์ใหม่</label>
+            <label><input type="checkbox" id="plateOld"> แม่พิมพ์เก่า</label>
         </div>
     </div>
 
@@ -165,8 +165,14 @@
         <button class="btn-success" onclick="saveChecklist()">💾 บันทึกข้อมูล</button>
     </div>
 
-     <script>        
-        // ตั้งวันที่วันนี้อัตโนมัติ และล็อกไม่ให้แก้ไข
+         <script>        
+        // ตั้งวันที่วันนี้อัตโนมัติ รูปแบบ วว/ดด/ปปปป และล็อกไม่ให้แก้ไข
+        function formatDateThai(date) {
+            const d = String(date.getDate()).padStart(2, '0');
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const y = date.getFullYear();
+            return `${d}/${m}/${y}`;
+        }
         document.getElementById('checkDate').valueAsDate = new Date();
 
         // ฐานข้อมูล Part — เพิ่มได้ตามต้องการครับ
@@ -176,30 +182,26 @@
                 customer: "TSI",
                 process: "Progressive"
             }
-            // เพิ่ม Part ต่อตรงนี้ ตามรูปแบบ:
-            // , "DIE-002": { partName: "ชื่อ Part", customer: "ลูกค้า", process: "ชนิด" }
         };
 
         // อ่านค่า Part จาก URL
         window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const partNo = urlParams.get('p');
-            
-            console.log("🔍 URL ทั้งหมด:", window.location.href);
-            console.log("📦 ค่า p ที่อ่านได้:", partNo);
-
-            if (partNo && partDatabase[partNo]) {
-                document.getElementById('partNo').value = partNo;
-                document.getElementById('partName').value = partDatabase[partNo].partName;
-                document.getElementById('customer').value = partDatabase[partNo].customer;
-                document.getElementById('process').value = partDatabase[partNo].process;
-                console.log("✅ Part โหลดสำเร็จ:", partNo);
-            } else {
-                alert("⚠️ ไม่มีรหัส Part ในลิงก์\n\nใช้ลิงก์แบบนี้นะครับ:\nchecklist.html?p=DIE-001");
+            // แปลงวันที่เป็นรูปแบบ วว/ดด/ปปปป สำหรับแสดงผล
+            const today = new Date();
+            const d = String(today.getDate()).padStart(2, '0');
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const y = today.getFullYear();
+            // สร้าง input แบบ text เพื่อแสดงรูปแบบ วว/ดด/ปปปป
+            const dateInput = document.getElementById('checkDate');
+            if (dateInput.type === 'date') {
+                // ถ้ายังเป็น type date ให้เปลี่ยนเป็น text เพื่อแสดงรูปแบบที่ต้องการ
+                dateInput.type = 'text';
+                dateInput.value = `${d}/${m}/${y}`;
+                dateInput.readOnly = true;
             }
         };
 
-        // บันทึกข้อมูล — แสดงเวลาทำงานเป็นนาทีอย่างเดียว
+        // บันทึกข้อมูล — เวลาเป็น 24 ชม. และแสดงเวลาทำงานเป็นนาที
         function saveChecklist() {
             const partNo = document.getElementById('partNo').value;
             if (!partNo) {
@@ -225,6 +227,9 @@
                 workDurationMin = `${diffMin} นาที`;
             }
 
+            // อ่านค่าวันที่
+            const checkDate = document.getElementById('checkDate').value;
+
             const record = {
                 id: Date.now(),
                 savedDate: new Date().toLocaleString('th-TH'),
@@ -233,7 +238,7 @@
                 customer: document.getElementById('customer').value,
                 process: document.getElementById('process').value,
                 passedShots: document.getElementById('passedShots').value,
-                checkDate: document.getElementById('checkDate').value,
+                checkDate: checkDate,
                 startTime: startTime,
                 endTime: endTime,
                 workDuration: workDurationMin,
@@ -253,6 +258,7 @@
             history.unshift(record);
             localStorage.setItem('pmHistory', JSON.stringify(history));
 
-            alert(`✅ บันทึกข้อมูลเรียบร้อยแล้ว!\n⏱️ เวลาทำงาน: ${workDurationMin || '-'}`);
+            alert(`✅ บันทึกข้อมูลเรียบร้อยแล้ว!\n📅 วันที่: ${checkDate}\n⏱️ เวลาทำงาน: ${workDurationMin || '-'}`);
         }
     </script>
+
