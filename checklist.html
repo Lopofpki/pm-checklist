@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mold Condition Check Sheet | TNC</title>
+<title>DIE Preventive Check List | TNC</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -476,8 +476,8 @@ button:disabled {
 <header class="header">
     <div class="header-top">
         <div>
-            <h1>🔧 MOLD CONDITION CHECK SHEET</h1>
-            <p>แบบฟอร์มตรวจสอบสภาพแม่พิมพ์ | MAINTENANCE DEPARTMENT</p>
+            <h1>🔧 DIE Preventive Check List</h1>
+            <p> </p>
         </div>
         <div class="header-tag">TNC · QUALITY CHECK</div>
     </div>
@@ -635,24 +635,45 @@ button:disabled {
     <h2 class="card-title">⏱️ ระยะเวลาการตรวจสอบ / INSPECTION TIME</h2>
 
     <p class="time-info">
-        กรอกเวลาเริ่มต้นและเวลาสิ้นสุด ระบบจะคำนวณระยะเวลาทำงานเป็นนาทีให้อัตโนมัติ
-        รองรับการทำงานข้ามเที่ยงคืน
+        กรอกเวลาเริ่มต้นและเวลาสิ้นสุดในรูปแบบ 24 ชั่วโมง เช่น 08:30
+        ระบบจะคำนวณระยะเวลารวมเป็นนาทีให้อัตโนมัติ และรองรับการทำงานข้ามเที่ยงคืน
     </p>
 
     <div class="form-grid">
         <div class="form-group">
-            <label>START TIME / เวลาเริ่มต้น</label>
-            <input type="time" id="startTime">
+            <label>START TIME / เวลาเริ่มต้น (24 HOUR)</label>
+            <input
+                type="text"
+                id="startTime"
+                placeholder="HH:MM"
+                maxlength="5"
+                inputmode="numeric"
+                autocomplete="off"
+            >
         </div>
 
         <div class="form-group">
-            <label>END TIME / เวลาสิ้นสุด</label>
-            <input type="time" id="endTime">
+            <label>END TIME / เวลาสิ้นสุด (24 HOUR)</label>
+            <input
+                type="text"
+                id="endTime"
+                placeholder="HH:MM"
+                maxlength="5"
+                inputmode="numeric"
+                autocomplete="off"
+            >
         </div>
 
         <div class="form-group">
             <label>TOTAL TIME / ระยะเวลารวม (MINUTES)</label>
-            <input type="text" id="totalMinutes" class="time-result" value="-" readonly>
+            <input
+                type="text"
+                id="totalMinutes"
+                class="time-result"
+                value=""
+                placeholder="คำนวณอัตโนมัติ"
+                readonly
+            >
         </div>
     </div>
 
@@ -961,31 +982,34 @@ function updateSummary() {
     document.getElementById("progressFill").style.width = percent + "%";
 }
 
+/* ========================================
+   14. ระบบคำนวณเวลาตรวจสอบ 24 ชั่วโมง
+   ผลลัพธ์เป็นนาทีเท่านั้น
+======================================== */
+
+function valid24Hour(time) {
+    return /^([01]\d|2[0-3]):([0-5]\d)$/.test(time);
+}
+
 function calculateDuration(startValue, endValue) {
     if (!startValue || !endValue) return null;
 
-    const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
-
     if (
-        !timePattern.test(startValue) ||
-        !timePattern.test(endValue)
+        !valid24Hour(startValue) ||
+        !valid24Hour(endValue)
     ) {
         return null;
     }
 
-    const [startHour, startMinute] = startValue.split(":").map(Number);
-    const [endHour, endMinute] = endValue.split(":").map(Number);
+    const [sh, sm] = startValue.split(":").map(Number);
+    const [eh, em] = endValue.split(":").map(Number);
 
-    const startTotal = startHour * 60 + startMinute;
-    const endTotal = endHour * 60 + endMinute;
+    let diff = (eh * 60 + em) - (sh * 60 + sm);
 
-    let difference = endTotal - startTotal;
+    // รองรับการทำงานข้ามเที่ยงคืน
+    if (diff < 0) diff += 1440;
 
-    if (difference < 0) {
-        difference += 24 * 60;
-    }
-
-    return difference;
+    return diff;
 }
 
 function updateDurationDisplay() {
@@ -993,24 +1017,35 @@ function updateDurationDisplay() {
     const endTime = document.getElementById("endTime").value;
     const output = document.getElementById("totalMinutes");
 
-    if (!startTime && !endTime) {
-        output.value = "-";
+    if (!startTime || !endTime) {
+        output.value = "";
         return;
     }
 
-    if (!startTime || !endTime) {
-        output.value = "รอกรอกเวลา";
+    if (
+        !valid24Hour(startTime) ||
+        !valid24Hour(endTime)
+    ) {
+        output.value = "";
         return;
     }
 
     const minutes = calculateDuration(startTime, endTime);
 
-    if (minutes === null) {
-        output.value = "เวลาไม่ถูกต้อง";
-        return;
+    output.value = minutes + " นาที";
+}
+
+/* จัดรูปแบบเวลาที่กรอกให้เป็น HH:MM */
+function format24Hour(input) {
+    let digits = input.value.replace(/[^0-9]/g, "").slice(0, 4);
+
+    if (digits.length > 2) {
+        input.value = digits.slice(0, 2) + ":" + digits.slice(2);
+    } else {
+        input.value = digits;
     }
 
-    output.value = minutes + " นาที";
+    updateDurationDisplay();
 }
 
 function getChecklistResults() {
@@ -1044,8 +1079,8 @@ async function saveChecklist() {
         return;
     }
 
-    const startTime = document.getElementById("startTime").value;
-    const endTime = document.getElementById("endTime").value;
+    const startTime = document.getElementById("startTime").value.trim();
+    const endTime = document.getElementById("endTime").value.trim();
 
     let durationMinutes = null;
 
@@ -1058,7 +1093,7 @@ async function saveChecklist() {
         durationMinutes = calculateDuration(startTime, endTime);
 
         if (durationMinutes === null) {
-            alert("รูปแบบเวลาไม่ถูกต้อง กรุณาตรวจสอบเวลาอีกครั้ง");
+            alert("รูปแบบเวลาไม่ถูกต้อง กรุณากรอกเวลาแบบ 24 ชั่วโมง เช่น 08:30");
             return;
         }
     }
@@ -1121,6 +1156,8 @@ async function saveChecklist() {
         check_date: document.getElementById("checkDate").value,
         start_time: startTime || null,
         end_time: endTime || null,
+
+        // บันทึกเป็นตัวเลขนาที เช่น "135"
         work_duration:
             durationMinutes === null ? null : String(durationMinutes),
 
@@ -1231,12 +1268,16 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     document.getElementById("startTime").addEventListener(
         "input",
-        updateDurationDisplay
+        function() {
+            format24Hour(this);
+        }
     );
 
     document.getElementById("endTime").addEventListener(
         "input",
-        updateDurationDisplay
+        function() {
+            format24Hour(this);
+        }
     );
 
     const connected = initializeSupabase();
