@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -79,6 +80,22 @@ body {
     border-radius:8px;
     font-size:12px;
     font-weight:bold;
+}
+
+.header-actions {
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.header-actions button {
+    background:rgba(255,255,255,.14);
+    color:white;
+    border:1px solid rgba(255,255,255,.3);
+    padding:9px 12px;
+    border-radius:8px;
+    font-size:12px;
+    cursor:pointer;
 }
 
 .card {
@@ -477,10 +494,15 @@ button:disabled {
     <div class="header-top">
         <div>
             <h1>🔧 DIE Preventive Check List</h1>
-            <p> </p>
+            <p>Maintenance Department | TNC</p>
         </div>
-        <div class="header-tag">TNC · QUALITY CHECK</div>
+
+        <div class="header-actions">
+            <button onclick="goToHistory()">📋 ประวัติการตรวจสอบ</button>
+            <div class="header-tag">TNC · QUALITY CHECK</div>
+        </div>
     </div>
+
     <div class="connection-status" id="connectionStatus">
         กำลังเชื่อมต่อฐานข้อมูล...
     </div>
@@ -642,38 +664,17 @@ button:disabled {
     <div class="form-grid">
         <div class="form-group">
             <label>START TIME / เวลาเริ่มต้น (24 HOUR)</label>
-            <input
-                type="text"
-                id="startTime"
-                placeholder="HH:MM"
-                maxlength="5"
-                inputmode="numeric"
-                autocomplete="off"
-            >
+            <input type="text" id="startTime" placeholder="HH:MM" maxlength="5" inputmode="numeric" autocomplete="off">
         </div>
 
         <div class="form-group">
             <label>END TIME / เวลาสิ้นสุด (24 HOUR)</label>
-            <input
-                type="text"
-                id="endTime"
-                placeholder="HH:MM"
-                maxlength="5"
-                inputmode="numeric"
-                autocomplete="off"
-            >
+            <input type="text" id="endTime" placeholder="HH:MM" maxlength="5" inputmode="numeric" autocomplete="off">
         </div>
 
         <div class="form-group">
             <label>TOTAL TIME / ระยะเวลารวม (MINUTES)</label>
-            <input
-                type="text"
-                id="totalMinutes"
-                class="time-result"
-                value=""
-                placeholder="คำนวณอัตโนมัติ"
-                readonly
-            >
+            <input type="text" id="totalMinutes" class="time-result" value="" placeholder="คำนวณอัตโนมัติ" readonly>
         </div>
     </div>
 
@@ -682,7 +683,7 @@ button:disabled {
             💾 บันทึกผลการตรวจสอบ
         </button>
 
-        <button class="btn-reset" onclick="resetChecklist()">
+        <button class="btn-reset" id="resetButton" onclick="resetChecklist()">
             ↻ ล้างข้อมูลในแบบฟอร์ม
         </button>
     </div>
@@ -696,6 +697,8 @@ const SUPABASE_KEY = "sb_publishable_DkoWB0IDDgodellT5vgcLQ_YdqIhKdI";
 
 let supabaseClient = null;
 let databaseReady = false;
+let partLoaded = false;
+let saving = false;
 
 const checklistItems = [
     "Bolt, Stripper Bolt",
@@ -732,12 +735,22 @@ const checklistItems = [
     "Start Coil / Feed Start"
 ];
 
-function initializeSupabase() {
+function setConnectionStatus(message, type = "info") {
     const status = document.getElementById("connectionStatus");
+    status.textContent = message;
 
-    if (!window.supabase) {
-        status.textContent = "ไม่พบ Supabase Library";
+    if (type === "success") {
+        status.style.background = "rgba(25,135,84,.25)";
+    } else if (type === "error") {
         status.style.background = "rgba(220,53,69,.25)";
+    } else {
+        status.style.background = "rgba(255,255,255,.12)";
+    }
+}
+
+function initializeSupabase() {
+    if (!window.supabase) {
+        setConnectionStatus("ไม่พบ Supabase Library", "error");
         return false;
     }
 
@@ -748,18 +761,19 @@ function initializeSupabase() {
         );
 
         databaseReady = true;
-        status.textContent = "เชื่อมต่อ Supabase Client แล้ว";
-        status.style.background = "rgba(25,135,84,.25)";
+        setConnectionStatus("เตรียมการเชื่อมต่อ Supabase Client แล้ว");
         return true;
 
     } catch (error) {
-        status.textContent = "ตั้งค่า Supabase ไม่สำเร็จ: " + error.message;
-        status.style.background = "rgba(220,53,69,.25)";
+        setConnectionStatus("ตั้งค่า Supabase ไม่สำเร็จ: " + error.message, "error");
         return false;
     }
 }
 
-/* ตรวจสอบว่าค่าที่อ่านได้เป็นวันที่หรือไม่ */
+function goToHistory() {
+    window.location.href = "mold-history.html";
+}
+
 function isDateValue(value) {
     if (value === null || value === undefined) return false;
 
@@ -767,16 +781,13 @@ function isDateValue(value) {
 
     if (!text) return false;
 
-    const patterns = [
+    return [
         /^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}$/,
         /^\d{4}-\d{2}-\d{2}$/,
         /^\d{4}-\d{2}-\d{2}T/
-    ];
-
-    return patterns.some(pattern => pattern.test(text));
+    ].some(pattern => pattern.test(text));
 }
 
-/* อ่าน Process จากคอลัมน์ที่เป็นไปได้ */
 function getValidProcess(data) {
     const fields = [
         "process",
@@ -809,9 +820,11 @@ async function loadPartData() {
     const partNoInput = document.getElementById("partNo");
     const customerInput = document.getElementById("customer");
     const processInput = document.getElementById("process");
-    const status = document.getElementById("connectionStatus");
+
+    partLoaded = false;
 
     if (!partNo) {
+        setConnectionStatus("ไม่พบ PART NUMBER ใน URL", "error");
         alert("ไม่พบ PART NUMBER ใน URL กรุณาเปิดผ่าน QR Code");
         return;
     }
@@ -821,11 +834,12 @@ async function loadPartData() {
     processInput.value = "";
 
     if (!databaseReady || !supabaseClient) {
+        setConnectionStatus("ยังไม่ได้เชื่อมต่อ Supabase", "error");
         alert("ยังไม่ได้เชื่อมต่อ Supabase กรุณาตรวจสอบ Publishable Key");
         return;
     }
 
-    status.textContent = "กำลังโหลดข้อมูล PART " + partNo + "...";
+    setConnectionStatus("กำลังโหลดข้อมูล PART " + partNo + "...");
 
     try {
         const { data, error } = await supabaseClient
@@ -838,7 +852,7 @@ async function loadPartData() {
 
         if (!data) {
             partNoInput.value = "";
-            status.textContent = "ไม่พบข้อมูล PART";
+            setConnectionStatus("ไม่พบข้อมูล PART", "error");
 
             alert(
                 "ไม่พบข้อมูล PART: " + partNo +
@@ -856,22 +870,19 @@ async function loadPartData() {
 
         partNoInput.value = data.part_no ?? partNo;
         customerInput.value = customer;
+        processInput.value = process || "";
 
-        if (process) {
-            processInput.value = process;
-        } else {
-            processInput.value = "ไม่พบข้อมูล Process";
-            console.warn("ไม่พบ Process ที่ถูกต้อง:", data);
-        }
+        partLoaded = true;
 
-        status.textContent =
-            "โหลดข้อมูล PART สำเร็จ | PART: " + partNo;
+        setConnectionStatus(
+            "โหลดข้อมูล PART สำเร็จ | PART: " + partNo,
+            "success"
+        );
 
     } catch (error) {
         console.error("Load PART error:", error);
 
-        status.textContent = "โหลดข้อมูล PART ไม่สำเร็จ";
-        status.style.background = "rgba(220,53,69,.25)";
+        setConnectionStatus("โหลดข้อมูล PART ไม่สำเร็จ", "error");
 
         alert(
             "โหลดข้อมูล PART ไม่สำเร็จ\n\n" +
@@ -982,11 +993,6 @@ function updateSummary() {
     document.getElementById("progressFill").style.width = percent + "%";
 }
 
-/* ========================================
-   14. ระบบคำนวณเวลาตรวจสอบ 24 ชั่วโมง
-   ผลลัพธ์เป็นนาทีเท่านั้น
-======================================== */
-
 function valid24Hour(time) {
     return /^([01]\d|2[0-3]):([0-5]\d)$/.test(time);
 }
@@ -994,10 +1000,7 @@ function valid24Hour(time) {
 function calculateDuration(startValue, endValue) {
     if (!startValue || !endValue) return null;
 
-    if (
-        !valid24Hour(startValue) ||
-        !valid24Hour(endValue)
-    ) {
+    if (!valid24Hour(startValue) || !valid24Hour(endValue)) {
         return null;
     }
 
@@ -1006,7 +1009,6 @@ function calculateDuration(startValue, endValue) {
 
     let diff = (eh * 60 + em) - (sh * 60 + sm);
 
-    // รองรับการทำงานข้ามเที่ยงคืน
     if (diff < 0) diff += 1440;
 
     return diff;
@@ -1022,20 +1024,14 @@ function updateDurationDisplay() {
         return;
     }
 
-    if (
-        !valid24Hour(startTime) ||
-        !valid24Hour(endTime)
-    ) {
+    if (!valid24Hour(startTime) || !valid24Hour(endTime)) {
         output.value = "";
         return;
     }
 
-    const minutes = calculateDuration(startTime, endTime);
-
-    output.value = minutes + " นาที";
+    output.value = calculateDuration(startTime, endTime) + " นาที";
 }
 
-/* จัดรูปแบบเวลาที่กรอกให้เป็น HH:MM */
 function format24Hour(input) {
     let digits = input.value.replace(/[^0-9]/g, "").slice(0, 4);
 
@@ -1066,12 +1062,21 @@ function getChecklistResults() {
 }
 
 async function saveChecklist() {
+    if (saving) return;
+
     if (!databaseReady || !supabaseClient) {
         alert("ยังไม่ได้เชื่อมต่อ Supabase กรุณาตรวจสอบการตั้งค่า");
         return;
     }
 
+    if (!partLoaded) {
+        alert("ยังโหลดข้อมูล PART ไม่สำเร็จ กรุณาตรวจสอบ PART NUMBER ก่อนบันทึก");
+        return;
+    }
+
     const saveButton = document.getElementById("saveButton");
+    const resetButton = document.getElementById("resetButton");
+
     const partNo = document.getElementById("partNo").value.trim();
 
     if (!partNo) {
@@ -1100,21 +1105,10 @@ async function saveChecklist() {
 
     const results = getChecklistResults();
 
-    const normalCount = results.filter(
-        x => x.result === "ปกติ"
-    ).length;
-
-    const defectCount = results.filter(
-        x => x.result === "ผิดปกติ"
-    ).length;
-
-    const naCount = results.filter(
-        x => x.result === "N/A"
-    ).length;
-
-    const pendingCount = results.filter(
-        x => x.result === "ยังไม่ตรวจ"
-    ).length;
+    const normalCount = results.filter(x => x.result === "ปกติ").length;
+    const defectCount = results.filter(x => x.result === "ผิดปกติ").length;
+    const naCount = results.filter(x => x.result === "N/A").length;
+    const pendingCount = results.filter(x => x.result === "ยังไม่ตรวจ").length;
 
     if (pendingCount > 0) {
         const confirmSave = confirm(
@@ -1134,15 +1128,11 @@ async function saveChecklist() {
         if (!confirmNoRemark) return;
     }
 
-    const passedShotsValue =
-        document.getElementById("passedShots").value.trim();
+    const passedShotsValue = document.getElementById("passedShots").value.trim();
 
     if (
         passedShotsValue !== "" &&
-        (
-            !Number.isFinite(Number(passedShotsValue)) ||
-            Number(passedShotsValue) < 0
-        )
+        (!Number.isFinite(Number(passedShotsValue)) || Number(passedShotsValue) < 0)
     ) {
         alert("กรุณากรอก Passed Shots เป็นตัวเลขตั้งแต่ 0 ขึ้นไป");
         return;
@@ -1157,11 +1147,10 @@ async function saveChecklist() {
         start_time: startTime || null,
         end_time: endTime || null,
 
-        // บันทึกเป็นตัวเลขนาที เช่น "135"
         work_duration:
             durationMinutes === null ? null : String(durationMinutes),
 
-        passed_shots: passedShotsValue || null,
+        passed_shots: passedShotsValue === "" ? null : Number(passedShotsValue),
 
         pm_plan: document.getElementById("pmPlan").checked,
         pm_tool: document.getElementById("pmTool").checked,
@@ -1181,14 +1170,14 @@ async function saveChecklist() {
         pending_count: pendingCount,
 
         remarks: remarks || null,
-        checked_by:
-            document.getElementById("checkedBy").value.trim() || null,
-        approved_by:
-            document.getElementById("approvedBy").value.trim() || null
+        checked_by: document.getElementById("checkedBy").value.trim() || null,
+        approved_by: document.getElementById("approvedBy").value.trim() || null
     };
 
     try {
+        saving = true;
         saveButton.disabled = true;
+        resetButton.disabled = true;
         saveButton.textContent = "กำลังบันทึกข้อมูล...";
 
         const { data, error } = await supabaseClient
@@ -1198,25 +1187,22 @@ async function saveChecklist() {
 
         if (error) throw error;
 
+        console.log("Saved mold checklist:", data);
+
         alert(
-            "บันทึกผลการตรวจสอบลง Supabase เรียบร้อยแล้ว\n\n" +
+            "บันทึกผลการตรวจสอบเรียบร้อยแล้ว\n\n" +
             "PART: " + partNo + "\n" +
             "ปกติ: " + normalCount + " รายการ\n" +
             "ผิดปกติ: " + defectCount + " รายการ\n" +
             "N/A: " + naCount + " รายการ\n" +
             "ยังไม่ตรวจ: " + pendingCount + " รายการ\n" +
             "ระยะเวลา: " +
-            (durationMinutes === null
-                ? "ไม่ได้ระบุ"
-                : durationMinutes + " นาที") +
-            "\n\nบันทึกลงตาราง: mold_checklists"
+            (durationMinutes === null ? "ไม่ได้ระบุ" : durationMinutes + " นาที") +
+            "\n\nกำลังเปิดหน้าประวัติการตรวจสอบ..."
         );
 
-        console.log("Saved mold checklist:", data);
-
-alert("บันทึกผลการตรวจสอบเรียบร้อยแล้ว");
-
-window.location.href = "history.html";
+        // ไปหน้าประวัติ Checklist แยกจาก Daily Report
+        window.location.href = "mold-history.html";
 
     } catch (error) {
         console.error("Save checklist error:", error);
@@ -1227,13 +1213,16 @@ window.location.href = "history.html";
             "\n\nกรุณาตรวจสอบการเชื่อมต่อ Supabase และตาราง mold_checklists"
         );
 
-    } finally {
+        saving = false;
         saveButton.disabled = false;
+        resetButton.disabled = false;
         saveButton.textContent = "💾 บันทึกผลการตรวจสอบ";
     }
 }
 
 function resetChecklist() {
+    if (saving) return;
+
     if (!confirm("ต้องการล้างข้อมูลที่กรอกทั้งหมดหรือไม่?")) {
         return;
     }
@@ -1267,8 +1256,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     const m = String(today.getMonth() + 1).padStart(2, "0");
     const y = String(today.getFullYear()).slice(-2);
 
-    document.getElementById("checkDate").value =
-        `${d}/${m}/${y}`;
+    document.getElementById("checkDate").value = `${d}/${m}/${y}`;
 
     document.getElementById("startTime").addEventListener(
         "input",
@@ -1284,9 +1272,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
     );
 
-    const connected = initializeSupabase();
-
-    if (connected) {
+    if (initializeSupabase()) {
         await loadPartData();
     }
 });
