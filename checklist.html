@@ -997,39 +997,39 @@ function valid24Hour(time) {
     return /^([01]\d|2[0-3]):([0-5]\d)$/.test(time);
 }
 
-function calculateDuration(startValue, endValue) {
-    if (!startValue || !endValue) return null;
+function calculateDuration() {
+    const start = document.getElementById("startTime").value;
+    const end = document.getElementById("endTime").value;
 
-    if (!valid24Hour(startValue) || !valid24Hour(endValue)) {
+    if (!valid24Hour(start) || !valid24Hour(end)) {
         return null;
     }
 
-    const [sh, sm] = startValue.split(":").map(Number);
-    const [eh, em] = endValue.split(":").map(Number);
+    const [startHour, startMinute] = start.split(":").map(Number);
+    const [endHour, endMinute] = end.split(":").map(Number);
 
-    let diff = (eh * 60 + em) - (sh * 60 + sm);
+    const startTotal = (startHour * 60) + startMinute;
+    const endTotal = (endHour * 60) + endMinute;
 
-    if (diff < 0) diff += 1440;
+    let duration = endTotal - startTotal;
 
-    return diff;
+    // รองรับกรณีเวลาสิ้นสุดข้ามวัน
+    if (duration < 0) {
+        duration += 24 * 60;
+    }
+
+    return duration;
 }
 
 function updateDurationDisplay() {
-    const startTime = document.getElementById("startTime").value;
-    const endTime = document.getElementById("endTime").value;
-    const output = document.getElementById("totalMinutes");
+    const duration = calculateDuration();
+    const display = document.getElementById("workDuration");
 
-    if (!startTime || !endTime) {
-        output.value = "";
-        return;
-    }
+    if (!display) return;
 
-    if (!valid24Hour(startTime) || !valid24Hour(endTime)) {
-        output.value = "";
-        return;
-    }
-
-    output.value = calculateDuration(startTime, endTime) + " นาที";
+    display.value = duration === null
+        ? ""
+        : duration + " นาที";
 }
 
 function format24Hour(input) {
