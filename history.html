@@ -10,61 +10,67 @@
 <style>
 :root {
     --navy:#20364d;
+    --navy-dark:#172a3d;
     --blue:#2878bd;
     --green:#219653;
+    --red:#dc3545;
+    --orange:#d18b18;
     --bg:#f3f6fa;
     --line:#dce3eb;
     --text:#243447;
+    --muted:#718096;
 }
 
-* {
-    box-sizing:border-box;
-}
+* { box-sizing:border-box; }
 
 body {
     margin:0;
-    padding:18px;
+    padding:20px;
     background:var(--bg);
     font-family:Arial,"Noto Sans Thai",sans-serif;
     color:var(--text);
 }
 
 .wrap {
-    max-width:1600px;
+    max-width:1700px;
     margin:auto;
 }
 
 .header,.panel {
-    background:#fff;
-    padding:18px;
-    border-radius:12px;
+    background:white;
+    padding:20px;
+    border-radius:13px;
     box-shadow:0 3px 14px #20364d12;
-    margin-bottom:15px;
+    margin-bottom:16px;
+}
+
+.header {
+    border-top:5px solid var(--navy);
 }
 
 h1 {
-    font-size:22px;
+    font-size:23px;
     margin:0 0 5px;
     color:var(--navy);
 }
 
 .sub {
-    font-size:14px;
-    color:#667788;
+    color:var(--muted);
+    font-size:13px;
 }
 
 .tools {
     display:flex;
     gap:10px;
     flex-wrap:wrap;
-    margin-top:15px;
+    margin-top:17px;
     align-items:end;
 }
 
 .field {
     display:flex;
     flex-direction:column;
-    gap:5px;
+    gap:6px;
     font-size:13px;
     font-weight:600;
     min-width:160px;
@@ -72,12 +78,19 @@ h1 {
 }
 
 input {
-    font:inherit;
-    padding:9px;
-    border:1px solid #cbd5df;
-    border-radius:6px;
     width:100%;
     min-width:0;
+    padding:10px 12px;
+    border:1px solid #cbd5df;
+    border-radius:7px;
+    font:inherit;
+    outline:none;
+    background:white;
+}
+
+input:focus {
+    border-color:var(--blue);
+    box-shadow:0 0 0 3px #2878bd18;
 }
 
 .btn {
@@ -88,38 +101,83 @@ input {
     font-weight:700;
     cursor:pointer;
     background:var(--blue);
+    font-size:13px;
+    transition:.2s;
 }
 
 .btn:hover {
-    opacity:.9;
+    filter:brightness(.93);
+    transform:translateY(-1px);
 }
 
-.green {
-    background:var(--green);
+.btn:disabled {
+    opacity:.5;
+    cursor:not-allowed;
+    transform:none;
 }
 
-.gray {
-    background:#64748b;
-}
+.green { background:var(--green); }
+.gray { background:#64748b; }
+.dark { background:var(--navy); }
+.orange { background:var(--orange); }
 
 .stats {
-    display:flex;
+    display:grid;
+    grid-template-columns:repeat(3,minmax(150px,1fr));
     gap:12px;
-    flex-wrap:wrap;
-    margin:14px 0;
 }
 
 .stat {
-    background:#eef5fb;
-    padding:10px 14px;
-    border-radius:8px;
-    font-size:14px;
+    background:#f1f6fb;
+    border:1px solid #e3ebf3;
+    padding:14px 16px;
+    border-radius:9px;
 }
 
-.stat b {
-    font-size:18px;
+.stat-label {
+    font-size:13px;
+    color:#64748b;
+}
+
+.stat-value {
+    font-size:25px;
+    font-weight:800;
     color:var(--navy);
-    margin-left:5px;
+    margin-top:4px;
+}
+
+.stat.done {
+    background:#edf9f1;
+    border-color:#d3eddd;
+}
+
+.stat.done .stat-value { color:var(--green); }
+
+.stat.pending {
+    background:#fff8e9;
+    border-color:#f3e4bd;
+}
+
+.stat.pending .stat-value { color:var(--orange); }
+
+.table-heading {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+}
+
+.table-heading h2 {
+    margin:0;
+    font-size:17px;
+    color:var(--navy);
+}
+
+.result-info {
+    color:var(--muted);
+    font-size:12px;
 }
 
 .table-wrap {
@@ -127,17 +185,18 @@ input {
     background:white;
     border-radius:12px;
     box-shadow:0 3px 14px #20364d12;
+    border:1px solid var(--line);
 }
 
 table {
     border-collapse:collapse;
     width:100%;
-    min-width:1450px;
+    min-width:1500px;
 }
 
 th,td {
-    border:1px solid var(--line);
-    padding:8px;
+    border-bottom:1px solid var(--line);
+    padding:10px 9px;
     text-align:center;
     font-size:12px;
     white-space:nowrap;
@@ -149,61 +208,190 @@ th {
     position:sticky;
     top:0;
     z-index:2;
+    font-weight:700;
 }
 
-tbody tr:nth-child(even) {
-    background:#f8fafc;
-}
+tbody tr:nth-child(even) { background:#f8fafc; }
+tbody tr:hover { background:#edf5fc; }
 
 .done {
-    color:#168044;
+    color:var(--green);
     font-weight:bold;
 }
 
 .pending {
-    color:#b7791f;
+    color:var(--orange);
     font-weight:bold;
 }
 
-.empty {
-    text-align:center;
-    padding:30px;
-    color:#718096;
+.view-btn {
+    background:#e7f1fb;
+    color:#2167a4;
+    border:1px solid #c9def1;
+    padding:6px 11px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:12px;
 }
 
-.loading {
+.view-btn:hover { background:#d8eafa; }
+
+.empty,.loading {
     text-align:center;
-    padding:30px;
-    color:#2878bd;
+    padding:35px;
+    color:var(--muted);
 }
+
+.loading { color:var(--blue); }
 
 .error {
+    display:none;
     background:#fff0f0;
     border:1px solid #f3b5b5;
     color:#b42318;
     padding:12px;
     border-radius:8px;
+    margin-top:14px;
+    font-size:13px;
+    overflow-wrap:anywhere;
+}
+
+.success-msg {
+    display:none;
+    background:#edf9f1;
+    border:1px solid #c9ead5;
+    color:#168044;
+    padding:10px;
+    border-radius:8px;
     margin-top:12px;
     font-size:13px;
+}
+
+/* DETAIL MODAL */
+
+.modal {
     display:none;
+    position:fixed;
+    inset:0;
+    background:#0b1929a8;
+    z-index:1000;
+    padding:20px;
+    overflow:auto;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal.show { display:flex; }
+
+.modal-box {
+    background:white;
+    width:100%;
+    max-width:850px;
+    max-height:90vh;
+    overflow:auto;
+    border-radius:13px;
+    box-shadow:0 15px 50px #0003;
+}
+
+.modal-header {
+    background:var(--navy);
+    color:white;
+    padding:17px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    position:sticky;
+    top:0;
+    z-index:2;
+}
+
+.modal-header h2 {
+    font-size:17px;
+    margin:0;
+}
+
+.close-btn {
+    background:#ffffff20;
+    color:white;
+    border:0;
+    border-radius:6px;
+    width:32px;
+    height:32px;
+    cursor:pointer;
+    font-size:19px;
+}
+
+.modal-content { padding:20px; }
+
+.detail-grid {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+}
+
+.detail-item {
+    background:#f5f8fb;
+    border:1px solid #e6edf4;
+    border-radius:8px;
+    padding:11px;
+    min-width:0;
+}
+
+.detail-item.full { grid-column:1/-1; }
+
+.detail-label {
+    font-size:11px;
+    color:var(--muted);
+    margin-bottom:5px;
+}
+
+.detail-value {
+    font-size:14px;
+    font-weight:600;
+    overflow-wrap:anywhere;
+}
+
+.modal-actions {
+    display:flex;
+    justify-content:flex-end;
+    margin-top:18px;
 }
 
 @media(max-width:700px) {
-    body {
-        padding:10px;
+    body { padding:10px; }
+
+    .header,.panel { padding:14px; }
+
+    h1 { font-size:19px; }
+
+    .stats {
+        grid-template-columns:1fr;
+        gap:8px;
     }
 
-    h1 {
-        font-size:18px;
+    .stat {
+        padding:10px 13px;
     }
 
-    .header,.panel {
-        padding:13px;
-    }
+    .stat-value { font-size:21px; }
 
     .tools .btn {
         flex:1;
     }
+
+    .tools .field {
+        min-width:100%;
+    }
+
+    .detail-grid {
+        grid-template-columns:1fr;
+    }
+
+    .detail-item.full { grid-column:auto; }
+
+    .modal { padding:10px; }
 }
 </style>
 </head>
@@ -217,18 +405,15 @@ tbody tr:nth-child(even) {
     <h1>ประวัติ Die Maintenance Daily Report</h1>
 
     <div class="sub">
-        TNC · ระบบประวัติ Daily Report ผ่าน Supabase
+        TNC · ระบบประวัติการซ่อมบำรุงแม่พิมพ์
     </div>
 
     <div class="tools">
 
         <label class="field">
             ค้นหาข้อมูล
-            <input
-                id="search"
-                type="search"
-                placeholder="ลูกค้า / Part No. / ผู้ซ่อม / รายละเอียด"
-            >
+            <input id="search" type="search"
+            placeholder="ลูกค้า / Part No. / ผู้ซ่อม / รายละเอียด">
         </label>
 
         <label class="field">
@@ -242,7 +427,7 @@ tbody tr:nth-child(even) {
         </label>
 
         <button class="btn" id="filterBtn" type="button">
-            ค้นหา
+            🔍 ค้นหา
         </button>
 
         <button class="btn gray" id="resetBtn" type="button">
@@ -252,6 +437,7 @@ tbody tr:nth-child(even) {
     </div>
 
     <div id="errorBox" class="error"></div>
+    <div id="successBox" class="success-msg"></div>
 
 </header>
 
@@ -261,18 +447,18 @@ tbody tr:nth-child(even) {
     <div class="stats">
 
         <div class="stat">
-            รายการที่แสดง
-            <b id="count">0</b>
+            <div class="stat-label">รายการที่แสดง</div>
+            <div class="stat-value" id="count">0</div>
         </div>
 
-        <div class="stat">
-            เสร็จแล้ว
-            <b id="doneCount">0</b>
+        <div class="stat done">
+            <div class="stat-label">เสร็จแล้ว</div>
+            <div class="stat-value" id="doneCount">0</div>
         </div>
 
-        <div class="stat">
-            ยังไม่เสร็จ
-            <b id="pendingCount">0</b>
+        <div class="stat pending">
+            <div class="stat-label">ยังไม่เสร็จ</div>
+            <div class="stat-value" id="pendingCount">0</div>
         </div>
 
     </div>
@@ -283,7 +469,7 @@ tbody tr:nth-child(even) {
             ⬇ ส่งออก CSV
         </button>
 
-        <button class="btn" id="backBtn" type="button">
+        <button class="btn dark" id="backBtn" type="button">
             ＋ กลับไปหน้าบันทึก
         </button>
 
@@ -296,42 +482,78 @@ tbody tr:nth-child(even) {
 </section>
 
 
-<div class="table-wrap">
+<section class="panel">
 
-<table>
+    <div class="table-heading">
+        <h2>รายการประวัติการซ่อม</h2>
+        <div class="result-info" id="resultInfo">
+            กำลังโหลดข้อมูล...
+        </div>
+    </div>
 
-<thead>
-<tr>
-    <th>#</th>
-    <th>วันที่</th>
-    <th>ลูกค้า</th>
-    <th>Part No.</th>
-    <th>Process</th>
-    <th>สาเหตุการซ่อม</th>
-    <th>สาเหตุปัญหา</th>
-    <th>รายละเอียดการซ่อม</th>
-    <th>ผู้ซ่อม</th>
-    <th>เวลาเริ่ม</th>
-    <th>เวลาเสร็จ</th>
-    <th>รวมเวลา</th>
-    <th>สถานะ</th>
-    <th>หมายเหตุ</th>
-</tr>
-</thead>
+    <div class="table-wrap">
 
-<tbody id="historyBody">
+        <table>
 
-<tr>
-    <td colspan="14" class="loading">
-        กำลังโหลดข้อมูลจาก Supabase...
-    </td>
-</tr>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>วันที่</th>
+                    <th>ลูกค้า</th>
+                    <th>Part No.</th>
+                    <th>Process</th>
+                    <th>สาเหตุการซ่อม</th>
+                    <th>สาเหตุปัญหา</th>
+                    <th>รายละเอียดการซ่อม</th>
+                    <th>ผู้ซ่อม</th>
+                    <th>เวลาเริ่ม</th>
+                    <th>เวลาเสร็จ</th>
+                    <th>รวมเวลา</th>
+                    <th>สถานะ</th>
+                    <th>หมายเหตุ</th>
+                    <th>รายละเอียด</th>
+                </tr>
+            </thead>
 
-</tbody>
+            <tbody id="historyBody">
+                <tr>
+                    <td colspan="15" class="loading">
+                        กำลังโหลดข้อมูลจาก Supabase...
+                    </td>
+                </tr>
+            </tbody>
 
-</table>
+        </table>
+
+    </div>
+
+</section>
 
 </div>
+
+
+<!-- DETAIL MODAL -->
+
+<div class="modal" id="detailModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h2>รายละเอียด Daily Report</h2>
+            <button class="close-btn" id="closeModal">×</button>
+        </div>
+
+        <div class="modal-content">
+            <div class="detail-grid" id="detailContent"></div>
+
+            <div class="modal-actions">
+                <button class="btn gray" id="closeModal2">
+                    ปิดหน้าต่าง
+                </button>
+            </div>
+        </div>
+
+    </div>
 
 </div>
 
@@ -366,34 +588,10 @@ let visibleRecords = [];
 
 
 /* =====================================
-   ERROR MESSAGE
-===================================== */
-
-function showError(message) {
-
-    const box = document.getElementById("errorBox");
-
-    box.style.display = "block";
-    box.textContent = message;
-
-}
-
-function hideError() {
-
-    const box = document.getElementById("errorBox");
-
-    box.style.display = "none";
-    box.textContent = "";
-
-}
-
-
-/* =====================================
    SAFE TEXT
 ===================================== */
 
 function safe(value) {
-
     return String(value ?? "").replace(
         /[&<>"']/g,
         char => ({
@@ -404,7 +602,19 @@ function safe(value) {
             "'":"&#39;"
         })[char]
     );
+}
 
+
+/* =====================================
+   STATUS
+===================================== */
+
+function isDone(value) {
+    return value === true ||
+           value === 1 ||
+           value === "true" ||
+           value === "1" ||
+           value === "เสร็จแล้ว";
 }
 
 
@@ -412,19 +622,16 @@ function safe(value) {
    DATE CONVERSION
 ===================================== */
 
-// รองรับทั้ง YYYY-MM-DD และ DD/MM/YY
 function normalizeDate(value) {
 
     if (!value) return "";
 
     const str = String(value).trim();
 
-    // YYYY-MM-DD
-    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
-        return str;
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+        return str.slice(0,10);
     }
 
-    // DD/MM/YY หรือ DD/MM/YYYY
     const match = str.match(
         /^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/
     );
@@ -435,35 +642,29 @@ function normalizeDate(value) {
         let month = Number(match[2]);
         let year = Number(match[3]);
 
-        if (year < 100) {
-            year += 2000;
-        }
+        if (year < 100) year += 2000;
 
         return [
             year,
             String(month).padStart(2,"0"),
             String(day).padStart(2,"0")
         ].join("-");
-
     }
 
     return "";
-
 }
 
 
 function displayDate(value) {
 
-    if (!value) return "";
+    if (!value) return "-";
 
     const str = String(value);
 
-    // ถ้าเป็น DD/MM/YY อยู่แล้วให้แสดงเหมือนเดิม
     if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(str)) {
         return str;
     }
 
-    // YYYY-MM-DD แสดงเป็น DD/MM/YY
     const date = normalizeDate(str);
 
     if (!date) return str;
@@ -471,12 +672,34 @@ function displayDate(value) {
     const parts = date.split("-");
 
     return `${parts[2]}/${parts[1]}/${parts[0].slice(-2)}`;
-
 }
 
 
 /* =====================================
-   LOAD DATA FROM SUPABASE
+   ERROR MESSAGE
+===================================== */
+
+function showError(message) {
+    const box = document.getElementById("errorBox");
+    box.style.display = "block";
+    box.textContent = message;
+}
+
+function hideError() {
+    const box = document.getElementById("errorBox");
+    box.style.display = "none";
+    box.textContent = "";
+}
+
+function showSuccess(message) {
+    const box = document.getElementById("successBox");
+    box.style.display = "block";
+    box.textContent = message;
+}
+
+
+/* =====================================
+   LOAD DATA
 ===================================== */
 
 async function loadHistory() {
@@ -485,28 +708,29 @@ async function loadHistory() {
 
     body.innerHTML = `
         <tr>
-            <td colspan="14" class="loading">
+            <td colspan="15" class="loading">
                 กำลังโหลดข้อมูลจาก Supabase...
             </td>
         </tr>
     `;
+
+    document.getElementById("refreshBtn").disabled = true;
 
     try {
 
         const { data, error } = await supabaseClient
             .from("daily_reports")
             .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+            .order("created_at", { ascending:false });
 
-        if (error) {
-            throw error;
-        }
+        if (error) throw error;
 
         allRecords = Array.isArray(data) ? data : [];
 
         render();
+
+        document.getElementById("resultInfo").textContent =
+            `ข้อมูลทั้งหมด ${allRecords.length} รายการ`;
 
     } catch (error) {
 
@@ -519,16 +743,23 @@ async function loadHistory() {
 
         body.innerHTML = `
             <tr>
-                <td colspan="14" class="empty">
-                    โหลดข้อมูลไม่สำเร็จ
+                <td colspan="15" class="empty">
+                    โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบการเชื่อมต่อ
                 </td>
             </tr>
         `;
+
+        document.getElementById("resultInfo").textContent =
+            "ไม่สามารถโหลดข้อมูลได้";
 
         showError(
             "โหลดข้อมูลจาก Supabase ไม่สำเร็จ: " +
             (error.message || "Unknown error")
         );
+
+    } finally {
+
+        document.getElementById("refreshBtn").disabled = false;
 
     }
 
@@ -543,9 +774,7 @@ function render() {
 
     const q = document
         .getElementById("search")
-        .value
-        .trim()
-        .toLowerCase();
+        .value.trim().toLowerCase();
 
     const from = document.getElementById("fromDate").value;
     const to = document.getElementById("toDate").value;
@@ -567,14 +796,9 @@ function render() {
 
         const date = normalizeDate(record.report_date);
 
-        const matchSearch =
-            !q || haystack.includes(q);
-
-        const matchFrom =
-            !from || (date && date >= from);
-
-        const matchTo =
-            !to || (date && date <= to);
+        const matchSearch = !q || haystack.includes(q);
+        const matchFrom = !from || (date && date >= from);
+        const matchTo = !to || (date && date <= to);
 
         return matchSearch && matchFrom && matchTo;
 
@@ -582,18 +806,20 @@ function render() {
 
     updateStats();
 
+    document.getElementById("resultInfo").textContent =
+        `แสดง ${visibleRecords.length} จาก ${allRecords.length} รายการ`;
+
     if (!visibleRecords.length) {
 
         body.innerHTML = `
             <tr>
-                <td colspan="14" class="empty">
+                <td colspan="15" class="empty">
                     ไม่พบข้อมูลประวัติ
                 </td>
             </tr>
         `;
 
         return;
-
     }
 
     body.innerHTML = visibleRecords.map((record,index) => `
@@ -604,31 +830,39 @@ function render() {
 
             <td>${safe(displayDate(record.report_date))}</td>
 
-            <td>${safe(record.customer)}</td>
+            <td>${safe(record.customer || "-")}</td>
 
-            <td>${safe(record.part_no)}</td>
+            <td><b>${safe(record.part_no || "-")}</b></td>
 
-            <td>${safe(record.process)}</td>
+            <td>${safe(record.process || "-")}</td>
 
-            <td>${safe(record.cause_repair)}</td>
+            <td>${safe(record.cause_repair || "-")}</td>
 
-            <td>${safe(record.cause_problem)}</td>
+            <td>${safe(record.cause_problem || "-")}</td>
 
-            <td>${safe(record.repair_detail)}</td>
+            <td>${safe(record.repair_detail || "-")}</td>
 
-            <td>${safe(record.repaired_by)}</td>
+            <td>${safe(record.repaired_by || "-")}</td>
 
-            <td>${safe(record.start_time)}</td>
+            <td>${safe(record.start_time || "-")}</td>
 
-            <td>${safe(record.end_time)}</td>
+            <td>${safe(record.end_time || "-")}</td>
 
-            <td>${safe(record.work_duration)}</td>
+            <td>${safe(record.work_duration || "-")}</td>
 
-            <td class="${record.status_done ? "done" : "pending"}">
-                ${record.status_done ? "เสร็จแล้ว" : "ยังไม่เสร็จ"}
+            <td class="${isDone(record.status_done) ? "done" : "pending"}">
+                ${isDone(record.status_done) ? "เสร็จแล้ว" : "ยังไม่เสร็จ"}
             </td>
 
-            <td>${safe(record.remarks)}</td>
+            <td>${safe(record.remarks || "-")}</td>
+
+            <td>
+                <button class="view-btn"
+                    type="button"
+                    data-index="${index}">
+                    ดูข้อมูล
+                </button>
+            </td>
 
         </tr>
 
@@ -638,7 +872,7 @@ function render() {
 
 
 /* =====================================
-   UPDATE STATISTICS
+   STATISTICS
 ===================================== */
 
 function updateStats() {
@@ -647,12 +881,84 @@ function updateStats() {
         visibleRecords.length;
 
     document.getElementById("doneCount").textContent =
-        visibleRecords.filter(record => record.status_done === true).length;
+        visibleRecords.filter(r => isDone(r.status_done)).length;
 
     document.getElementById("pendingCount").textContent =
-        visibleRecords.filter(record => record.status_done !== true).length;
+        visibleRecords.filter(r => !isDone(r.status_done)).length;
 
 }
+
+
+/* =====================================
+   VIEW DETAIL
+===================================== */
+
+function openDetail(record) {
+
+    const fields = [
+
+        ["วันที่", displayDate(record.report_date)],
+        ["ลูกค้า", record.customer],
+        ["Part No.", record.part_no],
+        ["Process", record.process],
+        ["สาเหตุการซ่อม", record.cause_repair],
+        ["สาเหตุปัญหา", record.cause_problem],
+        ["รายละเอียดการซ่อม", record.repair_detail],
+        ["ผู้ซ่อม", record.repaired_by],
+        ["เวลาเริ่ม", record.start_time],
+        ["เวลาเสร็จ", record.end_time],
+        ["รวมเวลา", record.work_duration],
+        ["สถานะ", isDone(record.status_done) ? "เสร็จแล้ว" : "ยังไม่เสร็จ"],
+        ["หมายเหตุ", record.remarks]
+
+    ];
+
+    document.getElementById("detailContent").innerHTML =
+        fields.map(([label,value]) => `
+
+            <div class="detail-item ${label === "รายละเอียดการซ่อม" || label === "หมายเหตุ" ? "full" : ""}">
+
+                <div class="detail-label">${safe(label)}</div>
+
+                <div class="detail-value">${safe(value || "-")}</div>
+
+            </div>
+
+        `).join("");
+
+    document.getElementById("detailModal").classList.add("show");
+
+}
+
+body.addEventListener("click", event => {
+
+    const button = event.target.closest(".view-btn");
+
+    if (!button) return;
+
+    const index = Number(button.dataset.index);
+
+    const record = visibleRecords[index];
+
+    if (record) openDetail(record);
+
+});
+
+
+function closeDetail() {
+    document.getElementById("detailModal").classList.remove("show");
+}
+
+document.getElementById("closeModal").addEventListener("click", closeDetail);
+document.getElementById("closeModal2").addEventListener("click", closeDetail);
+
+document.getElementById("detailModal").addEventListener("click", event => {
+    if (event.target.id === "detailModal") closeDetail();
+});
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeDetail();
+});
 
 
 /* =====================================
@@ -674,15 +980,13 @@ document.getElementById("resetBtn").addEventListener("click", () => {
    SEARCH
 ===================================== */
 
-document.getElementById("filterBtn").addEventListener(
-    "click",
-    render
-);
+document.getElementById("filterBtn").addEventListener("click", render);
 
-document.getElementById("search").addEventListener(
-    "input",
-    render
-);
+document.getElementById("search").addEventListener("input", render);
+
+document.getElementById("fromDate").addEventListener("change", render);
+
+document.getElementById("toDate").addEventListener("change", render);
 
 
 /* =====================================
@@ -690,20 +994,15 @@ document.getElementById("search").addEventListener(
 ===================================== */
 
 document.getElementById("backBtn").addEventListener("click", () => {
-
     location.href = "daily-report.html";
-
 });
 
 
 /* =====================================
-   REFRESH DATA
+   REFRESH
 ===================================== */
 
-document.getElementById("refreshBtn").addEventListener(
-    "click",
-    loadHistory
-);
+document.getElementById("refreshBtn").addEventListener("click", loadHistory);
 
 
 /* =====================================
@@ -722,11 +1021,8 @@ function csvCell(value) {
 document.getElementById("exportBtn").addEventListener("click", () => {
 
     if (!visibleRecords.length) {
-
         alert("ไม่มีข้อมูลสำหรับส่งออก");
-
         return;
-
     }
 
     const headers = [
@@ -766,7 +1062,6 @@ document.getElementById("exportBtn").addEventListener("click", () => {
     ];
 
     const rows = [
-
         headers,
 
         ...visibleRecords.map(record => {
@@ -774,7 +1069,7 @@ document.getElementById("exportBtn").addEventListener("click", () => {
             return keys.map(key => {
 
                 if (key === "status_done") {
-                    return record.status_done
+                    return isDone(record.status_done)
                         ? "เสร็จแล้ว"
                         : "ยังไม่เสร็จ";
                 }
@@ -812,9 +1107,7 @@ document.getElementById("exportBtn").addEventListener("click", () => {
         `TNC_Daily_Report_${new Date().toISOString().slice(0,10)}.csv`;
 
     document.body.appendChild(a);
-
     a.click();
-
     a.remove();
 
     URL.revokeObjectURL(url);
