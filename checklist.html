@@ -47,7 +47,6 @@ body{
     margin:auto;
 }
 
-/* HEADER */
 .header{
     background:linear-gradient(115deg,#10263b 0%,#1b4265 65%,#285d85 100%);
     color:white;
@@ -150,7 +149,6 @@ body{
 .connection-status.success .connection-dot{background:#55d69b;}
 .connection-status.error .connection-dot{background:#ff7d85;}
 
-/* GENERAL CARD */
 .card{
     background:white;
     border:1px solid var(--line);
@@ -197,7 +195,6 @@ body{
     letter-spacing:.6px;
 }
 
-/* FORM */
 .form-grid{
     display:grid;
     grid-template-columns:repeat(4,minmax(0,1fr));
@@ -246,7 +243,6 @@ textarea:focus{
     font-weight:bold;
 }
 
-/* INSPECTION TYPE */
 .section-grid{
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
@@ -298,7 +294,6 @@ textarea:focus{
     cursor:pointer;
 }
 
-/* SUMMARY */
 .summary-grid{
     display:grid;
     grid-template-columns:repeat(5,minmax(0,1fr));
@@ -380,7 +375,6 @@ textarea:focus{
     transition:.25s;
 }
 
-/* CHECKLIST */
 .note{
     font-size:12px;
     color:#718096;
@@ -500,7 +494,6 @@ tbody tr:hover{background:#f7faff;}
 .status-na{background:#edf1f5;color:#475569;}
 .status-pending{background:var(--orange-light);color:var(--orange);}
 
-/* REMARKS */
 textarea{
     min-height:110px;
     resize:vertical;
@@ -514,7 +507,6 @@ textarea{
     margin-top:19px;
 }
 
-/* TIME */
 .time-card{
     border-top:3px solid var(--blue);
 }
@@ -526,7 +518,6 @@ textarea{
     line-height:1.8;
 }
 
-/* BUTTON */
 .action-area{
     display:grid;
     grid-template-columns:1.5fr 1fr;
@@ -1336,24 +1327,50 @@ function resetChecklist(){
 
     if(!confirm("ต้องการล้างข้อมูลที่กรอกทั้งหมดหรือไม่?"))return;
 
+    clearChecklistForm();
+}
+
+function clearChecklistForm(){
+    // ล้างเครื่องหมายติ๊กทั้งหมด
     document.querySelectorAll('input[type="checkbox"]').forEach(input=>{
         input.checked=false;
     });
 
+    // ล้างช่องที่ผู้ใช้กรอก แต่เก็บข้อมูล PART ไว้
     document.querySelectorAll(
         'input:not([readonly]):not([type="checkbox"]),textarea'
     ).forEach(input=>{
         input.value="";
     });
 
+    // คืนสถานะทั้ง 32 รายการ
     checklistItems.forEach((item,index)=>{
         const no=index+1;
-        document.getElementById("status"+no).innerHTML=
-            '<span class="status-pill status-pending">ยังไม่ตรวจ</span>';
+        const status=document.getElementById("status"+no);
+
+        if(status){
+            status.innerHTML=
+                '<span class="status-pill status-pending">ยังไม่ตรวจ</span>';
+        }
     });
 
     updateDurationDisplay();
     updateSummary();
+
+    // คืนสถานะปุ่ม
+    saving=false;
+
+    const saveButton=document.getElementById("saveButton");
+    const resetButton=document.getElementById("resetButton");
+
+    if(saveButton){
+        saveButton.disabled=false;
+        saveButton.textContent="💾 บันทึกผลการตรวจสอบ";
+    }
+
+    if(resetButton){
+        resetButton.disabled=false;
+    }
 }
 
 document.addEventListener("DOMContentLoaded",async function(){
@@ -1378,6 +1395,26 @@ document.addEventListener("DOMContentLoaded",async function(){
         await loadPartData();
     }
 });
+
+// ==========================================
+// FIX: กดย้อนกลับจาก HISTORY แล้วล้าง Checklist
+// ==========================================
+window.addEventListener("pageshow",function(event){
+
+    const navigation=performance.getEntriesByType("navigation")[0];
+
+    const cameBack=
+        event.persisted||
+        (navigation&&navigation.type==="back_forward");
+
+    if(!cameBack)return;
+
+    // ล้างผลตรวจและข้อมูลที่กรอกไว้
+    clearChecklistForm();
+
+    // ข้อมูล PART / CUSTOMER / PROCESS ไม่ถูกล้าง
+});
+
 </script>
 
 </body>
