@@ -35,7 +35,6 @@ body {
     font-family:Arial,"Noto Sans Thai",sans-serif;
 }
 
-/* HEADER */
 header {
     background:linear-gradient(120deg,var(--navy-dark),var(--navy));
     color:white;
@@ -64,22 +63,15 @@ header {
     place-items:center;
     font-size:25px;
 }
-header h1 {
-    margin:0;
-    font-size:23px;
-}
-header p {
-    margin:6px 0 0;
-    opacity:.75;
-    font-size:13px;
-}
+header h1 { margin:0; font-size:23px; }
+header p { margin:6px 0 0; opacity:.75; font-size:13px; }
+
 .container {
     max-width:1550px;
     margin:25px auto;
     padding:0 20px 40px;
 }
 
-/* BUTTONS */
 button {
     border:0;
     border-radius:8px;
@@ -89,22 +81,14 @@ button {
     font-weight:bold;
     transition:.18s;
 }
-button:hover {
-    filter:brightness(.94);
-    transform:translateY(-1px);
-}
-button:disabled {
-    opacity:.55;
-    cursor:not-allowed;
-    transform:none;
-}
+button:hover { filter:brightness(.94); transform:translateY(-1px); }
+button:disabled { opacity:.55; cursor:not-allowed; transform:none; }
 .btn-primary { background:var(--blue); color:white; }
 .btn-dark { background:var(--navy); color:white; }
 .btn-light { background:white; color:var(--text); border:1px solid var(--line); }
 .btn-green { background:var(--green); color:white; }
 .btn-purple { background:var(--purple); color:white; }
 
-/* TOOLBAR */
 .toolbar {
     display:flex;
     flex-wrap:wrap;
@@ -112,7 +96,6 @@ button:disabled {
     margin-bottom:18px;
 }
 
-/* DASHBOARD */
 .dashboard-heading {
     display:flex;
     justify-content:space-between;
@@ -174,11 +157,7 @@ button:disabled {
     position:relative;
     z-index:1;
 }
-.stat-label {
-    color:var(--muted);
-    font-size:12px;
-    font-weight:bold;
-}
+.stat-label { color:var(--muted); font-size:12px; font-weight:bold; }
 .stat-icon {
     width:36px;
     height:36px;
@@ -209,7 +188,6 @@ button:disabled {
 .stat.na .stat-value { color:var(--orange); }
 .stat.pending .stat-value { color:var(--muted); }
 
-/* PANELS */
 .panel {
     background:white;
     border:1px solid var(--line);
@@ -231,7 +209,6 @@ button:disabled {
     margin-bottom:19px;
 }
 
-/* CHART GRID */
 .dashboard-grid {
     display:grid;
     grid-template-columns:1.35fr 1fr;
@@ -256,11 +233,7 @@ button:disabled {
     justify-content:flex-end;
     gap:7px;
 }
-.chart-value {
-    color:var(--muted);
-    font-size:10px;
-    font-weight:bold;
-}
+.chart-value { color:var(--muted); font-size:10px; font-weight:bold; }
 .chart-bar-area {
     width:100%;
     height:130px;
@@ -275,16 +248,8 @@ button:disabled {
     background:linear-gradient(180deg,#62b1ed,#2878bd);
     transition:height .3s;
 }
-.chart-label {
-    font-size:10px;
-    color:var(--muted);
-    white-space:nowrap;
-}
-.rank-list {
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-}
+.chart-label { font-size:10px; color:var(--muted); white-space:nowrap; }
+.rank-list { display:flex; flex-direction:column; gap:15px; }
 .rank-item { min-width:0; }
 .rank-head {
     display:flex;
@@ -300,11 +265,7 @@ button:disabled {
     white-space:nowrap;
     text-overflow:ellipsis;
 }
-.rank-number {
-    color:var(--blue);
-    font-weight:bold;
-    white-space:nowrap;
-}
+.rank-number { color:var(--blue); font-weight:bold; white-space:nowrap; }
 .rank-track {
     height:8px;
     border-radius:20px;
@@ -324,7 +285,6 @@ button:disabled {
     font-size:12px;
 }
 
-/* RESULT DISTRIBUTION */
 .distribution {
     display:grid;
     grid-template-columns:repeat(4,minmax(0,1fr));
@@ -344,11 +304,7 @@ button:disabled {
     font-size:12px;
     font-weight:bold;
 }
-.distribution-value {
-    font-size:23px;
-    font-weight:800;
-    margin-top:9px;
-}
+.distribution-value { font-size:23px; font-weight:800; margin-top:9px; }
 .distribution-track {
     height:7px;
     background:#e7ecf2;
@@ -356,16 +312,12 @@ button:disabled {
     margin-top:10px;
     overflow:hidden;
 }
-.distribution-fill {
-    height:100%;
-    border-radius:20px;
-}
+.distribution-fill { height:100%; border-radius:20px; }
 .fill-normal { background:var(--green); }
 .fill-defect { background:var(--red); }
 .fill-na { background:var(--orange); }
 .fill-pending { background:#9aa6b5; }
 
-/* FILTER */
 .filters {
     display:grid;
     grid-template-columns:2fr 1fr 1fr auto auto;
@@ -393,11 +345,7 @@ button:disabled {
     box-shadow:0 0 0 3px #2878bd15;
 }
 
-/* TABLE */
-.table-wrap {
-    overflow:auto;
-    width:100%;
-}
+.table-wrap { overflow:auto; width:100%; }
 table {
     width:100%;
     border-collapse:collapse;
@@ -433,17 +381,8 @@ tbody tr:hover td { background:#fafcff; }
 .badge-red { background:#fdeaea; color:#c83232; }
 .badge-orange { background:#fff3dc; color:#a86b08; }
 .badge-gray { background:#edf0f4; color:#657386; }
-.view-btn {
-    background:#e8f2fb;
-    color:var(--blue);
-    padding:7px 12px;
-}
-.message {
-    padding:25px;
-    text-align:center;
-    color:var(--muted);
-    font-size:13px;
-}
+.view-btn { background:#e8f2fb; color:var(--blue); padding:7px 12px; }
+.message { padding:25px; text-align:center; color:var(--muted); font-size:13px; }
 .error {
     color:#b42318;
     background:#fff0ef;
@@ -455,13 +394,8 @@ tbody tr:hover td { background:#fafcff; }
     display:none;
     font-size:13px;
 }
-.count-text {
-    color:var(--muted);
-    font-size:12px;
-    margin-bottom:10px;
-}
+.count-text { color:var(--muted); font-size:12px; margin-bottom:10px; }
 
-/* MODAL */
 .modal {
     display:none;
     position:fixed;
@@ -516,11 +450,7 @@ tbody tr:hover td { background:#fafcff; }
 .result-defect { color:var(--red); font-weight:bold; }
 .result-na { color:#b77912; font-weight:bold; }
 .result-pending { color:var(--muted); }
-.flag-list {
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-}
+.flag-list { display:flex; flex-wrap:wrap; gap:8px; }
 .flag {
     background:#edf3f8;
     border:1px solid var(--line);
@@ -537,22 +467,14 @@ tbody tr:hover td { background:#fafcff; }
     overflow-wrap:anywhere;
     font-size:13px;
 }
-.footer {
-    text-align:center;
-    color:#9aa6b5;
-    font-size:11px;
-    padding:20px 0 5px;
-}
+.footer { text-align:center; color:#9aa6b5; font-size:11px; padding:20px 0 5px; }
 
-/* RESPONSIVE */
 @media(max-width:1100px) {
     .stats { grid-template-columns:repeat(3,1fr); }
     .filters { grid-template-columns:1fr 1fr; }
     .filters .search-field { grid-column:1/-1; }
 }
-@media(max-width:800px) {
-    .dashboard-grid { grid-template-columns:1fr; }
-}
+@media(max-width:800px) { .dashboard-grid { grid-template-columns:1fr; } }
 @media(max-width:520px) {
     header { padding:18px 15px; }
     header h1 { font-size:19px; }
@@ -606,7 +528,6 @@ tbody tr:hover td { background:#fafcff; }
 
     <div id="errorBox" class="error"></div>
 
-    <!-- DASHBOARD -->
     <div class="dashboard-heading">
         <div>
             <h2>📊 Maintenance Dashboard</h2>
@@ -617,128 +538,82 @@ tbody tr:hover td { background:#fafcff; }
 
     <div class="stats">
         <div class="stat" style="--tint:#eaf3fb">
-            <div class="stat-top">
-                <div class="stat-label">จำนวนรายการตรวจ</div>
-                <div class="stat-icon">📋</div>
-            </div>
+            <div class="stat-top"><div class="stat-label">จำนวนรายการตรวจ</div><div class="stat-icon">📋</div></div>
             <div class="stat-value" id="totalRecords">0</div>
             <div class="stat-sub">รายการตรวจสอบ</div>
         </div>
-
         <div class="stat normal" style="--tint:#e5f5eb">
-            <div class="stat-top">
-                <div class="stat-label">ปกติ</div>
-                <div class="stat-icon">✓</div>
-            </div>
+            <div class="stat-top"><div class="stat-label">ปกติ</div><div class="stat-icon">✓</div></div>
             <div class="stat-value" id="totalNormal">0</div>
             <div class="stat-sub">รายการตรวจที่ปกติ</div>
         </div>
-
         <div class="stat defect" style="--tint:#fdeaea">
-            <div class="stat-top">
-                <div class="stat-label">ผิดปกติ</div>
-                <div class="stat-icon">⚠</div>
-            </div>
+            <div class="stat-top"><div class="stat-label">ผิดปกติ</div><div class="stat-icon">⚠</div></div>
             <div class="stat-value" id="totalDefect">0</div>
             <div class="stat-sub">รายการที่พบความผิดปกติ</div>
         </div>
-
         <div class="stat na" style="--tint:#fff3dc">
-            <div class="stat-top">
-                <div class="stat-label">N/A</div>
-                <div class="stat-icon">—</div>
-            </div>
+            <div class="stat-top"><div class="stat-label">N/A</div><div class="stat-icon">—</div></div>
             <div class="stat-value" id="totalNA">0</div>
             <div class="stat-sub">รายการที่ไม่เกี่ยวข้อง</div>
         </div>
-
         <div class="stat pending" style="--tint:#edf0f4">
-            <div class="stat-top">
-                <div class="stat-label">ยังไม่ตรวจ</div>
-                <div class="stat-icon">◷</div>
-            </div>
+            <div class="stat-top"><div class="stat-label">ยังไม่ตรวจ</div><div class="stat-icon">◷</div></div>
             <div class="stat-value" id="totalPending">0</div>
             <div class="stat-sub">รายการที่ยังไม่มีผลตรวจ</div>
         </div>
     </div>
 
-    <!-- CHARTS -->
     <div class="dashboard-grid">
         <div class="panel">
             <div class="panel-title">📅 แนวโน้มการตรวจสอบรายเดือน</div>
             <div class="panel-subtitle">จำนวนรายการตรวจสอบย้อนหลัง 6 เดือน</div>
-            <div class="chart" id="monthlyChart">
-                <div class="empty-chart">กำลังโหลดข้อมูล...</div>
-            </div>
+            <div class="chart" id="monthlyChart"><div class="empty-chart">กำลังโหลดข้อมูล...</div></div>
         </div>
-
         <div class="panel">
             <div class="panel-title">🏆 PART ที่ตรวจสอบมากที่สุด</div>
             <div class="panel-subtitle">5 อันดับ PART ที่มีประวัติการตรวจสอบสูงสุด</div>
-            <div class="rank-list" id="topParts">
-                <div class="empty-chart">กำลังโหลดข้อมูล...</div>
-            </div>
+            <div class="rank-list" id="topParts"><div class="empty-chart">กำลังโหลดข้อมูล...</div></div>
         </div>
     </div>
 
-    <!-- DISTRIBUTION -->
     <div class="panel">
         <div class="panel-title">📈 สัดส่วนผลการตรวจสอบ</div>
         <div class="panel-subtitle">สรุปจำนวนรายการตรวจตามสถานะ</div>
-        <div class="distribution" id="distribution">
-            <div class="empty-chart">กำลังโหลดข้อมูล...</div>
-        </div>
+        <div class="distribution" id="distribution"><div class="empty-chart">กำลังโหลดข้อมูล...</div></div>
     </div>
 
-    <!-- FILTER -->
     <div class="panel filter-panel">
         <div class="panel-title">ค้นหาประวัติการตรวจสอบ</div>
-
         <div class="filters">
             <div class="field search-field">
                 <label>ค้นหา PART / Customer / Process / ผู้ตรวจสอบ</label>
-                <input id="searchInput" type="text"
-                    placeholder="พิมพ์คำค้นหา..."
-                    oninput="renderHistory()">
+                <input id="searchInput" type="text" placeholder="พิมพ์คำค้นหา..." oninput="renderHistory()">
             </div>
-
             <div class="field">
                 <label>ตั้งแต่วันที่</label>
                 <input id="dateFrom" type="date" onchange="renderHistory()">
             </div>
-
             <div class="field">
                 <label>ถึงวันที่</label>
                 <input id="dateTo" type="date" onchange="renderHistory()">
             </div>
-
             <button class="btn-dark" onclick="renderHistory()">ค้นหา</button>
             <button class="btn-light" onclick="resetFilters()">ล้างตัวกรอง</button>
         </div>
     </div>
 
-    <!-- HISTORY TABLE -->
     <div class="panel">
         <div class="panel-title">รายการประวัติการตรวจสอบ</div>
         <div id="countText" class="count-text">กำลังโหลดข้อมูล...</div>
-
         <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
-                        <th>วันที่ตรวจ</th>
-                        <th>PART NO.</th>
-                        <th>Customer</th>
-                        <th>Process</th>
-                        <th>จำนวน Shot</th>
-                        <th>ปกติ</th>
-                        <th>ผิดปกติ</th>
-                        <th>N/A</th>
-                        <th>ยังไม่ตรวจ</th>
-                        <th>เวลาใช้งาน</th>
-                        <th>ผู้ตรวจสอบ</th>
-                        <th>ผู้อนุมัติ</th>
-                        <th>รายละเอียด</th>
+                        <th>วันที่ตรวจ</th><th>PART NO.</th><th>Customer</th><th>Process</th>
+                        <th>จำนวน Shot</th><th>ปกติ</th><th>ผิดปกติ</th><th>N/A</th>
+                        <th>ยังไม่ตรวจ</th><th>เวลาใช้งาน</th><th>ผู้ตรวจสอบ</th>
+                        <th>ผู้อนุมัติ</th><th>รายละเอียด</th>
                     </tr>
                 </thead>
                 <tbody id="historyBody">
@@ -748,12 +623,9 @@ tbody tr:hover td { background:#fafcff; }
         </div>
     </div>
 
-    <footer class="footer">
-        TNC · DIE Preventive Check List · Maintenance Department
-    </footer>
+    <footer class="footer">TNC · DIE Preventive Check List · Maintenance Department</footer>
 </div>
 
-<!-- DETAIL MODAL -->
 <div class="modal" id="detailModal" onclick="if(event.target===this)closeDetail()">
     <div class="modal-box">
         <div class="modal-header">
@@ -783,16 +655,12 @@ let allRecords = [];
 let filteredRecords = [];
 
 // ==========================================
-// 2. HELPER FUNCTIONS
+// 2. HELPERS
 // ==========================================
 
 function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#039;"
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
     })[char]);
 }
 
@@ -803,31 +671,27 @@ function numberValue(value) {
 
 function getResults(record) {
     let results = record.results;
-
     if (typeof results === "string") {
-        try {
-            results = JSON.parse(results);
-        } catch {
-            results = [];
-        }
+        try { results = JSON.parse(results); }
+        catch { results = []; }
     }
-
     return Array.isArray(results) ? results : [];
+}
+
+function normalizeResult(value) {
+    const result = String(value ?? "").trim();
+    if (result === "ปกติ") return "ปกติ";
+    if (result === "ผิดปกติ") return "ผิดปกติ";
+    if (result.toUpperCase() === "N/A") return "N/A";
+    return "ยังไม่ตรวจ";
 }
 
 function getCounts(record) {
     const results = getResults(record);
-
-    const calculated = {
-        normal:0,
-        defect:0,
-        na:0,
-        pending:0
-    };
+    const calculated = {normal:0,defect:0,na:0,pending:0};
 
     results.forEach(item => {
-        const result = String(item.result || "").trim();
-
+        const result = normalizeResult(item.result);
         if (result === "ปกติ") calculated.normal++;
         else if (result === "ผิดปกติ") calculated.defect++;
         else if (result === "N/A") calculated.na++;
@@ -835,17 +699,10 @@ function getCounts(record) {
     });
 
     return {
-        normal: record.normal_count != null
-            ? numberValue(record.normal_count) : calculated.normal,
-
-        defect: record.defect_count != null
-            ? numberValue(record.defect_count) : calculated.defect,
-
-        na: record.na_count != null
-            ? numberValue(record.na_count) : calculated.na,
-
-        pending: record.pending_count != null
-            ? numberValue(record.pending_count) : calculated.pending
+        normal:record.normal_count != null ? numberValue(record.normal_count) : calculated.normal,
+        defect:record.defect_count != null ? numberValue(record.defect_count) : calculated.defect,
+        na:record.na_count != null ? numberValue(record.na_count) : calculated.na,
+        pending:record.pending_count != null ? numberValue(record.pending_count) : calculated.pending
     };
 }
 
@@ -855,77 +712,53 @@ function getCounts(record) {
 
 function dateToISO(value) {
     if (!value) return "";
-
     const str = String(value).trim();
 
-    if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
-        return str.substring(0,10);
-    }
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.substring(0,10);
 
     const match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-
     if (match) {
         const day = match[1].padStart(2,"0");
         const month = match[2].padStart(2,"0");
         let year = Number(match[3]);
-
         if (year < 100) year += 2000;
-
         return `${year}-${month}-${day}`;
     }
-
     return "";
 }
 
 function formatDate(value) {
     const iso = dateToISO(value);
     if (!iso) return value || "-";
-
     const [year,month,day] = iso.split("-");
     return `${day}/${month}/${year}`;
 }
 
 function getDurationMinutes(value) {
-    if (value === null || value === undefined || value === "") {
-        return null;
-    }
+    if (value === null || value === undefined || value === "") return null;
 
     const text = String(value).trim();
-
-    if (/^\d+(?:\.\d+)?$/.test(text)) {
-        return Number(text);
-    }
+    if (/^\d+(?:\.\d+)?$/.test(text)) return Number(text);
 
     const hourMatch = text.match(/(\d+(?:\.\d+)?)\s*ชม/);
     const minuteMatch = text.match(/(\d+(?:\.\d+)?)\s*นาที/);
 
     if (hourMatch || minuteMatch) {
-        const hours = hourMatch ? Number(hourMatch[1]) : 0;
-        const mins = minuteMatch ? Number(minuteMatch[1]) : 0;
-        return hours * 60 + mins;
+        return (hourMatch ? Number(hourMatch[1]) * 60 : 0) +
+               (minuteMatch ? Number(minuteMatch[1]) : 0);
     }
-
     return null;
 }
 
 function formatDuration(value) {
     const minutes = getDurationMinutes(value);
-
     if (minutes === null) return "-";
-
     return `${minutes.toLocaleString("th-TH")} นาที`;
 }
 
 // ==========================================
 // 4. BADGES AND ERRORS
 // ==========================================
-
-function resultBadge(result) {
-    if (result === "ปกติ") return '<span class="badge badge-green">ปกติ</span>';
-    if (result === "ผิดปกติ") return '<span class="badge badge-red">ผิดปกติ</span>';
-    if (result === "N/A") return '<span class="badge badge-orange">N/A</span>';
-    return '<span class="badge badge-gray">ยังไม่ตรวจ</span>';
-}
 
 function showError(message) {
     const box = document.getElementById("errorBox");
@@ -950,22 +783,18 @@ async function loadHistory() {
     refreshBtn.disabled = true;
     refreshBtn.textContent = "กำลังโหลด...";
 
-    const body = document.getElementById("historyBody");
-    body.innerHTML = '<tr><td colspan="13" class="message">กำลังโหลดข้อมูล...</td></tr>';
-
+    document.getElementById("historyBody").innerHTML =
+        '<tr><td colspan="13" class="message">กำลังโหลดข้อมูล...</td></tr>';
     document.getElementById("countText").textContent = "กำลังโหลดข้อมูล...";
 
     try {
-        let { data, error } = await supabaseClient
+        let {data,error} = await supabaseClient
             .from("mold_checklists")
             .select("*")
-            .order("created_at", { ascending:false });
+            .order("created_at",{ascending:false});
 
         if (error && /created_at|column/i.test(error.message || "")) {
-            const retry = await supabaseClient
-                .from("mold_checklists")
-                .select("*");
-
+            const retry = await supabaseClient.from("mold_checklists").select("*");
             data = retry.data;
             error = retry.error;
         }
@@ -988,12 +817,10 @@ async function loadHistory() {
         renderHistory();
 
         showError(
-            "โหลดประวัติไม่สำเร็จ\n" +
-            "รายละเอียด: " + error.message +
+            "โหลดประวัติไม่สำเร็จ\nรายละเอียด: " + (error.message || error) +
             (error.code ? "\nรหัส: " + error.code : "") +
             "\n\nกรุณาตรวจสอบตาราง mold_checklists และ Supabase RLS Policy"
         );
-
     } finally {
         refreshBtn.disabled = false;
         refreshBtn.textContent = "↻ รีเฟรชข้อมูล";
@@ -1011,21 +838,15 @@ function renderHistory() {
 
     filteredRecords = allRecords.filter(record => {
         const searchFields = [
-            record.part_no,
-            record.customer,
-            record.process,
-            record.checked_by,
-            record.approved_by,
-            record.remarks
+            record.part_no,record.customer,record.process,
+            record.checked_by,record.approved_by,record.remarks
         ];
 
-        const matchesKeyword = !keyword ||
-            searchFields.some(value =>
-                String(value ?? "").toLowerCase().includes(keyword)
-            );
+        const matchesKeyword = !keyword || searchFields.some(value =>
+            String(value ?? "").toLowerCase().includes(keyword)
+        );
 
         const date = dateToISO(record.check_date);
-
         const matchesFrom = !from || (date && date >= from);
         const matchesTo = !to || (date && date <= to);
 
@@ -1047,7 +868,6 @@ function renderHistory() {
 
     body.innerHTML = filteredRecords.map((record,index) => {
         const c = getCounts(record);
-
         return `
         <tr>
             <td>${escapeHTML(formatDate(record.check_date))}</td>
@@ -1072,10 +892,7 @@ function renderHistory() {
 // ==========================================
 
 function updateStats(records) {
-    let normal = 0;
-    let defect = 0;
-    let na = 0;
-    let pending = 0;
+    let normal=0, defect=0, na=0, pending=0;
 
     records.forEach(record => {
         const c = getCounts(record);
@@ -1085,20 +902,11 @@ function updateStats(records) {
         pending += c.pending;
     });
 
-    document.getElementById("totalRecords").textContent =
-        records.length.toLocaleString("th-TH");
-
-    document.getElementById("totalNormal").textContent =
-        normal.toLocaleString("th-TH");
-
-    document.getElementById("totalDefect").textContent =
-        defect.toLocaleString("th-TH");
-
-    document.getElementById("totalNA").textContent =
-        na.toLocaleString("th-TH");
-
-    document.getElementById("totalPending").textContent =
-        pending.toLocaleString("th-TH");
+    document.getElementById("totalRecords").textContent = records.length.toLocaleString("th-TH");
+    document.getElementById("totalNormal").textContent = normal.toLocaleString("th-TH");
+    document.getElementById("totalDefect").textContent = defect.toLocaleString("th-TH");
+    document.getElementById("totalNA").textContent = na.toLocaleString("th-TH");
+    document.getElementById("totalPending").textContent = pending.toLocaleString("th-TH");
 }
 
 // ==========================================
@@ -1111,15 +919,12 @@ function updateDashboard(records) {
     const keyword = document.getElementById("searchInput").value.trim();
 
     let period = "ข้อมูลทั้งหมด";
-
     if (from && to) period = `${formatDate(from)} - ${formatDate(to)}`;
     else if (from) period = `ตั้งแต่ ${formatDate(from)}`;
     else if (to) period = `ถึง ${formatDate(to)}`;
-
     if (keyword) period += " · ผลการค้นหา";
 
     document.getElementById("dashboardPeriod").textContent = period;
-
     renderMonthlyChart(records);
     renderTopParts(records);
     renderDistribution(records);
@@ -1130,12 +935,9 @@ function renderMonthlyChart(records) {
     const now = new Date();
     const months = [];
 
-    for (let i=5; i>=0; i--) {
+    for (let i=5;i>=0;i--) {
         const date = new Date(now.getFullYear(),now.getMonth()-i,1);
-
-        const key = date.getFullYear() + "-" +
-            String(date.getMonth()+1).padStart(2,"0");
-
+        const key = date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0");
         months.push({
             key,
             label:date.toLocaleDateString("th-TH",{month:"short"}),
@@ -1146,7 +948,6 @@ function renderMonthlyChart(records) {
     records.forEach(record => {
         const iso = dateToISO(record.check_date);
         if (!iso) return;
-
         const month = months.find(m => m.key === iso.slice(0,7));
         if (month) month.count++;
     });
@@ -1154,17 +955,12 @@ function renderMonthlyChart(records) {
     const max = Math.max(...months.map(m => m.count),1);
 
     element.innerHTML = months.map(month => {
-        const height = month.count
-            ? Math.max(4,month.count/max*100)
-            : 0;
-
+        const height = month.count ? Math.max(4,month.count/max*100) : 0;
         return `
         <div class="chart-column">
             <div class="chart-value">${month.count.toLocaleString("th-TH")}</div>
             <div class="chart-bar-area">
-                <div class="chart-bar"
-                    style="height:${height}%"
-                    title="${month.count} รายการ"></div>
+                <div class="chart-bar" style="height:${height}%" title="${month.count} รายการ"></div>
             </div>
             <div class="chart-label">${month.label}</div>
         </div>`;
@@ -1177,13 +973,10 @@ function renderTopParts(records) {
 
     records.forEach(record => {
         const part = String(record.part_no || "").trim();
-        if (!part) return;
-        counts[part] = (counts[part] || 0) + 1;
+        if (part) counts[part] = (counts[part] || 0) + 1;
     });
 
-    const items = Object.entries(counts)
-        .sort((a,b) => b[1]-a[1])
-        .slice(0,5);
+    const items = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
 
     if (!items.length) {
         element.innerHTML = '<div class="empty-chart">ยังไม่มีข้อมูล</div>';
@@ -1207,11 +1000,7 @@ function renderTopParts(records) {
 
 function renderDistribution(records) {
     const element = document.getElementById("distribution");
-
-    let normal = 0;
-    let defect = 0;
-    let na = 0;
-    let pending = 0;
+    let normal=0, defect=0, na=0, pending=0;
 
     records.forEach(record => {
         const c = getCounts(record);
@@ -1221,8 +1010,7 @@ function renderDistribution(records) {
         pending += c.pending;
     });
 
-    const total = normal + defect + na + pending;
-
+    const total = normal+defect+na+pending;
     const items = [
         {label:"ปกติ",value:normal,cls:"fill-normal",color:"var(--green)"},
         {label:"ผิดปกติ",value:defect,cls:"fill-defect",color:"var(--red)"},
@@ -1232,7 +1020,6 @@ function renderDistribution(records) {
 
     element.innerHTML = items.map(item => {
         const percent = total ? item.value/total*100 : 0;
-
         return `
         <div class="distribution-item">
             <div class="distribution-top">
@@ -1243,8 +1030,7 @@ function renderDistribution(records) {
                 ${item.value.toLocaleString("th-TH")}
             </div>
             <div class="distribution-track">
-                <div class="distribution-fill ${item.cls}"
-                    style="width:${percent}%"></div>
+                <div class="distribution-fill ${item.cls}" style="width:${percent}%"></div>
             </div>
         </div>`;
     }).join("");
@@ -1270,9 +1056,8 @@ function openDetail(index) {
     const c = getCounts(record);
 
     const resultRows = results.map((item,i) => {
-        const result = String(item.result || "ยังไม่ตรวจ");
+        const result = normalizeResult(item.result);
         let cls = "result-pending";
-
         if (result === "ปกติ") cls = "result-normal";
         else if (result === "ผิดปกติ") cls = "result-defect";
         else if (result === "N/A") cls = "result-na";
@@ -1286,12 +1071,9 @@ function openDetail(index) {
     }).join("");
 
     const flags = [
-        ["PM Plan",record.pm_plan],
-        ["PM Tool",record.pm_tool],
-        ["Die Progressive",record.die_prog],
-        ["Die Single",record.die_single],
-        ["Die Compound",record.die_comp],
-        ["Plate New",record.plate_new],
+        ["PM Plan",record.pm_plan],["PM Tool",record.pm_tool],
+        ["Die Progressive",record.die_prog],["Die Single",record.die_single],
+        ["Die Compound",record.die_comp],["Plate New",record.plate_new],
         ["Plate Old",record.plate_old]
     ];
 
@@ -1326,16 +1108,8 @@ function openDetail(index) {
         <div class="section-title">รายการตรวจสอบทั้งหมด (${results.length} รายการ)</div>
         <div class="table-wrap">
             <table class="result-table">
-                <thead>
-                    <tr>
-                        <th style="width:65px">ลำดับ</th>
-                        <th>รายการตรวจสอบ</th>
-                        <th style="width:130px">ผลการตรวจ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${resultRows || '<tr><td colspan="3" class="message">ไม่มีรายละเอียดรายการตรวจสอบ</td></tr>'}
-                </tbody>
+                <thead><tr><th style="width:65px">ลำดับ</th><th>รายการตรวจสอบ</th><th style="width:130px">ผลการตรวจ</th></tr></thead>
+                <tbody>${resultRows || '<tr><td colspan="3" class="message">ไม่มีรายละเอียดรายการตรวจสอบ</td></tr>'}</tbody>
             </table>
         </div>
 
@@ -1370,8 +1144,45 @@ function resetFilters() {
 }
 
 // ==========================================
-// 11. EXPORT EXCEL (.XLSX)
+// 11. EXCEL EXPORT - FULL REPORT
 // ==========================================
+
+function getChecklistNumber(item,index) {
+    const n = Number(item?.no);
+    return Number.isInteger(n) && n >= 1 && n <= 32 ? n : index+1;
+}
+
+function getChecklistNames(records) {
+    const names = Array(32).fill("");
+
+    records.forEach(record => {
+        getResults(record).forEach((item,index) => {
+            const no = getChecklistNumber(item,index);
+            if (!names[no-1] && item.item) {
+                names[no-1] = String(item.item).trim();
+            }
+        });
+    });
+
+    return names.map((name,index) =>
+        name || `รายการตรวจ ${String(index+1).padStart(2,"0")}`
+    );
+}
+
+function getResultMap(record) {
+    const map = {};
+    getResults(record).forEach((item,index) => {
+        const no = getChecklistNumber(item,index);
+        map[no] = normalizeResult(item.result);
+    });
+    return map;
+}
+
+function excelCell(value) {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "number") return value;
+    return String(value);
+}
 
 function exportExcel() {
     if (!filteredRecords.length) {
@@ -1391,12 +1202,96 @@ function exportExcel() {
         button.textContent = "กำลังสร้าง Excel...";
 
         const records = filteredRecords;
+        const checklistNames = getChecklistNames(records);
 
-        // SHEET 1: SUMMARY
-        let normal = 0;
-        let defect = 0;
-        let na = 0;
-        let pending = 0;
+        // --------------------------------------
+        // SHEET 1: REPORT
+        // หนึ่งแถวต่อหนึ่งครั้งที่ตรวจ
+        // --------------------------------------
+
+        const reportHeaders = [
+            "PART NUMBER",
+            "CUSTOMER",
+            "DATE",
+            "PROCESS",
+            "PASSED SHOTS"
+        ];
+
+        for (let i=0;i<32;i++) {
+            reportHeaders.push(
+                `CHECK ${String(i+1).padStart(2,"0")} - ${checklistNames[i]}`
+            );
+        }
+
+        reportHeaders.push(
+            "NORMAL",
+            "DEFECT",
+            "N/A",
+            "PENDING",
+            "START TIME",
+            "END TIME",
+            "TOTAL TIME (MINUTES)",
+            "REMARKS",
+            "CHECKED BY",
+            "APPROVED BY"
+        );
+
+        const reportRows = records.map(record => {
+            const resultMap = getResultMap(record);
+            const c = getCounts(record);
+
+            const row = [
+                excelCell(record.part_no),
+                excelCell(record.customer),
+                excelCell(dateToISO(record.check_date)),
+                excelCell(record.process),
+                excelCell(record.passed_shots)
+            ];
+
+            for (let i=1;i<=32;i++) {
+                row.push(resultMap[i] || "ยังไม่ตรวจ");
+            }
+
+            row.push(
+                c.normal,
+                c.defect,
+                c.na,
+                c.pending,
+                excelCell(record.start_time),
+                excelCell(record.end_time),
+                getDurationMinutes(record.work_duration) ?? "",
+                excelCell(record.remarks),
+                excelCell(record.checked_by),
+                excelCell(record.approved_by)
+            );
+
+            return row;
+        });
+
+        const reportSheet = XLSX.utils.aoa_to_sheet([
+            reportHeaders,
+            ...reportRows
+        ]);
+
+        reportSheet["!cols"] = [
+            {wch:20},{wch:22},{wch:14},{wch:18},{wch:16},
+            ...Array(32).fill({wch:30}),
+            {wch:12},{wch:12},{wch:10},{wch:12},
+            {wch:14},{wch:14},{wch:22},
+            {wch:40},{wch:22},{wch:22}
+        ];
+
+        if (reportSheet["!ref"]) {
+            reportSheet["!autofilter"] = {ref:reportSheet["!ref"]};
+        }
+
+        reportSheet["!freeze"] = {xSplit:5,ySplit:1};
+
+        // --------------------------------------
+        // SHEET 2: SUMMARY
+        // --------------------------------------
+
+        let normal=0, defect=0, na=0, pending=0;
 
         records.forEach(record => {
             const c = getCounts(record);
@@ -1406,9 +1301,9 @@ function exportExcel() {
             pending += c.pending;
         });
 
-        const totalItems = normal + defect + na + pending;
+        const totalItems = normal+defect+na+pending;
         const totalParts = new Set(
-            records.map(r => r.part_no).filter(Boolean)
+            records.map(r => String(r.part_no || "").trim()).filter(Boolean)
         ).size;
 
         const from = document.getElementById("dateFrom").value;
@@ -1431,7 +1326,7 @@ function exportExcel() {
             ["ผลผิดปกติ",defect],
             ["ผล N/A",na],
             ["ยังไม่ตรวจ",pending],
-            ["เปอร์เซ็นต์ผิดปกติ",totalItems ? (defect/totalItems*100).toFixed(2)+"%" : "0%"],
+            ["เปอร์เซ็นต์ผิดปกติ",totalItems ? Number((defect/totalItems*100).toFixed(2)) : 0],
             ["ช่วงข้อมูล",period],
             ["วันที่ส่งออก",new Date().toLocaleDateString("th-TH")]
         ];
@@ -1443,112 +1338,76 @@ function exportExcel() {
             {s:{r:1,c:0},e:{r:1,c:1}}
         ];
 
-        // SHEET 2: HISTORY
-        const historyRows = records.map((record,index) => {
-            const c = getCounts(record);
+        // --------------------------------------
+        // SHEET 3: CHECK DETAILS
+        // --------------------------------------
 
-            return {
-                "ลำดับ":index+1,
-                "วันที่ตรวจ":formatDate(record.check_date),
-                "PART NO.":record.part_no || "",
-                "Customer":record.customer || "",
-                "Process":record.process || "",
-                "จำนวน Shot":record.passed_shots ?? "",
-                "เวลาเริ่ม":record.start_time || "",
-                "เวลาสิ้นสุด":record.end_time || "",
-                "ระยะเวลา (นาที)":getDurationMinutes(record.work_duration) ?? "",
-                "ปกติ":c.normal,
-                "ผิดปกติ":c.defect,
-                "N/A":c.na,
-                "ยังไม่ตรวจ":c.pending,
-                "PM Plan":record.pm_plan || "",
-                "PM Tool":record.pm_tool || "",
-                "Die Progressive":record.die_prog || "",
-                "Die Single":record.die_single || "",
-                "Die Compound":record.die_comp || "",
-                "Plate New":record.plate_new || "",
-                "Plate Old":record.plate_old || "",
-                "หมายเหตุ":record.remarks || "",
-                "ผู้ตรวจสอบ":record.checked_by || "",
-                "ผู้อนุมัติ":record.approved_by || ""
-            };
-        });
-
-        const historySheet = XLSX.utils.json_to_sheet(historyRows);
-        historySheet["!cols"] = [
-            {wch:8},{wch:14},{wch:20},{wch:20},{wch:18},
-            {wch:15},{wch:13},{wch:13},{wch:18},{wch:10},
-            {wch:12},{wch:10},{wch:13},{wch:15},{wch:15},
-            {wch:20},{wch:15},{wch:17},{wch:14},{wch:14},
-            {wch:35},{wch:20},{wch:20}
+        const detailHeaders = [
+            "PART NUMBER",
+            "CUSTOMER",
+            "DATE",
+            "PROCESS",
+            "CHECK NO.",
+            "CHECK ITEM",
+            "RESULT"
         ];
 
-        if (historySheet["!ref"]) {
-            historySheet["!autofilter"] = {ref:historySheet["!ref"]};
-        }
-
-        // SHEET 3: CHECK DETAILS
         const detailRows = [];
 
-        records.forEach((record,recordIndex) => {
+        records.forEach(record => {
             const results = getResults(record);
+            const resultMap = getResultMap(record);
 
-            if (!results.length) {
-                detailRows.push({
-                    "ลำดับประวัติ":recordIndex+1,
-                    "วันที่ตรวจ":formatDate(record.check_date),
-                    "PART NO.":record.part_no || "",
-                    "Customer":record.customer || "",
-                    "Process":record.process || "",
-                    "ลำดับรายการตรวจ":"",
-                    "รายการตรวจสอบ":"ไม่มีรายละเอียด",
-                    "ผลการตรวจ":""
-                });
-                return;
+            for (let i=1;i<=32;i++) {
+                const item = results.find((r,index) =>
+                    getChecklistNumber(r,index) === i
+                );
+
+                detailRows.push([
+                    excelCell(record.part_no),
+                    excelCell(record.customer),
+                    excelCell(dateToISO(record.check_date)),
+                    excelCell(record.process),
+                    i,
+                    item?.item || checklistNames[i-1],
+                    resultMap[i] || "ยังไม่ตรวจ"
+                ]);
             }
-
-            results.forEach((item,itemIndex) => {
-                detailRows.push({
-                    "ลำดับประวัติ":recordIndex+1,
-                    "วันที่ตรวจ":formatDate(record.check_date),
-                    "PART NO.":record.part_no || "",
-                    "Customer":record.customer || "",
-                    "Process":record.process || "",
-                    "ลำดับรายการตรวจ":item.no ?? itemIndex+1,
-                    "รายการตรวจสอบ":item.item || "",
-                    "ผลการตรวจ":item.result || "ยังไม่ตรวจ"
-                });
-            });
         });
 
-        const detailSheet = XLSX.utils.json_to_sheet(detailRows);
+        const detailSheet = XLSX.utils.aoa_to_sheet([
+            detailHeaders,
+            ...detailRows
+        ]);
+
         detailSheet["!cols"] = [
-            {wch:15},{wch:14},{wch:20},{wch:20},
-            {wch:18},{wch:15},{wch:55},{wch:18}
+            {wch:20},{wch:22},{wch:14},{wch:18},
+            {wch:12},{wch:55},{wch:18}
         ];
 
         if (detailSheet["!ref"]) {
             detailSheet["!autofilter"] = {ref:detailSheet["!ref"]};
         }
 
+        // --------------------------------------
         // CREATE WORKBOOK
+        // --------------------------------------
+
         const workbook = XLSX.utils.book_new();
 
+        XLSX.utils.book_append_sheet(workbook,reportSheet,"Report");
         XLSX.utils.book_append_sheet(workbook,summarySheet,"Summary");
-        XLSX.utils.book_append_sheet(workbook,historySheet,"History");
         XLSX.utils.book_append_sheet(workbook,detailSheet,"Check Details");
 
         const today = new Date().toISOString().slice(0,10);
-
         XLSX.writeFile(
             workbook,
-            `TNC_DIE_Preventive_History_${today}.xlsx`
+            `TNC_DIE_Preventive_Report_${today}.xlsx`
         );
 
     } catch (error) {
         console.error("Excel export error:",error);
-        alert("สร้าง Excel ไม่สำเร็จ: " + error.message);
-
+        alert("สร้าง Excel ไม่สำเร็จ: " + (error.message || error));
     } finally {
         button.disabled = false;
         button.textContent = "↓ Export Excel (.xlsx)";
