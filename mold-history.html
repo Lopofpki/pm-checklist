@@ -1,0 +1,843 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ประวัติ DIE Preventive Check List | TNC</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+    --navy:#20364d;
+    --navy-dark:#172a3d;
+    --blue:#2878bd;
+    --green:#219653;
+    --red:#d64545;
+    --orange:#e69a27;
+    --bg:#f3f6fa;
+    --line:#dce3eb;
+    --text:#243447;
+    --muted:#738195;
+    --white:#fff;
+}
+* { box-sizing:border-box; }
+body {
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,"Noto Sans Thai",sans-serif;
+}
+header {
+    background:linear-gradient(135deg,var(--navy-dark),var(--navy));
+    color:white;
+    padding:22px 24px;
+}
+.header-inner {
+    max-width:1500px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+header h1 { margin:0; font-size:23px; }
+header p { margin:6px 0 0; opacity:.8; font-size:13px; }
+.container {
+    max-width:1500px;
+    margin:24px auto;
+    padding:0 20px 40px;
+}
+.toolbar {
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-bottom:18px;
+}
+button {
+    border:0;
+    border-radius:8px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:bold;
+}
+.btn-primary { background:var(--blue); color:white; }
+.btn-dark { background:var(--navy); color:white; }
+.btn-light { background:white; color:var(--text); border:1px solid var(--line); }
+.btn-green { background:var(--green); color:white; }
+.btn-red { background:var(--red); color:white; }
+button:hover { filter:brightness(.94); }
+.stats {
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:12px;
+    margin-bottom:18px;
+}
+.stat {
+    background:white;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px;
+    box-shadow:0 2px 7px #20364d08;
+}
+.stat-label { color:var(--muted); font-size:12px; }
+.stat-value { font-size:25px; font-weight:bold; margin-top:7px; }
+.stat.normal .stat-value { color:var(--green); }
+.stat.defect .stat-value { color:var(--red); }
+.stat.na .stat-value { color:var(--orange); }
+.stat.pending .stat-value { color:var(--muted); }
+.panel {
+    background:white;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:18px;
+    box-shadow:0 2px 7px #20364d08;
+}
+.panel-title {
+    font-size:16px;
+    font-weight:bold;
+    margin-bottom:14px;
+}
+.filters {
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr auto auto;
+    gap:10px;
+    align-items:end;
+}
+.field label {
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:6px;
+}
+.field input {
+    width:100%;
+    padding:10px 11px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:13px;
+    outline:none;
+}
+.field input:focus { border-color:var(--blue); }
+.table-wrap {
+    overflow-x:auto;
+    width:100%;
+}
+table {
+    width:100%;
+    border-collapse:collapse;
+    min-width:1100px;
+}
+th {
+    background:#f0f4f8;
+    color:var(--navy);
+    font-size:12px;
+    text-align:left;
+    padding:12px 10px;
+    white-space:nowrap;
+}
+td {
+    padding:12px 10px;
+    border-bottom:1px solid #edf0f4;
+    font-size:12px;
+    white-space:nowrap;
+}
+tr:hover td { background:#fafcff; }
+.part { font-weight:bold; color:var(--blue); }
+.badge {
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+.badge-green { background:#e5f5eb; color:#168044; }
+.badge-red { background:#fdeaea; color:#c83232; }
+.badge-orange { background:#fff3dc; color:#a86b08; }
+.badge-gray { background:#edf0f4; color:#657386; }
+.view-btn {
+    background:#e8f2fb;
+    color:var(--blue);
+    padding:7px 12px;
+}
+.message {
+    padding:20px;
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+}
+.error {
+    color:#b42318;
+    background:#fff0ef;
+    border:1px solid #ffd0cc;
+    border-radius:8px;
+    padding:13px;
+    margin-bottom:15px;
+    white-space:pre-wrap;
+    display:none;
+    font-size:13px;
+}
+.count-text {
+    color:var(--muted);
+    font-size:12px;
+    margin-bottom:10px;
+}
+.modal {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#101c2dcc;
+    z-index:1000;
+    padding:20px;
+    overflow-y:auto;
+}
+.modal-box {
+    background:white;
+    width:100%;
+    max-width:1050px;
+    margin:20px auto;
+    border-radius:14px;
+    overflow:hidden;
+}
+.modal-header {
+    background:var(--navy);
+    color:white;
+    padding:18px 22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+.modal-header h2 { margin:0; font-size:18px; }
+.close-btn { background:#ffffff20; color:white; font-size:18px; }
+.modal-body { padding:22px; }
+.detail-grid {
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:12px;
+    margin-bottom:20px;
+}
+.detail-item {
+    background:#f5f7fa;
+    padding:11px;
+    border-radius:8px;
+    min-width:0;
+}
+.detail-label { color:var(--muted); font-size:11px; margin-bottom:5px; }
+.detail-value { font-size:13px; font-weight:bold; overflow-wrap:anywhere; }
+.section-title {
+    font-size:15px;
+    font-weight:bold;
+    margin:20px 0 10px;
+    color:var(--navy);
+}
+.result-table { min-width:500px; }
+.result-normal { color:var(--green); font-weight:bold; }
+.result-defect { color:var(--red); font-weight:bold; }
+.result-na { color:#b77912; font-weight:bold; }
+.result-pending { color:var(--muted); }
+.flag-list {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+.flag {
+    background:#edf3f8;
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:8px 11px;
+    font-size:12px;
+}
+.remarks {
+    background:#f5f7fa;
+    padding:13px;
+    border-radius:8px;
+    min-height:45px;
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+    font-size:13px;
+}
+@media(max-width:900px) {
+    .stats { grid-template-columns:repeat(3,1fr); }
+    .filters { grid-template-columns:1fr 1fr; }
+    .filters .search-field { grid-column:1/-1; }
+    .detail-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:520px) {
+    header { padding:18px 15px; }
+    header h1 { font-size:19px; }
+    .container { padding:0 12px 30px; margin:15px auto; }
+    .stats { grid-template-columns:repeat(2,1fr); gap:8px; }
+    .stat { padding:12px; }
+    .stat-value { font-size:21px; }
+    .filters { grid-template-columns:1fr; }
+    .filters .search-field { grid-column:auto; }
+    .detail-grid { grid-template-columns:1fr 1fr; gap:8px; }
+    .modal { padding:8px; }
+    .modal-body { padding:13px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+        <div>
+            <h1>ประวัติ DIE Preventive Check List</h1>
+            <p>TNC | Maintenance Department</p>
+        </div>
+        <div>
+            <button class="btn-light" onclick="history.back()">← กลับหน้าก่อนหน้า</button>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="toolbar">
+        <button class="btn-primary" onclick="loadHistory()">↻ รีเฟรชข้อมูล</button>
+        <button class="btn-green" onclick="exportCSV()">↓ Export CSV</button>
+    </div>
+
+    <div id="errorBox" class="error"></div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-label">จำนวนรายการ</div>
+            <div class="stat-value" id="totalRecords">0</div>
+        </div>
+        <div class="stat normal">
+            <div class="stat-label">ปกติ</div>
+            <div class="stat-value" id="totalNormal">0</div>
+        </div>
+        <div class="stat defect">
+            <div class="stat-label">ผิดปกติ</div>
+            <div class="stat-value" id="totalDefect">0</div>
+        </div>
+        <div class="stat na">
+            <div class="stat-label">N/A</div>
+            <div class="stat-value" id="totalNA">0</div>
+        </div>
+        <div class="stat pending">
+            <div class="stat-label">ยังไม่ตรวจ</div>
+            <div class="stat-value" id="totalPending">0</div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title">ค้นหาประวัติการตรวจสอบ</div>
+
+        <div class="filters">
+            <div class="field search-field">
+                <label>ค้นหา PART / Customer / Process / ผู้ตรวจสอบ</label>
+                <input id="searchInput" type="text"
+                    placeholder="พิมพ์คำค้นหา..."
+                    oninput="renderHistory()">
+            </div>
+
+            <div class="field">
+                <label>ตั้งแต่วันที่</label>
+                <input id="dateFrom" type="date" onchange="renderHistory()">
+            </div>
+
+            <div class="field">
+                <label>ถึงวันที่</label>
+                <input id="dateTo" type="date" onchange="renderHistory()">
+            </div>
+
+            <button class="btn-dark" onclick="renderHistory()">ค้นหา</button>
+            <button class="btn-light" onclick="resetFilters()">ล้างตัวกรอง</button>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title">รายการประวัติการตรวจสอบ</div>
+        <div id="countText" class="count-text">กำลังโหลดข้อมูล...</div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>วันที่ตรวจ</th>
+                        <th>PART NO.</th>
+                        <th>Customer</th>
+                        <th>Process</th>
+                        <th>จำนวน Shot</th>
+                        <th>ปกติ</th>
+                        <th>ผิดปกติ</th>
+                        <th>N/A</th>
+                        <th>ยังไม่ตรวจ</th>
+                        <th>เวลาใช้งาน</th>
+                        <th>ผู้ตรวจสอบ</th>
+                        <th>ผู้อนุมัติ</th>
+                        <th>รายละเอียด</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody">
+                    <tr><td colspan="13" class="message">กำลังโหลดข้อมูล...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal" id="detailModal" onclick="if(event.target===this)closeDetail()">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>รายละเอียดผลการตรวจสอบ</h2>
+            <button class="close-btn" onclick="closeDetail()">✕</button>
+        </div>
+        <div class="modal-body" id="detailContent"></div>
+    </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://enmzfxdswzhatvcenrds.supabase.co";
+const SUPABASE_KEY = "sb_publishable_DkoWB0IDDgodellT5vgcLQ_YdqIhKdI";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+let allRecords = [];
+let filteredRecords = [];
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+    })[char]);
+}
+
+function numberValue(value) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+}
+
+function getResults(record) {
+    let results = record.results;
+
+    if (typeof results === "string") {
+        try {
+            results = JSON.parse(results);
+        } catch {
+            results = [];
+        }
+    }
+
+    return Array.isArray(results) ? results : [];
+}
+
+function getCounts(record) {
+    const results = getResults(record);
+
+    const calculated = {
+        normal:0,
+        defect:0,
+        na:0,
+        pending:0
+    };
+
+    results.forEach(item => {
+        const result = String(item.result || "").trim();
+
+        if (result === "ปกติ") calculated.normal++;
+        else if (result === "ผิดปกติ") calculated.defect++;
+        else if (result === "N/A") calculated.na++;
+        else calculated.pending++;
+    });
+
+    return {
+        normal: record.normal_count != null
+            ? numberValue(record.normal_count) : calculated.normal,
+        defect: record.defect_count != null
+            ? numberValue(record.defect_count) : calculated.defect,
+        na: record.na_count != null
+            ? numberValue(record.na_count) : calculated.na,
+        pending: record.pending_count != null
+            ? numberValue(record.pending_count) : calculated.pending
+    };
+}
+
+function dateToISO(value) {
+    if (!value) return "";
+
+    const str = String(value).trim();
+
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+        return str.substring(0,10);
+    }
+
+    const match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+
+    if (match) {
+        const day = match[1].padStart(2,"0");
+        const month = match[2].padStart(2,"0");
+        let year = Number(match[3]);
+
+        if (year < 100) year += 2000;
+
+        return `${year}-${month}-${day}`;
+    }
+
+    return "";
+}
+
+function formatDuration(value) {
+    if (value === null || value === undefined || value === "") return "-";
+
+    const minutes = numberValue(value);
+
+    if (minutes < 0) return "-";
+
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+
+    if (hours === 0) return `${mins} นาที`;
+
+    return `${hours} ชม. ${mins} นาที`;
+}
+
+function resultBadge(result) {
+    if (result === "ปกติ") return '<span class="badge badge-green">ปกติ</span>';
+    if (result === "ผิดปกติ") return '<span class="badge badge-red">ผิดปกติ</span>';
+    if (result === "N/A") return '<span class="badge badge-orange">N/A</span>';
+    return '<span class="badge badge-gray">ยังไม่ตรวจ</span>';
+}
+
+function showError(message) {
+    const box = document.getElementById("errorBox");
+    box.style.display = "block";
+    box.textContent = message;
+}
+
+function hideError() {
+    const box = document.getElementById("errorBox");
+    box.style.display = "none";
+    box.textContent = "";
+}
+
+async function loadHistory() {
+    hideError();
+
+    const body = document.getElementById("historyBody");
+    body.innerHTML = '<tr><td colspan="13" class="message">กำลังโหลดข้อมูล...</td></tr>';
+
+    document.getElementById("countText").textContent = "กำลังโหลดข้อมูล...";
+
+    let { data, error } = await supabaseClient
+        .from("mold_checklists")
+        .select("*")
+        .order("created_at", { ascending:false });
+
+    // ถ้าไม่มี created_at ให้ลองดึงข้อมูลโดยไม่เรียงลำดับ
+    if (error && /created_at|column/i.test(error.message || "")) {
+        const retry = await supabaseClient
+            .from("mold_checklists")
+            .select("*");
+
+        data = retry.data;
+        error = retry.error;
+    }
+
+    if (error) {
+        allRecords = [];
+        renderHistory();
+
+        showError(
+            "โหลดประวัติไม่สำเร็จ\n" +
+            "รายละเอียด: " + error.message +
+            (error.code ? "\nรหัส: " + error.code : "") +
+            "\n\nกรุณาตรวจสอบตาราง mold_checklists และ Supabase RLS Policy"
+        );
+
+        return;
+    }
+
+    allRecords = Array.isArray(data) ? data : [];
+
+    // เรียงตามวันที่สร้าง หากมีข้อมูล
+    allRecords.sort((a,b) => {
+        const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return db - da;
+    });
+
+    renderHistory();
+}
+
+function renderHistory() {
+    const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+    const from = document.getElementById("dateFrom").value;
+    const to = document.getElementById("dateTo").value;
+
+    filteredRecords = allRecords.filter(record => {
+        const searchFields = [
+            record.part_no,
+            record.customer,
+            record.process,
+            record.checked_by,
+            record.approved_by,
+            record.remarks
+        ];
+
+        const matchesKeyword = !keyword ||
+            searchFields.some(value =>
+                String(value ?? "").toLowerCase().includes(keyword)
+            );
+
+        const date = dateToISO(record.check_date);
+
+        const matchesFrom = !from || (date && date >= from);
+        const matchesTo = !to || (date && date <= to);
+
+        return matchesKeyword && matchesFrom && matchesTo;
+    });
+
+    updateStats(filteredRecords);
+
+    document.getElementById("countText").textContent =
+        `แสดง ${filteredRecords.length} รายการ จากทั้งหมด ${allRecords.length} รายการ`;
+
+    const body = document.getElementById("historyBody");
+
+    if (!filteredRecords.length) {
+        body.innerHTML = '<tr><td colspan="13" class="message">ไม่พบประวัติการตรวจสอบ</td></tr>';
+        return;
+    }
+
+    body.innerHTML = filteredRecords.map((record,index) => {
+        const c = getCounts(record);
+
+        return `
+        <tr>
+            <td>${escapeHTML(record.check_date || "-")}</td>
+            <td class="part">${escapeHTML(record.part_no || "-")}</td>
+            <td>${escapeHTML(record.customer || "-")}</td>
+            <td>${escapeHTML(record.process || "-")}</td>
+            <td>${escapeHTML(record.passed_shots ?? "-")}</td>
+            <td><span class="result-normal">${c.normal}</span></td>
+            <td><span class="result-defect">${c.defect}</span></td>
+            <td><span class="result-na">${c.na}</span></td>
+            <td>${c.pending}</td>
+            <td>${escapeHTML(formatDuration(record.work_duration))}</td>
+            <td>${escapeHTML(record.checked_by || "-")}</td>
+            <td>${escapeHTML(record.approved_by || "-")}</td>
+            <td><button class="view-btn" onclick="openDetail(${index})">ดูรายละเอียด</button></td>
+        </tr>`;
+    }).join("");
+}
+
+function updateStats(records) {
+    let normal = 0, defect = 0, na = 0, pending = 0;
+
+    records.forEach(record => {
+        const c = getCounts(record);
+        normal += c.normal;
+        defect += c.defect;
+        na += c.na;
+        pending += c.pending;
+    });
+
+    document.getElementById("totalRecords").textContent = records.length;
+    document.getElementById("totalNormal").textContent = normal;
+    document.getElementById("totalDefect").textContent = defect;
+    document.getElementById("totalNA").textContent = na;
+    document.getElementById("totalPending").textContent = pending;
+}
+
+function detailItem(label,value) {
+    return `
+        <div class="detail-item">
+            <div class="detail-label">${escapeHTML(label)}</div>
+            <div class="detail-value">${escapeHTML(value ?? "-")}</div>
+        </div>`;
+}
+
+function openDetail(index) {
+    const record = filteredRecords[index];
+    if (!record) return;
+
+    const results = getResults(record);
+    const c = getCounts(record);
+
+    const resultRows = results.map((item,i) => {
+        const result = String(item.result || "ยังไม่ตรวจ");
+        let cls = "result-pending";
+
+        if (result === "ปกติ") cls = "result-normal";
+        else if (result === "ผิดปกติ") cls = "result-defect";
+        else if (result === "N/A") cls = "result-na";
+
+        return `
+        <tr>
+            <td>${escapeHTML(item.no ?? i+1)}</td>
+            <td style="white-space:normal">${escapeHTML(item.item || "-")}</td>
+            <td class="${cls}">${escapeHTML(result)}</td>
+        </tr>`;
+    }).join("");
+
+    const flags = [
+        ["PM Plan",record.pm_plan],
+        ["PM Tool",record.pm_tool],
+        ["Die Progressive",record.die_prog],
+        ["Die Single",record.die_single],
+        ["Die Compound",record.die_comp],
+        ["Plate New",record.plate_new],
+        ["Plate Old",record.plate_old]
+    ];
+
+    document.getElementById("detailContent").innerHTML = `
+        <div class="section-title">ข้อมูลทั่วไป</div>
+        <div class="detail-grid">
+            ${detailItem("PART NO.",record.part_no)}
+            ${detailItem("Customer",record.customer)}
+            ${detailItem("Process",record.process)}
+            ${detailItem("วันที่ตรวจ",record.check_date)}
+            ${detailItem("จำนวน Shot",record.passed_shots)}
+            ${detailItem("เวลาเริ่ม",record.start_time)}
+            ${detailItem("เวลาสิ้นสุด",record.end_time)}
+            ${detailItem("ระยะเวลาตรวจ",formatDuration(record.work_duration))}
+        </div>
+
+        <div class="section-title">ประเภทและข้อมูล PM</div>
+        <div class="flag-list">
+            ${flags.map(([label,value]) =>
+                `<div class="flag"><b>${escapeHTML(label)}:</b> ${escapeHTML(value || "-")}</div>`
+            ).join("")}
+        </div>
+
+        <div class="section-title">สรุปผลการตรวจสอบ</div>
+        <div class="detail-grid">
+            ${detailItem("ปกติ",c.normal)}
+            ${detailItem("ผิดปกติ",c.defect)}
+            ${detailItem("N/A",c.na)}
+            ${detailItem("ยังไม่ตรวจ",c.pending)}
+        </div>
+
+        <div class="section-title">รายการตรวจสอบทั้งหมด (${results.length} รายการ)</div>
+        <div class="table-wrap">
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th style="width:65px">ลำดับ</th>
+                        <th>รายการตรวจสอบ</th>
+                        <th style="width:130px">ผลการตรวจ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${resultRows || '<tr><td colspan="3" class="message">ไม่มีรายละเอียดรายการตรวจสอบ</td></tr>'}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-title">หมายเหตุ</div>
+        <div class="remarks">${escapeHTML(record.remarks || "-")}</div>
+
+        <div class="section-title">ผู้ตรวจสอบและผู้อนุมัติ</div>
+        <div class="detail-grid">
+            ${detailItem("Checked By",record.checked_by)}
+            ${detailItem("Approved By",record.approved_by)}
+        </div>
+    `;
+
+    document.getElementById("detailModal").style.display = "block";
+    document.body.style.overflow = "hidden";
+}
+
+function closeDetail() {
+    document.getElementById("detailModal").style.display = "none";
+    document.body.style.overflow = "";
+}
+
+function resetFilters() {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("dateFrom").value = "";
+    document.getElementById("dateTo").value = "";
+    renderHistory();
+}
+
+function csvCell(value) {
+    const text = String(value ?? "");
+    return '"' + text.replace(/"/g,'""') + '"';
+}
+
+function exportCSV() {
+    if (!filteredRecords.length) {
+        alert("ไม่มีข้อมูลสำหรับ Export");
+        return;
+    }
+
+    const headers = [
+        "วันที่ตรวจ","PART NO.","Customer","Process",
+        "จำนวน Shot","เวลาเริ่ม","เวลาสิ้นสุด","ระยะเวลา (นาที)",
+        "ปกติ","ผิดปกติ","N/A","ยังไม่ตรวจ",
+        "PM Plan","PM Tool","Die Progressive","Die Single",
+        "Die Compound","Plate New","Plate Old",
+        "หมายเหตุ","ผู้ตรวจสอบ","ผู้อนุมัติ","รายการตรวจสอบ"
+    ];
+
+    const rows = filteredRecords.map(record => {
+        const c = getCounts(record);
+
+        return [
+            record.check_date,
+            record.part_no,
+            record.customer,
+            record.process,
+            record.passed_shots,
+            record.start_time,
+            record.end_time,
+            record.work_duration,
+            c.normal,
+            c.defect,
+            c.na,
+            c.pending,
+            record.pm_plan,
+            record.pm_tool,
+            record.die_prog,
+            record.die_single,
+            record.die_comp,
+            record.plate_new,
+            record.plate_old,
+            record.remarks,
+            record.checked_by,
+            record.approved_by,
+            JSON.stringify(getResults(record))
+        ];
+    });
+
+    const csv = "\uFEFF" + [headers,...rows]
+        .map(row => row.map(csvCell).join(","))
+        .join("\r\n");
+
+    const blob = new Blob([csv], {
+        type:"text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "DIE_Preventive_Check_History.csv";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+loadHistory();
+</script>
+
+</body>
+</html>
