@@ -9,480 +9,592 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root {
-    --navy:#20364d;
-    --navy-dark:#172a3d;
-    --blue:#2878bd;
-    --green:#198754;
-    --green-light:#eaf7ef;
-    --red:#dc3545;
-    --red-light:#fff0f0;
+:root{
+    --navy:#17324d;
+    --navy-dark:#10263b;
+    --blue:#2469a6;
+    --blue-light:#eaf2fa;
+    --green:#168253;
+    --green-light:#eaf6ef;
+    --red:#c43d48;
+    --red-light:#fff0f1;
+    --orange:#b7791f;
+    --orange-light:#fff7e8;
     --gray:#64748b;
-    --gray-light:#f1f5f9;
-    --orange:#d97706;
-    --bg:#f3f6fa;
+    --bg:#f2f5f9;
     --white:#fff;
     --text:#263648;
     --muted:#718096;
     --line:#dce4ed;
-    --shadow:0 4px 16px rgba(24,48,75,.07);
+    --shadow:0 3px 14px rgba(20,42,65,.055);
 }
 
-* {
+*{
     box-sizing:border-box;
     margin:0;
     padding:0;
     font-family:Arial,"Tahoma",sans-serif;
 }
 
-body {
+body{
     background:var(--bg);
     color:var(--text);
-    padding:24px 16px 50px;
+    padding:25px 18px 45px;
 }
 
-.container {
-    max-width:1100px;
+.container{
+    max-width:1250px;
     margin:auto;
 }
 
-.header {
-    background:linear-gradient(135deg,var(--navy-dark),#315779);
+/* HEADER */
+.header{
+    background:linear-gradient(115deg,#10263b 0%,#1b4265 65%,#285d85 100%);
     color:white;
-    padding:25px 28px;
-    border-radius:14px;
+    padding:26px 30px;
+    border-radius:12px;
     margin-bottom:20px;
-    box-shadow:var(--shadow);
+    box-shadow:0 6px 20px rgba(16,38,59,.13);
 }
 
-.header-top {
+.header-top{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:15px;
+    gap:18px;
     flex-wrap:wrap;
 }
 
-.header h1 {
-    font-size:23px;
-    margin-bottom:7px;
-}
-
-.header p {
-    font-size:13px;
-    color:#d8e5f2;
-}
-
-.header-tag {
-    background:rgba(255,255,255,.13);
-    border:1px solid rgba(255,255,255,.25);
-    padding:8px 14px;
-    border-radius:8px;
-    font-size:12px;
-    font-weight:bold;
-}
-
-.header-actions {
+.brand{
     display:flex;
-    gap:8px;
+    align-items:center;
+    gap:15px;
+}
+
+.brand-mark{
+    width:49px;
+    height:49px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid rgba(255,255,255,.28);
+    background:rgba(255,255,255,.12);
+    border-radius:10px;
+    font-size:24px;
+}
+
+.header h1{
+    font-size:23px;
+    font-weight:700;
+    letter-spacing:.2px;
+    margin-bottom:6px;
+}
+
+.header p{
+    color:#d4e1ee;
+    font-size:12px;
+    letter-spacing:.5px;
+}
+
+.header-actions{
+    display:flex;
+    gap:9px;
+    align-items:center;
     flex-wrap:wrap;
 }
 
-.header-actions button {
-    background:rgba(255,255,255,.14);
+.header-actions button{
+    background:rgba(255,255,255,.12);
     color:white;
-    border:1px solid rgba(255,255,255,.3);
-    padding:9px 12px;
-    border-radius:8px;
+    border:1px solid rgba(255,255,255,.25);
+    padding:10px 15px;
+    border-radius:7px;
     font-size:12px;
     cursor:pointer;
 }
 
-.card {
-    background:var(--white);
+.header-actions button:hover{
+    background:rgba(255,255,255,.22);
+}
+
+.header-tag{
+    font-size:10px;
+    font-weight:bold;
+    letter-spacing:1px;
+    padding:9px 12px;
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:6px;
+    background:rgba(255,255,255,.08);
+}
+
+.connection-status{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:20px;
+    padding:10px 13px;
+    border-radius:6px;
+    font-size:12px;
+    color:#eaf2fa;
+    background:rgba(255,255,255,.11);
+}
+
+.connection-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#f6c453;
+    flex-shrink:0;
+}
+
+.connection-status.success .connection-dot{background:#55d69b;}
+.connection-status.error .connection-dot{background:#ff7d85;}
+
+/* GENERAL CARD */
+.card{
+    background:white;
     border:1px solid var(--line);
-    border-radius:12px;
-    padding:22px;
+    border-radius:10px;
+    padding:23px;
     margin-bottom:18px;
     box-shadow:var(--shadow);
 }
 
-.card-title {
-    font-size:16px;
-    font-weight:bold;
+.card-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:19px;
+    padding-bottom:14px;
+    border-bottom:1px solid #e8edf3;
+}
+
+.card-title{
     color:var(--navy);
-    padding-bottom:13px;
-    margin-bottom:17px;
-    border-bottom:2px solid #e8edf3;
+    font-size:15px;
+    font-weight:700;
     display:flex;
     align-items:center;
-    gap:9px;
+    gap:10px;
 }
 
-.form-grid {
+.heading-icon{
+    width:30px;
+    height:30px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:var(--blue-light);
+    border-radius:7px;
+    font-size:15px;
+}
+
+.section-subtitle{
+    font-size:10px;
+    color:#94a3b8;
+    font-weight:normal;
+    letter-spacing:.6px;
+}
+
+/* FORM */
+.form-grid{
     display:grid;
     grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:16px;
+    gap:17px;
 }
 
-.form-group label {
+.form-group label{
     display:block;
-    font-size:12px;
+    font-size:11px;
     font-weight:bold;
     color:#607184;
-    margin-bottom:7px;
+    margin-bottom:8px;
+    letter-spacing:.2px;
 }
 
-.form-group input {
+.form-group input,
+textarea{
     width:100%;
-    padding:11px 12px;
-    border:1px solid #cbd5e1;
+    padding:12px 13px;
+    border:1px solid #d5dee8;
     border-radius:7px;
-    font-size:14px;
+    font-size:13px;
     color:var(--text);
-    background:white;
+    background:#fff;
     outline:none;
+    transition:.18s;
 }
 
 .form-group input:focus,
-textarea:focus {
+textarea:focus{
     border-color:var(--blue);
-    box-shadow:0 0 0 3px rgba(40,120,189,.10);
+    box-shadow:0 0 0 3px rgba(36,105,166,.09);
 }
 
-.form-group input[readonly] {
-    background:#edf3f9;
+.form-group input[readonly]{
+    background:#f2f5f9;
     color:var(--navy);
     font-weight:bold;
+    border-color:#e0e6ed;
 }
 
-.form-group input.time-result {
+.form-group input.time-result{
     background:#eaf2fa;
     color:var(--blue);
-    font-weight:bold;
     font-size:17px;
+    font-weight:bold;
 }
 
-.section-grid {
+/* INSPECTION TYPE */
+.section-grid{
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
     gap:15px;
 }
 
-.section-box {
+.section-box{
     border:1px solid var(--line);
-    border-radius:10px;
-    padding:17px;
+    border-radius:8px;
+    padding:18px;
     background:#fff;
+    position:relative;
+    overflow:hidden;
 }
 
-.section-box.pm {border-top:4px solid var(--blue);}
-.section-box.die {border-top:4px solid var(--green);}
-.section-box.plate {border-top:4px solid var(--orange);}
+.section-box:before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:3px;
+}
 
-.section-box h3 {
-    font-size:14px;
-    margin-bottom:14px;
+.section-box.pm:before{background:#3279b7;}
+.section-box.die:before{background:#168253;}
+.section-box.plate:before{background:#c58b32;}
+
+.section-box h3{
+    font-size:13px;
+    margin-bottom:15px;
     color:var(--navy);
 }
 
-.check-option {
+.check-option{
     display:flex;
     align-items:center;
-    gap:9px;
-    margin:10px 0;
-    font-size:13px;
+    gap:10px;
+    margin:12px 0;
+    font-size:12px;
+    color:#425466;
     cursor:pointer;
 }
 
-.check-option input {
-    width:17px;
-    height:17px;
+.check-option input{
+    width:16px;
+    height:16px;
     accent-color:var(--blue);
     cursor:pointer;
 }
 
-.summary-grid {
+/* SUMMARY */
+.summary-grid{
     display:grid;
-    grid-template-columns:repeat(5,1fr);
+    grid-template-columns:repeat(5,minmax(0,1fr));
     gap:12px;
-    margin-bottom:18px;
 }
 
-.summary-box {
-    background:white;
+.summary-box{
+    background:#fff;
     border:1px solid var(--line);
-    border-radius:10px;
-    padding:15px;
-    text-align:center;
+    border-radius:8px;
+    padding:17px 14px;
+    position:relative;
+    overflow:hidden;
 }
 
-.summary-box span {
+.summary-box:before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:3px;
+    background:#94a3b8;
+}
+
+.summary-box.normal:before{background:var(--green);}
+.summary-box.defect:before{background:var(--red);}
+.summary-box.na:before{background:#8291a3;}
+.summary-box.pending:before{background:#d99a35;}
+
+.summary-box span{
     display:block;
-    font-size:12px;
+    font-size:11px;
     color:var(--muted);
-    margin-bottom:7px;
+    margin-bottom:9px;
 }
 
-.summary-box strong {
-    font-size:25px;
+.summary-box strong{
+    display:block;
+    font-size:27px;
+    font-weight:700;
     color:var(--navy);
 }
 
-.summary-box.normal strong {color:var(--green);}
-.summary-box.defect strong {color:var(--red);}
-.summary-box.na strong {color:var(--gray);}
-.summary-box.pending strong {color:var(--orange);}
+.summary-box.normal strong{color:var(--green);}
+.summary-box.defect strong{color:var(--red);}
+.summary-box.na strong{color:var(--gray);}
+.summary-box.pending strong{color:var(--orange);}
 
-.progress-track {
+.progress-area{
+    margin-top:23px;
+}
+
+.progress-label{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    color:#64748b;
+    margin-bottom:9px;
+}
+
+.progress-label strong{
+    color:var(--blue);
+    font-size:12px;
+}
+
+.progress-track{
     height:9px;
-    background:#e8edf3;
+    background:#e9eef4;
     border-radius:20px;
     overflow:hidden;
-    margin-top:10px;
 }
 
-.progress-fill {
+.progress-fill{
     height:100%;
     width:0%;
-    background:var(--blue);
-    transition:.2s;
+    background:linear-gradient(90deg,#2469a6,#4b94cb);
+    border-radius:20px;
+    transition:.25s;
 }
 
-.table-wrap {
+/* CHECKLIST */
+.note{
+    font-size:12px;
+    color:#718096;
+    margin-bottom:15px;
+    line-height:1.8;
+    background:#f6f8fb;
+    border-left:3px solid #7da6c9;
+    padding:11px 13px;
+    border-radius:0 6px 6px 0;
+}
+
+.legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-bottom:17px;
+}
+
+.legend span{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 11px;
+    border-radius:5px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.legend-normal{background:var(--green-light);color:var(--green);}
+.legend-defect{background:var(--red-light);color:var(--red);}
+.legend-na{background:#edf1f5;color:#475569;}
+
+.table-wrap{
     overflow-x:auto;
+    border:1px solid var(--line);
+    border-radius:7px;
 }
 
-table {
+table{
     width:100%;
     border-collapse:collapse;
-    min-width:780px;
+    min-width:820px;
 }
 
-th {
+thead th{
     background:#edf2f7;
-    color:var(--navy);
-    font-size:12px;
+    color:#334b63;
+    font-size:11px;
     font-weight:bold;
     padding:13px 10px;
     text-align:left;
-    border-bottom:1px solid var(--line);
+    border-bottom:1px solid #dce4ed;
+    white-space:nowrap;
 }
 
-td {
-    padding:12px 10px;
-    font-size:13px;
+tbody td{
+    padding:11px 10px;
+    font-size:12px;
     border-bottom:1px solid #edf1f5;
+    color:#435467;
 }
 
-tbody tr:hover {
-    background:#f8fbff;
-}
+tbody tr:last-child td{border-bottom:0;}
+tbody tr:hover{background:#f7faff;}
 
-.col-no {
-    width:50px;
+.col-no{
+    width:55px;
     text-align:center;
-    color:#64748b;
+    color:#8492a3;
     font-weight:bold;
 }
 
-.col-result {
+.col-result{
     width:105px;
     text-align:center;
 }
 
-.result-check {
+.result-check{
     display:inline-flex;
     align-items:center;
     justify-content:center;
     gap:6px;
-    padding:7px 8px;
-    border-radius:7px;
-    font-size:12px;
+    min-width:76px;
+    padding:7px 9px;
+    border-radius:5px;
+    font-size:11px;
     font-weight:bold;
     cursor:pointer;
     user-select:none;
     white-space:nowrap;
 }
 
-.result-check input {
-    width:16px;
-    height:16px;
+.result-check input{
+    width:14px;
+    height:14px;
     cursor:pointer;
 }
 
-.result-normal {
-    background:var(--green-light);
-    color:#167344;
-}
+.result-normal{background:var(--green-light);color:#167344;}
+.result-normal input{accent-color:var(--green);}
+.result-defect{background:var(--red-light);color:#c12b3a;}
+.result-defect input{accent-color:var(--red);}
+.result-na{background:#edf1f5;color:#475569;}
+.result-na input{accent-color:#64748b;}
 
-.result-normal input {accent-color:var(--green);}
-
-.result-defect {
-    background:var(--red-light);
-    color:#c12b3a;
-}
-
-.result-defect input {accent-color:var(--red);}
-
-.result-na {
-    background:var(--gray-light);
-    color:#475569;
-}
-
-.result-na input {accent-color:#64748b;}
-
-.result-check input:checked {
-    outline:2px solid currentColor;
-    outline-offset:2px;
-}
-
-.status-pill {
+.status-pill{
     display:inline-block;
     padding:5px 9px;
-    border-radius:20px;
-    font-size:11px;
+    border-radius:5px;
+    font-size:10px;
     font-weight:bold;
+    white-space:nowrap;
 }
 
-.status-normal {
-    background:var(--green-light);
-    color:var(--green);
-}
+.status-normal{background:var(--green-light);color:var(--green);}
+.status-defect{background:var(--red-light);color:var(--red);}
+.status-na{background:#edf1f5;color:#475569;}
+.status-pending{background:var(--orange-light);color:var(--orange);}
 
-.status-defect {
-    background:var(--red-light);
-    color:var(--red);
-}
-
-.status-na {
-    background:var(--gray-light);
-    color:#475569;
-}
-
-.status-pending {
-    background:#fff7e6;
-    color:#b7791f;
-}
-
-textarea {
-    width:100%;
-    min-height:105px;
+/* REMARKS */
+textarea{
+    min-height:110px;
     resize:vertical;
-    border:1px solid #cbd5e1;
-    border-radius:8px;
-    padding:12px;
-    font-size:14px;
-    outline:none;
+    line-height:1.7;
 }
 
-.footer-grid {
+.footer-grid{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(2,minmax(0,1fr));
     gap:16px;
-    margin-top:16px;
+    margin-top:19px;
 }
 
-.action-area {
+/* TIME */
+.time-card{
+    border-top:3px solid var(--blue);
+}
+
+.time-info{
+    font-size:11px;
+    color:#718096;
+    margin-bottom:18px;
+    line-height:1.8;
+}
+
+/* BUTTON */
+.action-area{
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:1.5fr 1fr;
     gap:12px;
-    margin-top:20px;
+    margin-top:23px;
 }
 
-button {
+button{
     border:0;
-    border-radius:8px;
+    border-radius:7px;
     padding:13px 18px;
-    font-size:14px;
+    font-size:13px;
     font-weight:bold;
     cursor:pointer;
-    transition:.2s;
+    transition:.18s;
 }
 
-button:disabled {
+button:disabled{
     opacity:.6;
     cursor:not-allowed;
 }
 
-.btn-save {
+.btn-save{
     background:var(--blue);
     color:white;
+    box-shadow:0 3px 8px rgba(36,105,166,.15);
 }
 
-.btn-save:hover {background:#1d639e;}
+.btn-save:hover{
+    background:#1b578c;
+    transform:translateY(-1px);
+}
 
-.btn-reset {
+.btn-reset{
     background:#edf1f5;
     color:#475569;
+    border:1px solid #dce4ed;
 }
 
-.btn-reset:hover {background:#dfe6ee;}
+.btn-reset:hover{background:#e1e8ef;}
 
-.note {
-    font-size:12px;
-    color:var(--muted);
-    margin-bottom:14px;
-    line-height:1.7;
+.footer-note{
+    text-align:center;
+    font-size:10px;
+    color:#94a3b8;
+    padding:7px 0 0;
+    letter-spacing:.3px;
 }
 
-.legend {
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-bottom:14px;
+@media(max-width:850px){
+    .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .section-grid{grid-template-columns:1fr;}
+    .summary-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
 }
 
-.legend span {
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    padding:6px 10px;
-    border-radius:6px;
-    font-size:12px;
-    font-weight:bold;
-}
-
-.legend-normal {background:var(--green-light);color:var(--green);}
-.legend-defect {background:var(--red-light);color:var(--red);}
-.legend-na {background:var(--gray-light);color:#475569;}
-
-.connection-status {
-    margin-top:12px;
-    padding:9px 12px;
-    border-radius:7px;
-    font-size:12px;
-    background:rgba(255,255,255,.12);
-    color:#eaf2fa;
-}
-
-.time-card {
-    border-top:4px solid var(--blue);
-}
-
-.time-info {
-    font-size:12px;
-    color:var(--muted);
-    margin-bottom:16px;
-    line-height:1.7;
-}
-
-@media(max-width:800px) {
-    .form-grid {grid-template-columns:repeat(2,1fr);}
-    .section-grid {grid-template-columns:1fr;}
-    .summary-grid {grid-template-columns:repeat(3,1fr);}
-}
-
-@media(max-width:520px) {
-    body {padding:12px 9px 30px;}
-    .header {padding:20px 17px;}
-    .header h1 {font-size:19px;}
-    .card {padding:16px 12px;}
-    .form-grid {grid-template-columns:1fr 1fr;gap:12px;}
-    .summary-grid {grid-template-columns:repeat(2,1fr);}
-    .footer-grid {grid-template-columns:1fr;}
-    .action-area {grid-template-columns:1fr;}
-    .form-group input {font-size:13px;}
+@media(max-width:550px){
+    body{padding:12px 9px 25px;}
+    .header{padding:19px 16px;}
+    .header h1{font-size:18px;}
+    .brand-mark{width:40px;height:40px;font-size:20px;}
+    .card{padding:16px 12px;}
+    .form-grid{grid-template-columns:1fr 1fr;gap:12px;}
+    .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .footer-grid{grid-template-columns:1fr;}
+    .action-area{grid-template-columns:1fr;}
+    .header-tag{display:none;}
+    .section-subtitle{display:none;}
+    .summary-box strong{font-size:24px;}
 }
 </style>
 </head>
@@ -492,46 +604,52 @@ button:disabled {
 
 <header class="header">
     <div class="header-top">
-        <div>
-            <h1>🔧 DIE Preventive Check List</h1>
-            <p>Maintenance Department | TNC</p>
+        <div class="brand">
+            <div class="brand-mark">⚙</div>
+            <div>
+                <h1>DIE Preventive Check List</h1>
+                <p>MAINTENANCE DEPARTMENT · TNC</p>
+            </div>
         </div>
 
         <div class="header-actions">
-            <button onclick="goToHistory()">📋 ประวัติการตรวจสอบ</button>
-            <div class="header-tag">TNC · QUALITY CHECK</div>
+            <button onclick="goToHistory()">▤ ประวัติการตรวจสอบ</button>
+            <div class="header-tag">TNC · ENGINEERING</div>
         </div>
     </div>
 
     <div class="connection-status" id="connectionStatus">
-        กำลังเชื่อมต่อฐานข้อมูล...
+        <span class="connection-dot"></span>
+        <span id="connectionText">กำลังเชื่อมต่อฐานข้อมูล...</span>
     </div>
 </header>
 
 <section class="card">
-    <h2 class="card-title">📋 ข้อมูลทั่วไป / GENERAL INFORMATION</h2>
+    <div class="card-heading">
+        <h2 class="card-title">
+            <span class="heading-icon">▤</span>
+            ข้อมูลทั่วไป / GENERAL INFORMATION
+        </h2>
+        <span class="section-subtitle">PART INFORMATION</span>
+    </div>
 
     <div class="form-grid">
         <div class="form-group">
             <label>PART NUMBER</label>
             <input id="partNo" readonly>
         </div>
-
         <div class="form-group">
             <label>CUSTOMER</label>
             <input id="customer" readonly>
         </div>
-
         <div class="form-group">
             <label>DATE</label>
             <input id="checkDate" readonly>
         </div>
-
         <div class="form-group">
             <label>PROCESS</label>
             <input id="process" readonly>
         </div>
-
         <div class="form-group">
             <label>PASSED SHOTS</label>
             <input id="passedShots" type="number" min="0" placeholder="จำนวนชิ้นงาน">
@@ -540,24 +658,30 @@ button:disabled {
 </section>
 
 <section class="card">
-    <h2 class="card-title">⚙️ ประเภทการตรวจสอบ / INSPECTION TYPE</h2>
+    <div class="card-heading">
+        <h2 class="card-title">
+            <span class="heading-icon">⚙</span>
+            ประเภทการตรวจสอบ / INSPECTION TYPE
+        </h2>
+        <span class="section-subtitle">INSPECTION CLASSIFICATION</span>
+    </div>
 
     <div class="section-grid">
         <div class="section-box pm">
-            <h3>📌 ประเภท PM</h3>
+            <h3>01 · ประเภท PM</h3>
             <label class="check-option"><input type="checkbox" id="pmPlan"> PM ตาม Plan</label>
             <label class="check-option"><input type="checkbox" id="pmTool"> PM ตาม Tool Life</label>
         </div>
 
         <div class="section-box die">
-            <h3>🔧 TYPE DIE</h3>
+            <h3>02 · TYPE DIE</h3>
             <label class="check-option"><input type="checkbox" id="dieProg"> Progressive Die</label>
             <label class="check-option"><input type="checkbox" id="dieSingle"> Single Die</label>
             <label class="check-option"><input type="checkbox" id="dieComp"> Compound Die</label>
         </div>
 
         <div class="section-box plate">
-            <h3>🏭 สภาพ / อายุแม่พิมพ์</h3>
+            <h3>03 · สภาพ / อายุแม่พิมพ์</h3>
             <label class="check-option"><input type="checkbox" id="plateNew"> แม่พิมพ์ใหม่</label>
             <label class="check-option"><input type="checkbox" id="plateOld"> แม่พิมพ์เก่า</label>
         </div>
@@ -565,11 +689,17 @@ button:disabled {
 </section>
 
 <section class="card">
-    <h2 class="card-title">📊 สรุปผลการตรวจสอบ / INSPECTION SUMMARY</h2>
+    <div class="card-heading">
+        <h2 class="card-title">
+            <span class="heading-icon">▥</span>
+            สรุปผลการตรวจสอบ / INSPECTION SUMMARY
+        </h2>
+        <span class="section-subtitle">LIVE INSPECTION STATUS</span>
+    </div>
 
     <div class="summary-grid">
         <div class="summary-box">
-            <span>รายการทั้งหมด</span>
+            <span>รายการทั้งหมด / TOTAL</span>
             <strong id="totalCount">32</strong>
         </div>
         <div class="summary-box normal">
@@ -590,18 +720,25 @@ button:disabled {
         </div>
     </div>
 
-    <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;">
-        <span>ความคืบหน้าการตรวจสอบ</span>
-        <strong id="progressText">0%</strong>
-    </div>
-
-    <div class="progress-track">
-        <div class="progress-fill" id="progressFill"></div>
+    <div class="progress-area">
+        <div class="progress-label">
+            <span>ความคืบหน้าการตรวจสอบ / INSPECTION PROGRESS</span>
+            <strong id="progressText">0%</strong>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
     </div>
 </section>
 
 <section class="card">
-    <h2 class="card-title">🔍 รายการตรวจสอบสภาพแม่พิมพ์ / MOLD INSPECTION CHECKLIST</h2>
+    <div class="card-heading">
+        <h2 class="card-title">
+            <span class="heading-icon">☷</span>
+            รายการตรวจสอบสภาพแม่พิมพ์ / MOLD INSPECTION CHECKLIST
+        </h2>
+        <span class="section-subtitle">32 INSPECTION ITEMS</span>
+    </div>
 
     <p class="note">
         วิธีตรวจสอบ: เลือกผลตรวจแต่ละรายการเพียง 1 สถานะ
@@ -619,7 +756,7 @@ button:disabled {
         <table>
             <thead>
                 <tr>
-                    <th style="width:50px;text-align:center;">NO.</th>
+                    <th style="width:55px;text-align:center;">NO.</th>
                     <th>รายการตรวจสอบ / INSPECTION ITEM</th>
                     <th style="text-align:center;width:105px;">ปกติ</th>
                     <th style="text-align:center;width:105px;">ผิดปกติ</th>
@@ -633,7 +770,13 @@ button:disabled {
 </section>
 
 <section class="card">
-    <h2 class="card-title">📝 หมายเหตุและการอนุมัติ / REMARKS & APPROVAL</h2>
+    <div class="card-heading">
+        <h2 class="card-title">
+            <span class="heading-icon">✎</span>
+            หมายเหตุและการอนุมัติ / REMARKS & APPROVAL
+        </h2>
+        <span class="section-subtitle">INSPECTION REMARKS</span>
+    </div>
 
     <div class="form-group">
         <label>REMARKS / COMMENTS — รายละเอียดจุดที่ผิดปกติหรือสิ่งที่ต้องดำเนินการ</label>
@@ -645,7 +788,6 @@ button:disabled {
             <label>TECHNICIAN / CHECKED BY</label>
             <input type="text" id="checkedBy" placeholder="ชื่อผู้ตรวจสอบ">
         </div>
-
         <div class="form-group">
             <label>LEADER / APPROVED BY</label>
             <input type="text" id="approvedBy" placeholder="ชื่อหัวหน้างาน">
@@ -654,7 +796,13 @@ button:disabled {
 </section>
 
 <section class="card time-card">
-    <h2 class="card-title">⏱️ ระยะเวลาการตรวจสอบ / INSPECTION TIME</h2>
+    <div class="card-heading">
+        <h2 class="card-title">
+            <span class="heading-icon">◷</span>
+            ระยะเวลาการตรวจสอบ / INSPECTION TIME
+        </h2>
+        <span class="section-subtitle">TIME RECORD</span>
+    </div>
 
     <p class="time-info">
         กรอกเวลาเริ่มต้นและเวลาสิ้นสุดในรูปแบบ 24 ชั่วโมง เช่น 08:30
@@ -663,17 +811,15 @@ button:disabled {
 
     <div class="form-grid">
         <div class="form-group">
-            <label>START TIME / เวลาเริ่มต้น (24 HOUR)</label>
+            <label>START TIME / เวลาเริ่มต้น</label>
             <input type="text" id="startTime" placeholder="HH:MM" maxlength="5" inputmode="numeric" autocomplete="off">
         </div>
-
         <div class="form-group">
-            <label>END TIME / เวลาสิ้นสุด (24 HOUR)</label>
+            <label>END TIME / เวลาสิ้นสุด</label>
             <input type="text" id="endTime" placeholder="HH:MM" maxlength="5" inputmode="numeric" autocomplete="off">
         </div>
-
         <div class="form-group">
-            <label>TOTAL TIME / ระยะเวลารวม (MINUTES)</label>
+            <label>TOTAL TIME / ระยะเวลารวม</label>
             <input type="text" id="totalMinutes" class="time-result" value="" placeholder="คำนวณอัตโนมัติ" readonly>
         </div>
     </div>
@@ -682,12 +828,15 @@ button:disabled {
         <button class="btn-save" id="saveButton" onclick="saveChecklist()">
             💾 บันทึกผลการตรวจสอบ
         </button>
-
         <button class="btn-reset" id="resetButton" onclick="resetChecklist()">
             ↻ ล้างข้อมูลในแบบฟอร์ม
         </button>
     </div>
 </section>
+
+<div class="footer-note">
+    TNC · MAINTENANCE DEPARTMENT · DIE PREVENTIVE INSPECTION SYSTEM
+</div>
 
 </div>
 
@@ -735,61 +884,52 @@ const checklistItems = [
     "Start Coil / Feed Start"
 ];
 
-function setConnectionStatus(message, type = "info") {
-    const status = document.getElementById("connectionStatus");
-    status.textContent = message;
-
-    if (type === "success") {
-        status.style.background = "rgba(25,135,84,.25)";
-    } else if (type === "error") {
-        status.style.background = "rgba(220,53,69,.25)";
-    } else {
-        status.style.background = "rgba(255,255,255,.12)";
-    }
+function setConnectionStatus(message,type="info"){
+    const status=document.getElementById("connectionStatus");
+    const text=document.getElementById("connectionText");
+    text.textContent=message;
+    status.className="connection-status "+type;
 }
 
-function initializeSupabase() {
-    if (!window.supabase) {
-        setConnectionStatus("ไม่พบ Supabase Library", "error");
+function initializeSupabase(){
+    if(!window.supabase){
+        setConnectionStatus("ไม่พบ Supabase Library","error");
         return false;
     }
 
-    try {
-        supabaseClient = window.supabase.createClient(
+    try{
+        supabaseClient=window.supabase.createClient(
             SUPABASE_URL,
             SUPABASE_KEY
         );
 
-        databaseReady = true;
+        databaseReady=true;
         setConnectionStatus("เตรียมการเชื่อมต่อ Supabase Client แล้ว");
         return true;
-
-    } catch (error) {
-        setConnectionStatus("ตั้งค่า Supabase ไม่สำเร็จ: " + error.message, "error");
+    }catch(error){
+        setConnectionStatus("ตั้งค่า Supabase ไม่สำเร็จ: "+error.message,"error");
         return false;
     }
 }
 
-function goToHistory() {
-    window.location.href = "mold-history.html";
+function goToHistory(){
+    window.location.href="mold-history.html";
 }
 
-function isDateValue(value) {
-    if (value === null || value === undefined) return false;
-
-    const text = String(value).trim();
-
-    if (!text) return false;
+function isDateValue(value){
+    if(value===null||value===undefined)return false;
+    const text=String(value).trim();
+    if(!text)return false;
 
     return [
         /^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}$/,
         /^\d{4}-\d{2}-\d{2}$/,
         /^\d{4}-\d{2}-\d{2}T/
-    ].some(pattern => pattern.test(text));
+    ].some(pattern=>pattern.test(text));
 }
 
-function getValidProcess(data) {
-    const fields = [
+function getValidProcess(data){
+    const fields=[
         "process",
         "process_name",
         "process_type",
@@ -797,112 +937,109 @@ function getValidProcess(data) {
         "die_process"
     ];
 
-    for (const field of fields) {
-        const value = data[field];
+    for(const field of fields){
+        const value=data[field];
 
-        if (
-            value !== null &&
-            value !== undefined &&
-            String(value).trim() !== "" &&
+        if(
+            value!==null&&
+            value!==undefined&&
+            String(value).trim()!==""&&
             !isDateValue(value)
-        ) {
+        ){
             return String(value).trim();
         }
     }
-
     return "";
 }
 
-async function loadPartData() {
-    const params = new URLSearchParams(window.location.search);
-    const partNo = params.get("part") || params.get("p");
+async function loadPartData(){
+    const params=new URLSearchParams(window.location.search);
+    const partNo=params.get("part")||params.get("p");
 
-    const partNoInput = document.getElementById("partNo");
-    const customerInput = document.getElementById("customer");
-    const processInput = document.getElementById("process");
+    const partNoInput=document.getElementById("partNo");
+    const customerInput=document.getElementById("customer");
+    const processInput=document.getElementById("process");
 
-    partLoaded = false;
+    partLoaded=false;
 
-    if (!partNo) {
-        setConnectionStatus("ไม่พบ PART NUMBER ใน URL", "error");
+    if(!partNo){
+        setConnectionStatus("ไม่พบ PART NUMBER ใน URL","error");
         alert("ไม่พบ PART NUMBER ใน URL กรุณาเปิดผ่าน QR Code");
         return;
     }
 
-    partNoInput.value = partNo;
-    customerInput.value = "";
-    processInput.value = "";
+    partNoInput.value=partNo;
+    customerInput.value="";
+    processInput.value="";
 
-    if (!databaseReady || !supabaseClient) {
-        setConnectionStatus("ยังไม่ได้เชื่อมต่อ Supabase", "error");
+    if(!databaseReady||!supabaseClient){
+        setConnectionStatus("ยังไม่ได้เชื่อมต่อ Supabase","error");
         alert("ยังไม่ได้เชื่อมต่อ Supabase กรุณาตรวจสอบ Publishable Key");
         return;
     }
 
-    setConnectionStatus("กำลังโหลดข้อมูล PART " + partNo + "...");
+    setConnectionStatus("กำลังโหลดข้อมูล PART "+partNo+"...");
 
-    try {
-        const { data, error } = await supabaseClient
+    try{
+        const {data,error}=await supabaseClient
             .from("part_database")
             .select("*")
-            .eq("part_no", partNo)
+            .eq("part_no",partNo)
             .maybeSingle();
 
-        if (error) throw error;
+        if(error)throw error;
 
-        if (!data) {
-            partNoInput.value = "";
-            setConnectionStatus("ไม่พบข้อมูล PART", "error");
-
+        if(!data){
+            partNoInput.value="";
+            setConnectionStatus("ไม่พบข้อมูล PART","error");
             alert(
-                "ไม่พบข้อมูล PART: " + partNo +
+                "ไม่พบข้อมูล PART: "+partNo+
                 "\n\nกรุณาตรวจสอบข้อมูลในตาราง part_database"
             );
             return;
         }
 
-        const customer =
-            data.customer ??
-            data.customer_name ??
-            "";
+        const customer=data.customer??data.customer_name??"";
+        const process=getValidProcess(data);
 
-        const process = getValidProcess(data);
+        partNoInput.value=data.part_no??partNo;
+        customerInput.value=customer;
+        processInput.value=process||"";
 
-        partNoInput.value = data.part_no ?? partNo;
-        customerInput.value = customer;
-        processInput.value = process || "";
+        partLoaded=true;
+        setConnectionStatus("โหลดข้อมูล PART สำเร็จ | PART: "+partNo,"success");
 
-        partLoaded = true;
-
-        setConnectionStatus(
-            "โหลดข้อมูล PART สำเร็จ | PART: " + partNo,
-            "success"
-        );
-
-    } catch (error) {
-        console.error("Load PART error:", error);
-
-        setConnectionStatus("โหลดข้อมูล PART ไม่สำเร็จ", "error");
-
+    }catch(error){
+        console.error("Load PART error:",error);
+        setConnectionStatus("โหลดข้อมูล PART ไม่สำเร็จ","error");
         alert(
-            "โหลดข้อมูล PART ไม่สำเร็จ\n\n" +
-            error.message +
+            "โหลดข้อมูล PART ไม่สำเร็จ\n\n"+
+            error.message+
             "\n\nกรุณาตรวจสอบตาราง part_database"
         );
     }
 }
 
-function createChecklist() {
-    const tbody = document.getElementById("checklistBody");
+function escapeHTML(value){
+    return String(value).replace(/[&<>"']/g,char=>({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+    })[char]);
+}
 
-    tbody.innerHTML = checklistItems.map((item, index) => {
-        const no = index + 1;
+function createChecklist(){
+    const tbody=document.getElementById("checklistBody");
+
+    tbody.innerHTML=checklistItems.map((item,index)=>{
+        const no=index+1;
 
         return `
         <tr id="row${no}">
             <td class="col-no">${no}</td>
-            <td>${item}</td>
-
+            <td>${escapeHTML(item)}</td>
             <td class="col-result">
                 <label class="result-check result-normal">
                     <input type="checkbox" id="normal${no}"
@@ -910,7 +1047,6 @@ function createChecklist() {
                     ปกติ
                 </label>
             </td>
-
             <td class="col-result">
                 <label class="result-check result-defect">
                     <input type="checkbox" id="defect${no}"
@@ -918,7 +1054,6 @@ function createChecklist() {
                     เสีย
                 </label>
             </td>
-
             <td class="col-result">
                 <label class="result-check result-na">
                     <input type="checkbox" id="na${no}"
@@ -926,7 +1061,6 @@ function createChecklist() {
                     N/A
                 </label>
             </td>
-
             <td style="text-align:center" id="status${no}">
                 <span class="status-pill status-pending">ยังไม่ตรวจ</span>
             </td>
@@ -936,311 +1070,285 @@ function createChecklist() {
     updateSummary();
 }
 
-function setResult(no, selected) {
-    const options = ["normal", "defect", "na"];
+function setResult(no,selected){
+    const options=["normal","defect","na"];
 
-    options.forEach(option => {
-        if (option !== selected) {
-            document.getElementById(option + no).checked = false;
+    options.forEach(option=>{
+        if(option!==selected){
+            document.getElementById(option+no).checked=false;
         }
     });
 
-    const checked = document.getElementById(selected + no).checked;
-    const status = document.getElementById("status" + no);
+    const checked=document.getElementById(selected+no).checked;
+    const status=document.getElementById("status"+no);
 
-    if (!checked) {
-        status.innerHTML =
-            '<span class="status-pill status-pending">ยังไม่ตรวจ</span>';
-    } else if (selected === "normal") {
-        status.innerHTML =
-            '<span class="status-pill status-normal">ปกติ</span>';
-    } else if (selected === "defect") {
-        status.innerHTML =
-            '<span class="status-pill status-defect">ผิดปกติ</span>';
-    } else {
-        status.innerHTML =
-            '<span class="status-pill status-na">N/A</span>';
+    if(!checked){
+        status.innerHTML='<span class="status-pill status-pending">ยังไม่ตรวจ</span>';
+    }else if(selected==="normal"){
+        status.innerHTML='<span class="status-pill status-normal">ปกติ</span>';
+    }else if(selected==="defect"){
+        status.innerHTML='<span class="status-pill status-defect">ผิดปกติ</span>';
+    }else{
+        status.innerHTML='<span class="status-pill status-na">N/A</span>';
     }
 
     updateSummary();
 }
 
-function updateSummary() {
-    let normal = 0;
-    let defect = 0;
-    let na = 0;
+function updateSummary(){
+    let normal=0;
+    let defect=0;
+    let na=0;
 
-    checklistItems.forEach((item, index) => {
-        const no = index + 1;
-
-        if (document.getElementById("normal" + no)?.checked) normal++;
-        if (document.getElementById("defect" + no)?.checked) defect++;
-        if (document.getElementById("na" + no)?.checked) na++;
+    checklistItems.forEach((item,index)=>{
+        const no=index+1;
+        if(document.getElementById("normal"+no)?.checked)normal++;
+        if(document.getElementById("defect"+no)?.checked)defect++;
+        if(document.getElementById("na"+no)?.checked)na++;
     });
 
-    const total = checklistItems.length;
-    const checked = normal + defect + na;
-    const pending = total - checked;
-    const percent = Math.round((checked / total) * 100);
+    const total=checklistItems.length;
+    const checked=normal+defect+na;
+    const pending=total-checked;
+    const percent=Math.round((checked/total)*100);
 
-    document.getElementById("totalCount").textContent = total;
-    document.getElementById("normalCount").textContent = normal;
-    document.getElementById("defectCount").textContent = defect;
-    document.getElementById("naCount").textContent = na;
-    document.getElementById("pendingCount").textContent = pending;
+    document.getElementById("totalCount").textContent=total;
+    document.getElementById("normalCount").textContent=normal;
+    document.getElementById("defectCount").textContent=defect;
+    document.getElementById("naCount").textContent=na;
+    document.getElementById("pendingCount").textContent=pending;
 
-    document.getElementById("progressText").textContent = percent + "%";
-    document.getElementById("progressFill").style.width = percent + "%";
+    document.getElementById("progressText").textContent=percent+"%";
+    document.getElementById("progressFill").style.width=percent+"%";
 }
 
-function valid24Hour(time) {
+function valid24Hour(time){
     return /^([01]\d|2[0-3]):([0-5]\d)$/.test(time);
 }
 
-function calculateDuration() {
-    const start = document.getElementById("startTime").value;
-    const end = document.getElementById("endTime").value;
+function calculateDuration(){
+    const start=document.getElementById("startTime").value.trim();
+    const end=document.getElementById("endTime").value.trim();
 
-    if (!valid24Hour(start) || !valid24Hour(end)) {
-        return null;
-    }
+    if(!valid24Hour(start)||!valid24Hour(end))return null;
 
-    const [startHour, startMinute] = start.split(":").map(Number);
-    const [endHour, endMinute] = end.split(":").map(Number);
+    const [startHour,startMinute]=start.split(":").map(Number);
+    const [endHour,endMinute]=end.split(":").map(Number);
 
-    const startTotal = (startHour * 60) + startMinute;
-    const endTotal = (endHour * 60) + endMinute;
+    const startTotal=startHour*60+startMinute;
+    const endTotal=endHour*60+endMinute;
 
-    let duration = endTotal - startTotal;
-
-    // รองรับกรณีเวลาสิ้นสุดข้ามวัน
-    if (duration < 0) {
-        duration += 24 * 60;
-    }
+    let duration=endTotal-startTotal;
+    if(duration<0)duration+=24*60;
 
     return duration;
 }
 
-function updateDurationDisplay() {
-    const duration = calculateDuration();
-    const display = document.getElementById("workDuration");
+function updateDurationDisplay(){
+    const duration=calculateDuration();
+    const display=document.getElementById("totalMinutes");
 
-    if (!display) return;
-
-    display.value = duration === null
-        ? ""
-        : duration + " นาที";
+    display.value=duration===null?"":duration+" นาที";
 }
 
-function format24Hour(input) {
-    let digits = input.value.replace(/[^0-9]/g, "").slice(0, 4);
+function format24Hour(input){
+    let digits=input.value.replace(/[^0-9]/g,"").slice(0,4);
 
-    if (digits.length > 2) {
-        input.value = digits.slice(0, 2) + ":" + digits.slice(2);
-    } else {
-        input.value = digits;
+    if(digits.length>2){
+        input.value=digits.slice(0,2)+":"+digits.slice(2);
+    }else{
+        input.value=digits;
     }
 
     updateDurationDisplay();
 }
 
-function getChecklistResults() {
-    return checklistItems.map((item, index) => {
-        const no = index + 1;
-        let result = "ยังไม่ตรวจ";
+function getChecklistResults(){
+    return checklistItems.map((item,index)=>{
+        const no=index+1;
+        let result="ยังไม่ตรวจ";
 
-        if (document.getElementById("normal" + no).checked) {
-            result = "ปกติ";
-        } else if (document.getElementById("defect" + no).checked) {
-            result = "ผิดปกติ";
-        } else if (document.getElementById("na" + no).checked) {
-            result = "N/A";
+        if(document.getElementById("normal"+no).checked){
+            result="ปกติ";
+        }else if(document.getElementById("defect"+no).checked){
+            result="ผิดปกติ";
+        }else if(document.getElementById("na"+no).checked){
+            result="N/A";
         }
 
-        return { no, item, result };
+        return {no,item,result};
     });
 }
 
-async function saveChecklist() {
-    if (saving) return;
+async function saveChecklist(){
+    if(saving)return;
 
-    if (!databaseReady || !supabaseClient) {
+    if(!databaseReady||!supabaseClient){
         alert("ยังไม่ได้เชื่อมต่อ Supabase กรุณาตรวจสอบการตั้งค่า");
         return;
     }
 
-    if (!partLoaded) {
+    if(!partLoaded){
         alert("ยังโหลดข้อมูล PART ไม่สำเร็จ กรุณาตรวจสอบ PART NUMBER ก่อนบันทึก");
         return;
     }
 
-    const saveButton = document.getElementById("saveButton");
-    const resetButton = document.getElementById("resetButton");
+    const saveButton=document.getElementById("saveButton");
+    const resetButton=document.getElementById("resetButton");
 
-    const partNo = document.getElementById("partNo").value.trim();
+    const partNo=document.getElementById("partNo").value.trim();
 
-    if (!partNo) {
+    if(!partNo){
         alert("ไม่พบ PART NUMBER กรุณาตรวจสอบ QR Code");
         return;
     }
 
-    const startTime = document.getElementById("startTime").value.trim();
-    const endTime = document.getElementById("endTime").value.trim();
+    const startTime=document.getElementById("startTime").value.trim();
+    const endTime=document.getElementById("endTime").value.trim();
 
-    let durationMinutes = null;
+    let durationMinutes=null;
 
-    if (startTime || endTime) {
-        if (!startTime || !endTime) {
+    if(startTime||endTime){
+        if(!startTime||!endTime){
             alert("กรุณากรอกเวลาเริ่มต้นและเวลาสิ้นสุดให้ครบ");
             return;
         }
 
-        durationMinutes = calculateDuration(startTime, endTime);
+        durationMinutes=calculateDuration();
 
-        if (durationMinutes === null) {
+        if(durationMinutes===null){
             alert("รูปแบบเวลาไม่ถูกต้อง กรุณากรอกเวลาแบบ 24 ชั่วโมง เช่น 08:30");
             return;
         }
     }
 
-    const results = getChecklistResults();
+    const results=getChecklistResults();
 
-    const normalCount = results.filter(x => x.result === "ปกติ").length;
-    const defectCount = results.filter(x => x.result === "ผิดปกติ").length;
-    const naCount = results.filter(x => x.result === "N/A").length;
-    const pendingCount = results.filter(x => x.result === "ยังไม่ตรวจ").length;
+    const normalCount=results.filter(x=>x.result==="ปกติ").length;
+    const defectCount=results.filter(x=>x.result==="ผิดปกติ").length;
+    const naCount=results.filter(x=>x.result==="N/A").length;
+    const pendingCount=results.filter(x=>x.result==="ยังไม่ตรวจ").length;
 
-    if (pendingCount > 0) {
-        const confirmSave = confirm(
+    if(pendingCount>0){
+        const confirmSave=confirm(
             `ยังมีรายการที่ไม่ได้ตรวจ ${pendingCount} รายการ\n\nต้องการบันทึกข้อมูลต่อหรือไม่?`
         );
-
-        if (!confirmSave) return;
+        if(!confirmSave)return;
     }
 
-    const remarks = document.getElementById("remarks").value.trim();
+    const remarks=document.getElementById("remarks").value.trim();
 
-    if (defectCount > 0 && !remarks) {
-        const confirmNoRemark = confirm(
+    if(defectCount>0&&!remarks){
+        const confirmNoRemark=confirm(
             `พบรายการผิดปกติ ${defectCount} รายการ แต่ยังไม่ได้กรอกรายละเอียดใน Remarks\n\nต้องการบันทึกต่อหรือไม่?`
         );
-
-        if (!confirmNoRemark) return;
+        if(!confirmNoRemark)return;
     }
 
-    const passedShotsValue = document.getElementById("passedShots").value.trim();
+    const passedShotsValue=document.getElementById("passedShots").value.trim();
 
-    if (
-        passedShotsValue !== "" &&
-        (!Number.isFinite(Number(passedShotsValue)) || Number(passedShotsValue) < 0)
-    ) {
+    if(
+        passedShotsValue!==""&&
+        (!Number.isFinite(Number(passedShotsValue))||Number(passedShotsValue)<0)
+    ){
         alert("กรุณากรอก Passed Shots เป็นตัวเลขตั้งแต่ 0 ขึ้นไป");
         return;
     }
 
-    const record = {
-        part_no: partNo,
-        customer: document.getElementById("customer").value,
-        process: document.getElementById("process").value,
+    const record={
+        part_no:partNo,
+        customer:document.getElementById("customer").value,
+        process:document.getElementById("process").value,
+        check_date:document.getElementById("checkDate").value,
+        start_time:startTime||null,
+        end_time:endTime||null,
+        work_duration:durationMinutes===null?null:String(durationMinutes),
+        passed_shots:passedShotsValue===""?null:Number(passedShotsValue),
 
-        check_date: document.getElementById("checkDate").value,
-        start_time: startTime || null,
-        end_time: endTime || null,
+        pm_plan:document.getElementById("pmPlan").checked,
+        pm_tool:document.getElementById("pmTool").checked,
 
-        work_duration:
-            durationMinutes === null ? null : String(durationMinutes),
+        die_prog:document.getElementById("dieProg").checked,
+        die_single:document.getElementById("dieSingle").checked,
+        die_comp:document.getElementById("dieComp").checked,
 
-        passed_shots: passedShotsValue === "" ? null : Number(passedShotsValue),
+        plate_new:document.getElementById("plateNew").checked,
+        plate_old:document.getElementById("plateOld").checked,
 
-        pm_plan: document.getElementById("pmPlan").checked,
-        pm_tool: document.getElementById("pmTool").checked,
+        results:results,
+        normal_count:normalCount,
+        defect_count:defectCount,
+        na_count:naCount,
+        pending_count:pendingCount,
 
-        die_prog: document.getElementById("dieProg").checked,
-        die_single: document.getElementById("dieSingle").checked,
-        die_comp: document.getElementById("dieComp").checked,
-
-        plate_new: document.getElementById("plateNew").checked,
-        plate_old: document.getElementById("plateOld").checked,
-
-        results: results,
-
-        normal_count: normalCount,
-        defect_count: defectCount,
-        na_count: naCount,
-        pending_count: pendingCount,
-
-        remarks: remarks || null,
-        checked_by: document.getElementById("checkedBy").value.trim() || null,
-        approved_by: document.getElementById("approvedBy").value.trim() || null
+        remarks:remarks||null,
+        checked_by:document.getElementById("checkedBy").value.trim()||null,
+        approved_by:document.getElementById("approvedBy").value.trim()||null
     };
 
-    try {
-        saving = true;
-        saveButton.disabled = true;
-        resetButton.disabled = true;
-        saveButton.textContent = "กำลังบันทึกข้อมูล...";
+    try{
+        saving=true;
+        saveButton.disabled=true;
+        resetButton.disabled=true;
+        saveButton.textContent="กำลังบันทึกข้อมูล...";
 
-        const { data, error } = await supabaseClient
+        const {data,error}=await supabaseClient
             .from("mold_checklists")
             .insert([record])
             .select();
 
-        if (error) throw error;
+        if(error)throw error;
 
-        console.log("Saved mold checklist:", data);
+        console.log("Saved mold checklist:",data);
 
         alert(
-            "บันทึกผลการตรวจสอบเรียบร้อยแล้ว\n\n" +
-            "PART: " + partNo + "\n" +
-            "ปกติ: " + normalCount + " รายการ\n" +
-            "ผิดปกติ: " + defectCount + " รายการ\n" +
-            "N/A: " + naCount + " รายการ\n" +
-            "ยังไม่ตรวจ: " + pendingCount + " รายการ\n" +
-            "ระยะเวลา: " +
-            (durationMinutes === null ? "ไม่ได้ระบุ" : durationMinutes + " นาที") +
+            "บันทึกผลการตรวจสอบเรียบร้อยแล้ว\n\n"+
+            "PART: "+partNo+"\n"+
+            "ปกติ: "+normalCount+" รายการ\n"+
+            "ผิดปกติ: "+defectCount+" รายการ\n"+
+            "N/A: "+naCount+" รายการ\n"+
+            "ยังไม่ตรวจ: "+pendingCount+" รายการ\n"+
+            "ระยะเวลา: "+
+            (durationMinutes===null?"ไม่ได้ระบุ":durationMinutes+" นาที")+
             "\n\nกำลังเปิดหน้าประวัติการตรวจสอบ..."
         );
 
-        // ไปหน้าประวัติ Checklist แยกจาก Daily Report
-        window.location.href = "mold-history.html";
+        window.location.href="mold-history.html";
 
-    } catch (error) {
-        console.error("Save checklist error:", error);
+    }catch(error){
+        console.error("Save checklist error:",error);
 
         alert(
-            "บันทึกข้อมูลไม่สำเร็จ\n\n" +
-            error.message +
+            "บันทึกข้อมูลไม่สำเร็จ\n\n"+
+            error.message+
             "\n\nกรุณาตรวจสอบการเชื่อมต่อ Supabase และตาราง mold_checklists"
         );
 
-        saving = false;
-        saveButton.disabled = false;
-        resetButton.disabled = false;
-        saveButton.textContent = "💾 บันทึกผลการตรวจสอบ";
+        saving=false;
+        saveButton.disabled=false;
+        resetButton.disabled=false;
+        saveButton.textContent="💾 บันทึกผลการตรวจสอบ";
     }
 }
 
-function resetChecklist() {
-    if (saving) return;
+function resetChecklist(){
+    if(saving)return;
 
-    if (!confirm("ต้องการล้างข้อมูลที่กรอกทั้งหมดหรือไม่?")) {
-        return;
-    }
+    if(!confirm("ต้องการล้างข้อมูลที่กรอกทั้งหมดหรือไม่?"))return;
 
-    document.querySelectorAll('input[type="checkbox"]').forEach(input => {
-        input.checked = false;
+    document.querySelectorAll('input[type="checkbox"]').forEach(input=>{
+        input.checked=false;
     });
 
     document.querySelectorAll(
-        'input:not([readonly]):not([type="checkbox"]), textarea'
-    ).forEach(input => {
-        input.value = "";
+        'input:not([readonly]):not([type="checkbox"]),textarea'
+    ).forEach(input=>{
+        input.value="";
     });
 
-    checklistItems.forEach((item, index) => {
-        const no = index + 1;
-
-        document.getElementById("status" + no).innerHTML =
+    checklistItems.forEach((item,index)=>{
+        const no=index+1;
+        document.getElementById("status"+no).innerHTML=
             '<span class="status-pill status-pending">ยังไม่ตรวจ</span>';
     });
 
@@ -1248,31 +1356,25 @@ function resetChecklist() {
     updateSummary();
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
+document.addEventListener("DOMContentLoaded",async function(){
     createChecklist();
 
-    const today = new Date();
-    const d = String(today.getDate()).padStart(2, "0");
-    const m = String(today.getMonth() + 1).padStart(2, "0");
-    const y = String(today.getFullYear()).slice(-2);
+    const today=new Date();
+    const d=String(today.getDate()).padStart(2,"0");
+    const m=String(today.getMonth()+1).padStart(2,"0");
+    const y=String(today.getFullYear()).slice(-2);
 
-    document.getElementById("checkDate").value = `${d}/${m}/${y}`;
+    document.getElementById("checkDate").value=`${d}/${m}/${y}`;
 
-    document.getElementById("startTime").addEventListener(
-        "input",
-        function() {
-            format24Hour(this);
-        }
-    );
+    document.getElementById("startTime").addEventListener("input",function(){
+        format24Hour(this);
+    });
 
-    document.getElementById("endTime").addEventListener(
-        "input",
-        function() {
-            format24Hour(this);
-        }
-    );
+    document.getElementById("endTime").addEventListener("input",function(){
+        format24Hour(this);
+    });
 
-    if (initializeSupabase()) {
+    if(initializeSupabase()){
         await loadPartData();
     }
 });
