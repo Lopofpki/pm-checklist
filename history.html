@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ประวัติ Daily Report | TNC</title>
+<title>Mold Checklist History | TNC</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -12,12 +13,13 @@
     --navy:#20364d;
     --navy-dark:#172a3d;
     --blue:#2878bd;
-    --green:#219653;
+    --green:#198754;
     --red:#dc3545;
-    --orange:#d18b18;
+    --orange:#d97706;
+    --gray:#64748b;
     --bg:#f3f6fa;
-    --line:#dce3eb;
-    --text:#243447;
+    --line:#dce4ed;
+    --text:#263648;
     --muted:#718096;
 }
 
@@ -27,65 +29,79 @@ body {
     margin:0;
     padding:20px;
     background:var(--bg);
-    font-family:Arial,"Noto Sans Thai",sans-serif;
     color:var(--text);
+    font-family:Arial,"Tahoma",sans-serif;
 }
 
-.wrap {
+.container {
     max-width:1700px;
     margin:auto;
 }
 
 .header,.panel {
-    background:white;
-    padding:20px;
+    background:#fff;
+    border:1px solid var(--line);
     border-radius:13px;
-    box-shadow:0 3px 14px #20364d12;
+    padding:20px;
     margin-bottom:16px;
+    box-shadow:0 4px 16px rgba(24,48,75,.06);
 }
 
 .header {
-    border-top:5px solid var(--navy);
+    background:linear-gradient(135deg,var(--navy-dark),#315779);
+    color:white;
+    border:0;
 }
 
-h1 {
-    font-size:23px;
-    margin:0 0 5px;
-    color:var(--navy);
+.header h1 {
+    font-size:22px;
+    margin:0 0 6px;
 }
 
-.sub {
-    color:var(--muted);
+.header p {
     font-size:13px;
+    color:#d8e5f2;
+    margin:0;
+}
+
+.header-tag {
+    display:inline-block;
+    margin-top:12px;
+    padding:7px 12px;
+    border-radius:7px;
+    background:#ffffff20;
+    border:1px solid #ffffff35;
+    font-size:12px;
+    font-weight:bold;
 }
 
 .tools {
     display:flex;
     gap:10px;
     flex-wrap:wrap;
-    margin-top:17px;
     align-items:end;
+    margin-top:16px;
 }
 
 .field {
     display:flex;
     flex-direction:column;
     gap:6px;
-    font-size:13px;
-    font-weight:600;
-    min-width:160px;
     flex:1;
+    min-width:160px;
+    font-size:12px;
+    font-weight:bold;
 }
 
 input {
     width:100%;
     min-width:0;
     padding:10px 12px;
-    border:1px solid #cbd5df;
+    border:1px solid #cbd5e1;
     border-radius:7px;
     font:inherit;
     outline:none;
-    background:white;
+    background:#fff;
 }
 
 input:focus {
@@ -96,69 +112,76 @@ input:focus {
 .btn {
     border:0;
     border-radius:7px;
-    padding:10px 15px;
+    padding:11px 15px;
     color:white;
-    font-weight:700;
-    cursor:pointer;
     background:var(--blue);
+    font-weight:bold;
     font-size:13px;
+    cursor:pointer;
     transition:.2s;
 }
 
-.btn:hover {
-    filter:brightness(.93);
-    transform:translateY(-1px);
-}
-
-.btn:disabled {
-    opacity:.5;
-    cursor:not-allowed;
-    transform:none;
-}
+.btn:hover { filter:brightness(.93); }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
 
 .green { background:var(--green); }
 .gray { background:#64748b; }
 .dark { background:var(--navy); }
-.orange { background:var(--orange); }
 
 .stats {
     display:grid;
-    grid-template-columns:repeat(3,minmax(150px,1fr));
-    gap:12px;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:10px;
 }
 
 .stat {
+    padding:13px;
+    border-radius:9px;
     background:#f1f6fb;
     border:1px solid #e3ebf3;
-    padding:14px 16px;
-    border-radius:9px;
 }
 
-.stat-label {
-    font-size:13px;
-    color:#64748b;
+.stat span {
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:6px;
 }
 
-.stat-value {
-    font-size:25px;
-    font-weight:800;
+.stat strong {
+    font-size:24px;
     color:var(--navy);
-    margin-top:4px;
 }
 
-.stat.done {
+.stat.normal {
     background:#edf9f1;
     border-color:#d3eddd;
 }
+.stat.normal strong { color:var(--green); }
 
-.stat.done .stat-value { color:var(--green); }
+.stat.defect {
+    background:#fff0f0;
+    border-color:#f3d1d1;
+}
+.stat.defect strong { color:var(--red); }
+
+.stat.na {
+    background:#f1f5f9;
+}
+.stat.na strong { color:var(--gray); }
 
 .stat.pending {
     background:#fff8e9;
     border-color:#f3e4bd;
 }
+.stat.pending strong { color:var(--orange); }
 
-.stat.pending .stat-value { color:var(--orange); }
+.section-title {
+    font-size:16px;
+    color:var(--navy);
+    font-weight:bold;
+    margin:0 0 14px;
+}
 
 .table-heading {
     display:flex;
@@ -170,33 +193,32 @@ input:focus {
 }
 
 .table-heading h2 {
-    margin:0;
-    font-size:17px;
+    font-size:16px;
     color:var(--navy);
+    margin:0;
 }
 
-.result-info {
+.info {
     color:var(--muted);
     font-size:12px;
 }
 
 .table-wrap {
     overflow:auto;
-    background:white;
-    border-radius:12px;
-    box-shadow:0 3px 14px #20364d12;
     border:1px solid var(--line);
+    border-radius:10px;
+    background:white;
 }
 
 table {
-    border-collapse:collapse;
     width:100%;
     min-width:1500px;
+    border-collapse:collapse;
 }
 
 th,td {
-    border-bottom:1px solid var(--line);
     padding:10px 9px;
+    border-bottom:1px solid var(--line);
     text-align:center;
     font-size:12px;
     white-space:nowrap;
@@ -208,36 +230,51 @@ th {
     position:sticky;
     top:0;
     z-index:2;
-    font-weight:700;
 }
 
 tbody tr:nth-child(even) { background:#f8fafc; }
 tbody tr:hover { background:#edf5fc; }
 
-.done {
-    color:var(--green);
+.part {
+    font-weight:bold;
+    color:var(--navy);
+}
+
+.number {
     font-weight:bold;
 }
 
-.pending {
-    color:var(--orange);
+.normal-text { color:var(--green); }
+.defect-text { color:var(--red); }
+.na-text { color:var(--gray); }
+.pending-text { color:var(--orange); }
+
+.pill {
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:11px;
     font-weight:bold;
 }
+
+.pill-good { background:#eaf7ef; color:#198754; }
+.pill-bad { background:#fff0f0; color:#dc3545; }
+.pill-neutral { background:#f1f5f9; color:#475569; }
+.pill-pending { background:#fff7e6; color:#b7791f; }
 
 .view-btn {
+    padding:7px 11px;
+    border-radius:6px;
+    border:1px solid #c9def1;
     background:#e7f1fb;
     color:#2167a4;
-    border:1px solid #c9def1;
-    padding:6px 11px;
-    border-radius:6px;
     cursor:pointer;
-    font-weight:700;
-    font-size:12px;
+    font-weight:bold;
 }
 
 .view-btn:hover { background:#d8eafa; }
 
-.empty,.loading {
+.loading,.empty {
     text-align:center;
     padding:35px;
     color:var(--muted);
@@ -247,36 +284,25 @@ tbody tr:hover { background:#edf5fc; }
 
 .error {
     display:none;
-    background:#fff0f0;
-    border:1px solid #f3b5b5;
-    color:#b42318;
+    margin-top:13px;
     padding:12px;
     border-radius:8px;
-    margin-top:14px;
+    color:#b42318;
+    background:#fff0f0;
+    border:1px solid #f3b5b5;
     font-size:13px;
     overflow-wrap:anywhere;
 }
 
-.success-msg {
-    display:none;
-    background:#edf9f1;
-    border:1px solid #c9ead5;
-    color:#168044;
-    padding:10px;
-    border-radius:8px;
-    margin-top:12px;
-    font-size:13px;
-}
-
-/* DETAIL MODAL */
+/* MODAL */
 
 .modal {
     display:none;
     position:fixed;
     inset:0;
-    background:#0b1929a8;
     z-index:1000;
-    padding:20px;
+    background:#0b1929a8;
+    padding:15px;
     overflow:auto;
     align-items:center;
     justify-content:center;
@@ -287,8 +313,8 @@ tbody tr:hover { background:#edf5fc; }
 .modal-box {
     background:white;
     width:100%;
-    max-width:850px;
-    max-height:90vh;
+    max-width:950px;
+    max-height:92vh;
     overflow:auto;
     border-radius:13px;
     box-shadow:0 15px 50px #0003;
@@ -297,14 +323,13 @@ tbody tr:hover { background:#edf5fc; }
 .modal-header {
     background:var(--navy);
     color:white;
-    padding:17px 20px;
+    padding:16px 20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:10px;
     position:sticky;
     top:0;
-    z-index:2;
+    z-index:5;
 }
 
 .modal-header h2 {
@@ -313,107 +338,116 @@ tbody tr:hover { background:#edf5fc; }
 }
 
 .close-btn {
-    background:#ffffff20;
-    color:white;
-    border:0;
-    border-radius:6px;
     width:32px;
     height:32px;
+    border:0;
+    border-radius:6px;
+    background:#ffffff25;
+    color:white;
+    font-size:20px;
     cursor:pointer;
-    font-size:19px;
 }
 
-.modal-content { padding:20px; }
+.modal-content { padding:18px; }
 
 .detail-grid {
     display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:12px;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;
+    margin-bottom:18px;
 }
 
 .detail-item {
     background:#f5f8fb;
     border:1px solid #e6edf4;
-    border-radius:8px;
     padding:11px;
+    border-radius:8px;
     min-width:0;
 }
 
 .detail-item.full { grid-column:1/-1; }
 
 .detail-label {
-    font-size:11px;
     color:var(--muted);
+    font-size:11px;
     margin-bottom:5px;
 }
 
 .detail-value {
-    font-size:14px;
-    font-weight:600;
+    font-size:13px;
+    font-weight:bold;
     overflow-wrap:anywhere;
 }
 
-.modal-actions {
-    display:flex;
-    justify-content:flex-end;
-    margin-top:18px;
+.detail-section {
+    font-size:15px;
+    font-weight:bold;
+    color:var(--navy);
+    margin:17px 0 10px;
 }
 
-@media(max-width:700px) {
+.result-table {
+    min-width:600px;
+}
+
+.result-table th {
+    position:static;
+}
+
+.result-table td {
+    text-align:left;
+}
+
+.modal-footer {
+    display:flex;
+    justify-content:flex-end;
+    padding-top:16px;
+}
+
+@media(max-width:900px) {
+    .stats { grid-template-columns:repeat(3,1fr); }
+}
+
+@media(max-width:600px) {
     body { padding:10px; }
-
     .header,.panel { padding:14px; }
+    .header h1 { font-size:19px; }
+    .stats { grid-template-columns:repeat(2,1fr); }
+    .stat strong { font-size:21px; }
+    .tools .btn { flex:1; }
+    .field { min-width:100%; }
+    .detail-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .detail-item.full { grid-column:1/-1; }
+    .modal { padding:8px; }
+}
 
-    h1 { font-size:19px; }
-
-    .stats {
-        grid-template-columns:1fr;
-        gap:8px;
-    }
-
-    .stat {
-        padding:10px 13px;
-    }
-
-    .stat-value { font-size:21px; }
-
-    .tools .btn {
-        flex:1;
-    }
-
-    .tools .field {
-        min-width:100%;
-    }
-
-    .detail-grid {
-        grid-template-columns:1fr;
-    }
-
+@media(max-width:380px) {
+    .detail-grid { grid-template-columns:1fr; }
     .detail-item.full { grid-column:auto; }
-
-    .modal { padding:10px; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="wrap">
+<div class="container">
 
 <header class="header">
+    <h1>🔧 DIE Preventive Check List</h1>
+    <p>ประวัติการตรวจสอบสภาพแม่พิมพ์ | TNC Maintenance</p>
+    <div class="header-tag">MOLD CHECKLIST HISTORY</div>
+</header>
 
-    <h1>ประวัติ Die Maintenance Daily Report</h1>
+<section class="panel">
 
-    <div class="sub">
-        TNC · ระบบประวัติการซ่อมบำรุงแม่พิมพ์
-    </div>
+    <h2 class="section-title">🔍 ค้นหาประวัติการตรวจสอบ</h2>
 
     <div class="tools">
 
         <label class="field">
             ค้นหาข้อมูล
             <input id="search" type="search"
-            placeholder="ลูกค้า / Part No. / ผู้ซ่อม / รายละเอียด">
+                placeholder="Part No. / Customer / Process / ผู้ตรวจ">
         </label>
 
         <label class="field">
@@ -426,54 +460,60 @@ tbody tr:hover { background:#edf5fc; }
             <input id="toDate" type="date">
         </label>
 
-        <button class="btn" id="filterBtn" type="button">
-            🔍 ค้นหา
-        </button>
-
-        <button class="btn gray" id="resetBtn" type="button">
-            ล้างตัวกรอง
-        </button>
+        <button class="btn" id="filterBtn">🔍 ค้นหา</button>
+        <button class="btn gray" id="resetBtn">ล้างตัวกรอง</button>
 
     </div>
 
-    <div id="errorBox" class="error"></div>
-    <div id="successBox" class="success-msg"></div>
+    <div class="error" id="errorBox"></div>
 
-</header>
+</section>
 
 
 <section class="panel">
 
+    <h2 class="section-title">📊 สรุปผลการตรวจสอบ</h2>
+
     <div class="stats">
 
         <div class="stat">
-            <div class="stat-label">รายการที่แสดง</div>
-            <div class="stat-value" id="count">0</div>
+            <span>รายการตรวจสอบ</span>
+            <strong id="count">0</strong>
         </div>
 
-        <div class="stat done">
-            <div class="stat-label">เสร็จแล้ว</div>
-            <div class="stat-value" id="doneCount">0</div>
+        <div class="stat normal">
+            <span>ปกติ / NORMAL</span>
+            <strong id="normalCount">0</strong>
+        </div>
+
+        <div class="stat defect">
+            <span>ผิดปกติ / DEFECT</span>
+            <strong id="defectCount">0</strong>
+        </div>
+
+        <div class="stat na">
+            <span>N/A</span>
+            <strong id="naCount">0</strong>
         </div>
 
         <div class="stat pending">
-            <div class="stat-label">ยังไม่เสร็จ</div>
-            <div class="stat-value" id="pendingCount">0</div>
+            <span>ยังไม่ตรวจ / PENDING</span>
+            <strong id="pendingCount">0</strong>
         </div>
 
     </div>
 
     <div class="tools">
 
-        <button class="btn green" id="exportBtn" type="button">
+        <button class="btn green" id="exportBtn">
             ⬇ ส่งออก CSV
         </button>
 
-        <button class="btn dark" id="backBtn" type="button">
-            ＋ กลับไปหน้าบันทึก
+        <button class="btn dark" id="backBtn">
+            ↩ กลับหน้าก่อนหน้า
         </button>
 
-        <button class="btn gray" id="refreshBtn" type="button">
+        <button class="btn gray" id="refreshBtn">
             ↻ โหลดข้อมูลใหม่
         </button>
 
@@ -485,44 +525,43 @@ tbody tr:hover { background:#edf5fc; }
 <section class="panel">
 
     <div class="table-heading">
-        <h2>รายการประวัติการซ่อม</h2>
-        <div class="result-info" id="resultInfo">
-            กำลังโหลดข้อมูล...
-        </div>
+        <h2>📋 ประวัติการตรวจสอบแม่พิมพ์</h2>
+        <span class="info" id="resultInfo">กำลังโหลดข้อมูล...</span>
     </div>
 
     <div class="table-wrap">
 
         <table>
-
             <thead>
                 <tr>
                     <th>#</th>
                     <th>วันที่</th>
-                    <th>ลูกค้า</th>
                     <th>Part No.</th>
+                    <th>Customer</th>
                     <th>Process</th>
-                    <th>สาเหตุการซ่อม</th>
-                    <th>สาเหตุปัญหา</th>
-                    <th>รายละเอียดการซ่อม</th>
-                    <th>ผู้ซ่อม</th>
+                    <th>Passed Shots</th>
+                    <th>PM Type</th>
+                    <th>Die Type</th>
+                    <th>Normal</th>
+                    <th>Defect</th>
+                    <th>N/A</th>
+                    <th>Pending</th>
                     <th>เวลาเริ่ม</th>
-                    <th>เวลาเสร็จ</th>
-                    <th>รวมเวลา</th>
-                    <th>สถานะ</th>
-                    <th>หมายเหตุ</th>
+                    <th>เวลาสิ้นสุด</th>
+                    <th>ระยะเวลา</th>
+                    <th>ผู้ตรวจ</th>
+                    <th>ผู้อนุมัติ</th>
                     <th>รายละเอียด</th>
                 </tr>
             </thead>
 
             <tbody id="historyBody">
                 <tr>
-                    <td colspan="15" class="loading">
+                    <td colspan="18" class="loading">
                         กำลังโหลดข้อมูลจาก Supabase...
                     </td>
                 </tr>
             </tbody>
-
         </table>
 
     </div>
@@ -539,18 +578,44 @@ tbody tr:hover { background:#edf5fc; }
     <div class="modal-box">
 
         <div class="modal-header">
-            <h2>รายละเอียด Daily Report</h2>
+            <h2>รายละเอียดผลการตรวจสอบ</h2>
             <button class="close-btn" id="closeModal">×</button>
         </div>
 
         <div class="modal-content">
-            <div class="detail-grid" id="detailContent"></div>
 
-            <div class="modal-actions">
-                <button class="btn gray" id="closeModal2">
-                    ปิดหน้าต่าง
-                </button>
+            <div class="detail-grid" id="detailInfo"></div>
+
+            <div class="detail-section">
+                รายการตรวจสอบทั้ง 32 รายการ
             </div>
+
+            <div class="table-wrap">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th style="width:60px">NO.</th>
+                            <th>รายการตรวจสอบ</th>
+                            <th style="width:130px">ผลตรวจ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailResults"></tbody>
+                </table>
+            </div>
+
+            <div class="detail-section">
+                หมายเหตุ / REMARKS
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-value" id="detailRemarks"
+                    style="white-space:pre-wrap;font-weight:normal"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn gray" id="closeModal2">ปิดหน้าต่าง</button>
+            </div>
+
         </div>
 
     </div>
@@ -568,13 +633,16 @@ tbody tr:hover { background:#edf5fc; }
 const SUPABASE_URL =
 "https://enmzfxdswzhatvcenrds.supabase.co";
 
-const SUPABASE_ANON_KEY =
+const SUPABASE_KEY =
 "sb_publishable_DkoWB0IDDgodellT5vgcLQ_YdqIhKdI";
 
 const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_ANON_KEY
+    SUPABASE_KEY
 );
+
+let allRecords = [];
+let visibleRecords = [];
 
 
 /* =====================================
@@ -582,9 +650,6 @@ const supabaseClient = window.supabase.createClient(
 ===================================== */
 
 const body = document.getElementById("historyBody");
-
-let allRecords = [];
-let visibleRecords = [];
 
 
 /* =====================================
@@ -606,20 +671,7 @@ function safe(value) {
 
 
 /* =====================================
-   STATUS
-===================================== */
-
-function isDone(value) {
-    return value === true ||
-           value === 1 ||
-           value === "true" ||
-           value === "1" ||
-           value === "เสร็จแล้ว";
-}
-
-
-/* =====================================
-   DATE CONVERSION
+   DATE
 ===================================== */
 
 function normalizeDate(value) {
@@ -676,30 +728,95 @@ function displayDate(value) {
 
 
 /* =====================================
-   ERROR MESSAGE
+   RESULTS
 ===================================== */
 
-function showError(message) {
-    const box = document.getElementById("errorBox");
-    box.style.display = "block";
-    box.textContent = message;
+function parseResults(value) {
+
+    if (Array.isArray(value)) return value;
+
+    if (typeof value === "string") {
+        try {
+            const parsed = JSON.parse(value);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch {
+            return [];
+        }
+    }
+
+    return [];
 }
 
-function hideError() {
-    const box = document.getElementById("errorBox");
-    box.style.display = "none";
-    box.textContent = "";
+
+function resultClass(result) {
+
+    if (result === "ปกติ") return "pill-good";
+    if (result === "ผิดปกติ") return "pill-bad";
+    if (result === "N/A") return "pill-neutral";
+
+    return "pill-pending";
 }
 
-function showSuccess(message) {
-    const box = document.getElementById("successBox");
-    box.style.display = "block";
-    box.textContent = message;
+
+function resultText(result) {
+    return result || "ยังไม่ตรวจ";
 }
 
 
 /* =====================================
-   LOAD DATA
+   FLAGS
+===================================== */
+
+function getPM(record) {
+
+    const list = [];
+
+    if (record.pm_plan) list.push("PM Plan");
+    if (record.pm_tool) list.push("Tool Life");
+
+    return list.length ? list.join(" / ") : "-";
+}
+
+
+function getDie(record) {
+
+    const list = [];
+
+    if (record.die_prog) list.push("Progressive");
+    if (record.die_single) list.push("Single");
+    if (record.die_comp) list.push("Compound");
+
+    return list.length ? list.join(" / ") : "-";
+}
+
+
+function getPlate(record) {
+
+    const list = [];
+
+    if (record.plate_new) list.push("แม่พิมพ์ใหม่");
+    if (record.plate_old) list.push("แม่พิมพ์เก่า");
+
+    return list.length ? list.join(" / ") : "-";
+}
+
+
+function durationText(value) {
+
+    if (value === null || value === undefined || value === "") {
+        return "-";
+    }
+
+    const minutes = Number(value);
+
+    if (!Number.isFinite(minutes)) return String(value);
+
+    return `${minutes} นาที`;
+}
+
+
+/* =====================================
+   LOAD SUPABASE
 ===================================== */
 
 async function loadHistory() {
@@ -708,7 +825,7 @@ async function loadHistory() {
 
     body.innerHTML = `
         <tr>
-            <td colspan="15" class="loading">
+            <td colspan="18" class="loading">
                 กำลังโหลดข้อมูลจาก Supabase...
             </td>
         </tr>
@@ -719,7 +836,7 @@ async function loadHistory() {
     try {
 
         const { data, error } = await supabaseClient
-            .from("daily_reports")
+            .from("mold_checklists")
             .select("*")
             .order("created_at", { ascending:false });
 
@@ -729,12 +846,9 @@ async function loadHistory() {
 
         render();
 
-        document.getElementById("resultInfo").textContent =
-            `ข้อมูลทั้งหมด ${allRecords.length} รายการ`;
-
     } catch (error) {
 
-        console.error("Supabase Error:", error);
+        console.error("Mold History Error:", error);
 
         allRecords = [];
         visibleRecords = [];
@@ -743,8 +857,8 @@ async function loadHistory() {
 
         body.innerHTML = `
             <tr>
-                <td colspan="15" class="empty">
-                    โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบการเชื่อมต่อ
+                <td colspan="18" class="empty">
+                    โหลดข้อมูลไม่สำเร็จ
                 </td>
             </tr>
         `;
@@ -753,7 +867,7 @@ async function loadHistory() {
             "ไม่สามารถโหลดข้อมูลได้";
 
         showError(
-            "โหลดข้อมูลจาก Supabase ไม่สำเร็จ: " +
+            "โหลดข้อมูลจาก mold_checklists ไม่สำเร็จ: " +
             (error.message || "Unknown error")
         );
 
@@ -767,7 +881,7 @@ async function loadHistory() {
 
 
 /* =====================================
-   FILTER AND RENDER
+   FILTER
 ===================================== */
 
 function render() {
@@ -783,18 +897,19 @@ function render() {
 
         const haystack = [
 
-            record.customer,
             record.part_no,
+            record.customer,
             record.process,
-            record.cause_repair,
-            record.cause_problem,
-            record.repair_detail,
-            record.repaired_by,
-            record.remarks
+            record.checked_by,
+            record.approved_by,
+            record.remarks,
+            getPM(record),
+            getDie(record),
+            getPlate(record)
 
         ].join(" ").toLowerCase();
 
-        const date = normalizeDate(record.report_date);
+        const date = normalizeDate(record.check_date);
 
         const matchSearch = !q || haystack.includes(q);
         const matchFrom = !from || (date && date >= from);
@@ -813,8 +928,8 @@ function render() {
 
         body.innerHTML = `
             <tr>
-                <td colspan="15" class="empty">
-                    ไม่พบข้อมูลประวัติ
+                <td colspan="18" class="empty">
+                    ไม่พบประวัติการตรวจสอบ
                 </td>
             </tr>
         `;
@@ -822,51 +937,62 @@ function render() {
         return;
     }
 
-    body.innerHTML = visibleRecords.map((record,index) => `
+    body.innerHTML = visibleRecords.map((record,index) => {
 
+        const normal = Number(record.normal_count || 0);
+        const defect = Number(record.defect_count || 0);
+        const na = Number(record.na_count || 0);
+        const pending = Number(record.pending_count || 0);
+
+        return `
         <tr>
 
             <td>${index + 1}</td>
 
-            <td>${safe(displayDate(record.report_date))}</td>
+            <td>${safe(displayDate(record.check_date))}</td>
+
+            <td class="part">${safe(record.part_no || "-")}</td>
 
             <td>${safe(record.customer || "-")}</td>
 
-            <td><b>${safe(record.part_no || "-")}</b></td>
-
             <td>${safe(record.process || "-")}</td>
 
-            <td>${safe(record.cause_repair || "-")}</td>
+            <td>${safe(record.passed_shots ?? "-")}</td>
 
-            <td>${safe(record.cause_problem || "-")}</td>
+            <td>${safe(getPM(record))}</td>
 
-            <td>${safe(record.repair_detail || "-")}</td>
+            <td>${safe(getDie(record))}</td>
 
-            <td>${safe(record.repaired_by || "-")}</td>
+            <td class="number normal-text">${normal}</td>
+
+            <td class="number defect-text">${defect}</td>
+
+            <td class="number na-text">${na}</td>
+
+            <td class="number pending-text">${pending}</td>
 
             <td>${safe(record.start_time || "-")}</td>
 
             <td>${safe(record.end_time || "-")}</td>
 
-            <td>${safe(record.work_duration || "-")}</td>
+            <td>${safe(durationText(record.work_duration))}</td>
 
-            <td class="${isDone(record.status_done) ? "done" : "pending"}">
-                ${isDone(record.status_done) ? "เสร็จแล้ว" : "ยังไม่เสร็จ"}
-            </td>
+            <td>${safe(record.checked_by || "-")}</td>
 
-            <td>${safe(record.remarks || "-")}</td>
+            <td>${safe(record.approved_by || "-")}</td>
 
             <td>
                 <button class="view-btn"
                     type="button"
                     data-index="${index}">
-                    ดูข้อมูล
+                    ดูรายละเอียด
                 </button>
             </td>
 
         </tr>
+        `;
 
-    `).join("");
+    }).join("");
 
 }
 
@@ -877,67 +1003,115 @@ function render() {
 
 function updateStats() {
 
+    const sum = key => visibleRecords.reduce(
+        (total,record) => total + Number(record[key] || 0),
+        0
+    );
+
     document.getElementById("count").textContent =
         visibleRecords.length;
 
-    document.getElementById("doneCount").textContent =
-        visibleRecords.filter(r => isDone(r.status_done)).length;
+    document.getElementById("normalCount").textContent =
+        sum("normal_count");
+
+    document.getElementById("defectCount").textContent =
+        sum("defect_count");
+
+    document.getElementById("naCount").textContent =
+        sum("na_count");
 
     document.getElementById("pendingCount").textContent =
-        visibleRecords.filter(r => !isDone(r.status_done)).length;
+        sum("pending_count");
 
 }
 
 
 /* =====================================
-   VIEW DETAIL
+   DETAIL MODAL
 ===================================== */
 
 function openDetail(record) {
 
     const fields = [
 
-        ["วันที่", displayDate(record.report_date)],
-        ["ลูกค้า", record.customer],
-        ["Part No.", record.part_no],
+        ["วันที่ตรวจสอบ", displayDate(record.check_date)],
+        ["Part Number", record.part_no],
+        ["Customer", record.customer],
         ["Process", record.process],
-        ["สาเหตุการซ่อม", record.cause_repair],
-        ["สาเหตุปัญหา", record.cause_problem],
-        ["รายละเอียดการซ่อม", record.repair_detail],
-        ["ผู้ซ่อม", record.repaired_by],
+        ["Passed Shots", record.passed_shots],
+        ["PM Type", getPM(record)],
+        ["Die Type", getDie(record)],
+        ["สภาพแม่พิมพ์", getPlate(record)],
         ["เวลาเริ่ม", record.start_time],
-        ["เวลาเสร็จ", record.end_time],
-        ["รวมเวลา", record.work_duration],
-        ["สถานะ", isDone(record.status_done) ? "เสร็จแล้ว" : "ยังไม่เสร็จ"],
-        ["หมายเหตุ", record.remarks]
+        ["เวลาสิ้นสุด", record.end_time],
+        ["ระยะเวลา", durationText(record.work_duration)],
+        ["ผู้ตรวจสอบ", record.checked_by],
+        ["ผู้อนุมัติ", record.approved_by],
+        ["Normal", record.normal_count],
+        ["Defect", record.defect_count],
+        ["N/A", record.na_count],
+        ["Pending", record.pending_count]
 
     ];
 
-    document.getElementById("detailContent").innerHTML =
+    document.getElementById("detailInfo").innerHTML =
         fields.map(([label,value]) => `
-
-            <div class="detail-item ${label === "รายละเอียดการซ่อม" || label === "หมายเหตุ" ? "full" : ""}">
-
+            <div class="detail-item">
                 <div class="detail-label">${safe(label)}</div>
-
-                <div class="detail-value">${safe(value || "-")}</div>
-
+                <div class="detail-value">${safe(value ?? "-")}</div>
             </div>
-
         `).join("");
+
+    const results = parseResults(record.results);
+
+    if (!results.length) {
+
+        document.getElementById("detailResults").innerHTML = `
+            <tr>
+                <td colspan="3" style="text-align:center">
+                    ไม่พบรายละเอียดผลตรวจ
+                </td>
+            </tr>
+        `;
+
+    } else {
+
+        document.getElementById("detailResults").innerHTML =
+            results.map(item => {
+
+                const result = resultText(item.result);
+
+                return `
+                    <tr>
+                        <td>${safe(item.no ?? "-")}</td>
+                        <td>${safe(item.item || "-")}</td>
+                        <td>
+                            <span class="pill ${resultClass(result)}">
+                                ${safe(result)}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+
+            }).join("");
+
+    }
+
+    document.getElementById("detailRemarks").textContent =
+        record.remarks || "-";
 
     document.getElementById("detailModal").classList.add("show");
 
 }
 
-body.addEventListener("click", event => {
+
+body.addEventListener("click",event => {
 
     const button = event.target.closest(".view-btn");
 
     if (!button) return;
 
     const index = Number(button.dataset.index);
-
     const record = visibleRecords[index];
 
     if (record) openDetail(record);
@@ -949,23 +1123,31 @@ function closeDetail() {
     document.getElementById("detailModal").classList.remove("show");
 }
 
-document.getElementById("closeModal").addEventListener("click", closeDetail);
-document.getElementById("closeModal2").addEventListener("click", closeDetail);
+document.getElementById("closeModal").addEventListener("click",closeDetail);
+document.getElementById("closeModal2").addEventListener("click",closeDetail);
 
-document.getElementById("detailModal").addEventListener("click", event => {
+document.getElementById("detailModal").addEventListener("click",event => {
     if (event.target.id === "detailModal") closeDetail();
 });
 
-document.addEventListener("keydown", event => {
+document.addEventListener("keydown",event => {
     if (event.key === "Escape") closeDetail();
 });
 
 
 /* =====================================
-   RESET FILTER
+   SEARCH AND FILTER
 ===================================== */
 
-document.getElementById("resetBtn").addEventListener("click", () => {
+document.getElementById("filterBtn").addEventListener("click",render);
+
+document.getElementById("search").addEventListener("input",render);
+
+document.getElementById("fromDate").addEventListener("change",render);
+
+document.getElementById("toDate").addEventListener("change",render);
+
+document.getElementById("resetBtn").addEventListener("click",() => {
 
     document.getElementById("search").value = "";
     document.getElementById("fromDate").value = "";
@@ -977,24 +1159,17 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 
 
 /* =====================================
-   SEARCH
+   BACK
 ===================================== */
 
-document.getElementById("filterBtn").addEventListener("click", render);
+document.getElementById("backBtn").addEventListener("click",() => {
 
-document.getElementById("search").addEventListener("input", render);
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        alert("กรุณาเปิดหน้า Checklist ผ่าน QR Code อีกครั้ง");
+    }
 
-document.getElementById("fromDate").addEventListener("change", render);
-
-document.getElementById("toDate").addEventListener("change", render);
-
-
-/* =====================================
-   BACK TO DAILY REPORT
-===================================== */
-
-document.getElementById("backBtn").addEventListener("click", () => {
-    location.href = "daily-report.html";
 });
 
 
@@ -1002,11 +1177,14 @@ document.getElementById("backBtn").addEventListener("click", () => {
    REFRESH
 ===================================== */
 
-document.getElementById("refreshBtn").addEventListener("click", loadHistory);
+document.getElementById("refreshBtn").addEventListener(
+    "click",
+    loadHistory
+);
 
 
 /* =====================================
-   EXPORT CSV
+   CSV EXPORT
 ===================================== */
 
 function csvCell(value) {
@@ -1018,7 +1196,7 @@ function csvCell(value) {
 }
 
 
-document.getElementById("exportBtn").addEventListener("click", () => {
+document.getElementById("exportBtn").addEventListener("click",() => {
 
     if (!visibleRecords.length) {
         alert("ไม่มีข้อมูลสำหรับส่งออก");
@@ -1028,36 +1206,28 @@ document.getElementById("exportBtn").addEventListener("click", () => {
     const headers = [
 
         "วันที่",
-        "ลูกค้า",
-        "Part No.",
+        "Part Number",
+        "Customer",
         "Process",
-        "สาเหตุการซ่อม",
-        "สาเหตุปัญหา",
-        "รายละเอียดการซ่อม",
-        "ผู้ซ่อม",
+        "Passed Shots",
+        "PM Plan",
+        "PM Tool Life",
+        "Progressive Die",
+        "Single Die",
+        "Compound Die",
+        "แม่พิมพ์ใหม่",
+        "แม่พิมพ์เก่า",
         "เวลาเริ่ม",
-        "เวลาเสร็จ",
-        "รวมเวลา",
-        "สถานะ",
-        "หมายเหตุ"
-
-    ];
-
-    const keys = [
-
-        "report_date",
-        "customer",
-        "part_no",
-        "process",
-        "cause_repair",
-        "cause_problem",
-        "repair_detail",
-        "repaired_by",
-        "start_time",
-        "end_time",
-        "work_duration",
-        "status_done",
-        "remarks"
+        "เวลาสิ้นสุด",
+        "ระยะเวลา (นาที)",
+        "Normal",
+        "Defect",
+        "N/A",
+        "Pending",
+        "ผู้ตรวจสอบ",
+        "ผู้อนุมัติ",
+        "Remarks",
+        "ผลตรวจทั้ง 32 รายการ"
 
     ];
 
@@ -1066,21 +1236,45 @@ document.getElementById("exportBtn").addEventListener("click", () => {
 
         ...visibleRecords.map(record => {
 
-            return keys.map(key => {
+            const results = parseResults(record.results)
+                .map(item =>
+                    `${item.no}. ${item.item}: ${item.result}`
+                )
+                .join(" | ");
 
-                if (key === "status_done") {
-                    return isDone(record.status_done)
-                        ? "เสร็จแล้ว"
-                        : "ยังไม่เสร็จ";
-                }
+            return [
 
-                if (key === "report_date") {
-                    return displayDate(record.report_date);
-                }
+                displayDate(record.check_date),
+                record.part_no,
+                record.customer,
+                record.process,
+                record.passed_shots,
 
-                return record[key] ?? "";
+                record.pm_plan ? "Yes" : "No",
+                record.pm_tool ? "Yes" : "No",
 
-            });
+                record.die_prog ? "Yes" : "No",
+                record.die_single ? "Yes" : "No",
+                record.die_comp ? "Yes" : "No",
+
+                record.plate_new ? "Yes" : "No",
+                record.plate_old ? "Yes" : "No",
+
+                record.start_time,
+                record.end_time,
+                record.work_duration,
+
+                record.normal_count,
+                record.defect_count,
+                record.na_count,
+                record.pending_count,
+
+                record.checked_by,
+                record.approved_by,
+                record.remarks,
+                results
+
+            ];
 
         })
 
@@ -1094,17 +1288,15 @@ document.getElementById("exportBtn").addEventListener("click", () => {
 
     const blob = new Blob(
         [csv],
-        { type:"text/csv;charset=utf-8;" }
+        {type:"text/csv;charset=utf-8;"}
     );
 
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement("a");
 
     a.href = url;
-
     a.download =
-        `TNC_Daily_Report_${new Date().toISOString().slice(0,10)}.csv`;
+        `TNC_Mold_Checklist_${new Date().toISOString().slice(0,10)}.csv`;
 
     document.body.appendChild(a);
     a.click();
@@ -1113,6 +1305,29 @@ document.getElementById("exportBtn").addEventListener("click", () => {
     URL.revokeObjectURL(url);
 
 });
+
+
+/* =====================================
+   ERROR
+===================================== */
+
+function showError(message) {
+
+    const box = document.getElementById("errorBox");
+
+    box.style.display = "block";
+    box.textContent = message;
+
+}
+
+function hideError() {
+
+    const box = document.getElementById("errorBox");
+
+    box.style.display = "none";
+    box.textContent = "";
+
+}
 
 
 /* =====================================
