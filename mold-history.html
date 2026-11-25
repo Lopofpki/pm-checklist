@@ -493,20 +493,34 @@ function dateToISO(value) {
     return "";
 }
 
+
 function formatDuration(value) {
-    if (value === null || value === undefined || value === "") return "-";
+    if (value === null || value === undefined || value === "") {
+        return "-";
+    }
 
-    const minutes = numberValue(value);
+    // รองรับข้อมูลที่เป็นตัวเลขนาที
+    const minutes = Number(value);
 
-    if (minutes < 0) return "-";
+    if (Number.isFinite(minutes) && minutes >= 0) {
+        return `${minutes} นาที`;
+    }
 
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
+    // รองรับข้อมูลเก่าที่เก็บเป็นข้อความ เช่น 1 ชม. 30 นาที
+    const text = String(value).trim();
+    const hourMatch = text.match(/(\d+(?:\.\d+)?)\s*ชม/);
+    const minuteMatch = text.match(/(\d+(?:\.\d+)?)\s*นาที/);
 
-    if (hours === 0) return `${mins} นาที`;
+    if (hourMatch || minuteMatch) {
+        const hours = hourMatch ? Number(hourMatch[1]) : 0;
+        const mins = minuteMatch ? Number(minuteMatch[1]) : 0;
 
-    return `${hours} ชม. ${mins} นาที`;
+        return `${hours * 60 + mins} นาที`;
+    }
+
+    return text;
 }
+
 
 function resultBadge(result) {
     if (result === "ปกติ") return '<span class="badge badge-green">ปกติ</span>';
