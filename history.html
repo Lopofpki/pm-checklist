@@ -1,300 +1,834 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ประวัติข้อมูลตรวจเช็ค</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #f0f4f8; padding: 20px; max-width: 900px; margin: 0 auto; }
-        .back-link { display: inline-block; color: #2563eb; text-decoration: none; margin-bottom: 20px; font-size: 0.95rem; }
-        .back-link:hover { text-decoration: underline; }
-        h1 { font-size: 1.3rem; color: #1e3a8a; margin-bottom: 20px; text-align: center; }
-        
-        .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        
-        .search-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-        .search-bar input { flex: 1; min-width: 200px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
-        .btn { padding: 10px 16px; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
-        .btn-primary { background: #2563eb; color: white; }
-        .btn-success { background: #16a34a; color: white; }
-        .btn-danger { background: #dc2626; color: white; }
-        .btn-secondary { background: #e2e8f0; color: #374151; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #d1d5db; padding: 10px 8px; text-align: left; font-size: 0.85rem; }
-        th { background: #f3f4f6; font-weight: bold; color: #1f2937; white-space: nowrap; }
-        tr:hover { background: #f9fafb; }
-        
-        .empty-state { text-align: center; padding: 40px 20px; color: #6b7280; }
-        .empty-state p { margin-top: 10px; font-size: 0.95rem; }
-        
-        .stats { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
-        .stat-box { background: #eff6ff; padding: 12px 16px; border-radius: 8px; text-align: center; min-width: 100px; }
-        .stat-num { font-size: 1.4rem; font-weight: bold; color: #1e40af; }
-        .stat-label { font-size: 0.8rem; color: #3b82f6; }
-        
-        .action-links { font-size: 0.8rem; }
-        .action-links a { color: #2563eb; text-decoration: none; margin-right: 8px; }
-        .action-links a:hover { text-decoration: underline; }
-        .action-links .del { color: #dc2626; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ประวัติ Daily Report | TNC</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+    --navy:#20364d;
+    --blue:#2878bd;
+    --green:#219653;
+    --bg:#f3f6fa;
+    --line:#dce3eb;
+    --text:#243447;
+}
+
+* {
+    box-sizing:border-box;
+}
+
+body {
+    margin:0;
+    padding:18px;
+    background:var(--bg);
+    font-family:Arial,"Noto Sans Thai",sans-serif;
+    color:var(--text);
+}
+
+.wrap {
+    max-width:1600px;
+    margin:auto;
+}
+
+.header,.panel {
+    background:#fff;
+    padding:18px;
+    border-radius:12px;
+    box-shadow:0 3px 14px #20364d12;
+    margin-bottom:15px;
+}
+
+h1 {
+    font-size:22px;
+    margin:0 0 5px;
+    color:var(--navy);
+}
+
+.sub {
+    font-size:14px;
+    color:#667788;
+}
+
+.tools {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:15px;
+    align-items:end;
+}
+
+.field {
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    font-size:13px;
+    font-weight:600;
+    min-width:160px;
+    flex:1;
+}
+
+input {
+    font:inherit;
+    padding:9px;
+    border:1px solid #cbd5df;
+    border-radius:6px;
+    width:100%;
+    min-width:0;
+}
+
+.btn {
+    border:0;
+    border-radius:7px;
+    padding:10px 15px;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    background:var(--blue);
+}
+
+.btn:hover {
+    opacity:.9;
+}
+
+.green {
+    background:var(--green);
+}
+
+.gray {
+    background:#64748b;
+}
+
+.stats {
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin:14px 0;
+}
+
+.stat {
+    background:#eef5fb;
+    padding:10px 14px;
+    border-radius:8px;
+    font-size:14px;
+}
+
+.stat b {
+    font-size:18px;
+    color:var(--navy);
+    margin-left:5px;
+}
+
+.table-wrap {
+    overflow:auto;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 3px 14px #20364d12;
+}
+
+table {
+    border-collapse:collapse;
+    width:100%;
+    min-width:1450px;
+}
+
+th,td {
+    border:1px solid var(--line);
+    padding:8px;
+    text-align:center;
+    font-size:12px;
+    white-space:nowrap;
+}
+
+th {
+    background:var(--navy);
+    color:white;
+    position:sticky;
+    top:0;
+    z-index:2;
+}
+
+tbody tr:nth-child(even) {
+    background:#f8fafc;
+}
+
+.done {
+    color:#168044;
+    font-weight:bold;
+}
+
+.pending {
+    color:#b7791f;
+    font-weight:bold;
+}
+
+.empty {
+    text-align:center;
+    padding:30px;
+    color:#718096;
+}
+
+.loading {
+    text-align:center;
+    padding:30px;
+    color:#2878bd;
+}
+
+.error {
+    background:#fff0f0;
+    border:1px solid #f3b5b5;
+    color:#b42318;
+    padding:12px;
+    border-radius:8px;
+    margin-top:12px;
+    font-size:13px;
+    display:none;
+}
+
+@media(max-width:700px) {
+    body {
+        padding:10px;
+    }
+
+    h1 {
+        font-size:18px;
+    }
+
+    .header,.panel {
+        padding:13px;
+    }
+
+    .tools .btn {
+        flex:1;
+    }
+}
+</style>
 </head>
+
 <body>
-    <a href="index.html" class="back-link">← กลับหน้าหลัก</a>
-    <h1>📂 ประวัติข้อมูลตรวจเช็ค</h1>
 
-    <!-- สรุปจำนวนข้อมูล -->
-    <div class="card">
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-num" id="totalCount">0</div>
-                <div class="stat-label">รายการทั้งหมด</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-num" id="thisMonth">0</div>
-                <div class="stat-label">เดือนนี้</div>
-            </div>
-        </div>
+<div class="wrap">
 
-        <!-- ค้นหา + ปุ่มส่งออก -->
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="🔍 ค้นหาด้วย Part No / ชื่อ / ลูกค้า...">
-            <button class="btn btn-primary" onclick="searchRecords()">ค้นหา</button>
-            <button class="btn btn-success" onclick="exportToCSV()">📥 ส่งออก Excel (CSV)</button>
-            <button class="btn btn-danger" onclick="clearAllData()">🗑️ ล้างข้อมูลทั้งหมด</button>
-        </div>
+<header class="header">
 
-        <!-- ตารางแสดงข้อมูล -->
-        <div id="tableContainer">
-            <table id="historyTable">
-                <thead>
-                    <tr>
-                        <th>วันที่บันทึก</th>
-                        <th>วันที่ตรวจ</th>
-                        <th>Part No</th>
-                        <th>Part Name</th>
-                        <th>ลูกค้า</th>
-                        <th>ผู้ตรวจ</th>
-                        <th>จัดการ</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- ข้อมูลจะแสดงที่นี่ -->
-                </tbody>
-            </table>
-        </div>
+    <h1>ประวัติ Die Maintenance Daily Report</h1>
 
-        <div id="emptyMsg" class="empty-state" style="display: none;">
-            <p>📭 ยังไม่มีข้อมูลประวัติ</p>
-            <p style="font-size: 0.85rem;">เริ่มบันทึกข้อมูลจากหน้าแบบฟอร์มก่อนครับ</p>
-        </div>
+    <div class="sub">
+        TNC · ระบบประวัติ Daily Report ผ่าน Supabase
     </div>
 
-    <script>
-      // โหลดข้อมูลเมื่อเปิดหน้า
-    let allRecords = [];
-    
-    window.onload = function() {
-        loadRecords();
-        document.getElementById('searchInput').addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') searchRecords();
-        });
-    };
+    <div class="tools">
 
-    // โหลดข้อมูลจาก localStorage
-    function loadRecords() {
-        const stored = localStorage.getItem('pmHistory');
-        allRecords = stored ? JSON.parse(stored) : [];
-        
-        updateStats();
-        renderTable(allRecords);
+        <label class="field">
+            ค้นหาข้อมูล
+            <input
+                id="search"
+                type="search"
+                placeholder="ลูกค้า / Part No. / ผู้ซ่อม / รายละเอียด"
+            >
+        </label>
+
+        <label class="field">
+            วันที่เริ่ม
+            <input id="fromDate" type="date">
+        </label>
+
+        <label class="field">
+            ถึงวันที่
+            <input id="toDate" type="date">
+        </label>
+
+        <button class="btn" id="filterBtn" type="button">
+            ค้นหา
+        </button>
+
+        <button class="btn gray" id="resetBtn" type="button">
+            ล้างตัวกรอง
+        </button>
+
+    </div>
+
+    <div id="errorBox" class="error"></div>
+
+</header>
+
+
+<section class="panel">
+
+    <div class="stats">
+
+        <div class="stat">
+            รายการที่แสดง
+            <b id="count">0</b>
+        </div>
+
+        <div class="stat">
+            เสร็จแล้ว
+            <b id="doneCount">0</b>
+        </div>
+
+        <div class="stat">
+            ยังไม่เสร็จ
+            <b id="pendingCount">0</b>
+        </div>
+
+    </div>
+
+    <div class="tools">
+
+        <button class="btn green" id="exportBtn" type="button">
+            ⬇ ส่งออก CSV
+        </button>
+
+        <button class="btn" id="backBtn" type="button">
+            ＋ กลับไปหน้าบันทึก
+        </button>
+
+        <button class="btn gray" id="refreshBtn" type="button">
+            ↻ โหลดข้อมูลใหม่
+        </button>
+
+    </div>
+
+</section>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+    <th>#</th>
+    <th>วันที่</th>
+    <th>ลูกค้า</th>
+    <th>Part No.</th>
+    <th>Process</th>
+    <th>สาเหตุการซ่อม</th>
+    <th>สาเหตุปัญหา</th>
+    <th>รายละเอียดการซ่อม</th>
+    <th>ผู้ซ่อม</th>
+    <th>เวลาเริ่ม</th>
+    <th>เวลาเสร็จ</th>
+    <th>รวมเวลา</th>
+    <th>สถานะ</th>
+    <th>หมายเหตุ</th>
+</tr>
+</thead>
+
+<tbody id="historyBody">
+
+<tr>
+    <td colspan="14" class="loading">
+        กำลังโหลดข้อมูลจาก Supabase...
+    </td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<script>
+"use strict";
+
+/* =====================================
+   SUPABASE CONFIG
+===================================== */
+
+const SUPABASE_URL =
+"https://enmzfxdswzhatvcenrds.supabase.co";
+
+const SUPABASE_ANON_KEY =
+"sb_publishable_DkoWB0IDDgodellT5vgcLQ_YdqIhKdI";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+
+/* =====================================
+   ELEMENTS
+===================================== */
+
+const body = document.getElementById("historyBody");
+
+let allRecords = [];
+let visibleRecords = [];
+
+
+/* =====================================
+   ERROR MESSAGE
+===================================== */
+
+function showError(message) {
+
+    const box = document.getElementById("errorBox");
+
+    box.style.display = "block";
+    box.textContent = message;
+
+}
+
+function hideError() {
+
+    const box = document.getElementById("errorBox");
+
+    box.style.display = "none";
+    box.textContent = "";
+
+}
+
+
+/* =====================================
+   SAFE TEXT
+===================================== */
+
+function safe(value) {
+
+    return String(value ?? "").replace(
+        /[&<>"']/g,
+        char => ({
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            '"':"&quot;",
+            "'":"&#39;"
+        })[char]
+    );
+
+}
+
+
+/* =====================================
+   DATE CONVERSION
+===================================== */
+
+// รองรับทั้ง YYYY-MM-DD และ DD/MM/YY
+function normalizeDate(value) {
+
+    if (!value) return "";
+
+    const str = String(value).trim();
+
+    // YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+        return str;
     }
 
-    // อัพเดตตัวเลขสถิติ
-    function updateStats() {
-        document.getElementById('totalCount').textContent = allRecords.length;
-        
-        const now = new Date();
-        const thisMonthRecords = allRecords.filter(r => {
-            // ใช้ savedDate ที่บันทึกจากหน้าฟอร์ม
-            if (!r.savedDate) return false;
-            const d = new Date(r.savedDate.split('/').reverse().join('-'));
-            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-        });
-        document.getElementById('thisMonth').textContent = thisMonthRecords.length;
-    }
+    // DD/MM/YY หรือ DD/MM/YYYY
+    const match = str.match(
+        /^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/
+    );
 
-    // แสดงตาราง
-    function renderTable(records) {
-        const tbody = document.getElementById('tableBody');
-        const emptyMsg = document.getElementById('emptyMsg');
-        const tableContainer = document.getElementById('tableContainer');
-        
-        tbody.innerHTML = '';
-        
-        if (records.length === 0) {
-            tableContainer.style.display = 'none';
-            emptyMsg.style.display = 'block';
-            return;
+    if (match) {
+
+        let day = Number(match[1]);
+        let month = Number(match[2]);
+        let year = Number(match[3]);
+
+        if (year < 100) {
+            year += 2000;
         }
-        
-        tableContainer.style.display = 'block';
-        emptyMsg.style.display = 'none';
-        
-        records.forEach(record => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${record.savedDate || '-'}</td>
-                <td>${record.checkDate || '-'}</td>
-                <td><strong>${record.partNo || '-'}</strong></td>
-                <td>${record.partName || '-'}</td>
-                <td>${record.customer || '-'}</td>
-                <td>${record.checkedBy || '-'}</td>
-                <td class="action-links">
-                    <a href="javascript:viewRecord(${record.id})">ดู</a>
-                    <a href="javascript:deleteRecord(${record.id})" class="del">ลบ</a>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
+
+        return [
+            year,
+            String(month).padStart(2,"0"),
+            String(day).padStart(2,"0")
+        ].join("-");
+
     }
 
-    // ค้นหา
-    function searchRecords() {
-        const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-        if (!keyword) {
-            renderTable(allRecords);
-            return;
+    return "";
+
+}
+
+
+function displayDate(value) {
+
+    if (!value) return "";
+
+    const str = String(value);
+
+    // ถ้าเป็น DD/MM/YY อยู่แล้วให้แสดงเหมือนเดิม
+    if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(str)) {
+        return str;
+    }
+
+    // YYYY-MM-DD แสดงเป็น DD/MM/YY
+    const date = normalizeDate(str);
+
+    if (!date) return str;
+
+    const parts = date.split("-");
+
+    return `${parts[2]}/${parts[1]}/${parts[0].slice(-2)}`;
+
+}
+
+
+/* =====================================
+   LOAD DATA FROM SUPABASE
+===================================== */
+
+async function loadHistory() {
+
+    hideError();
+
+    body.innerHTML = `
+        <tr>
+            <td colspan="14" class="loading">
+                กำลังโหลดข้อมูลจาก Supabase...
+            </td>
+        </tr>
+    `;
+
+    try {
+
+        const { data, error } = await supabaseClient
+            .from("daily_reports")
+            .select("*")
+            .order("created_at", {
+                ascending: false
+            });
+
+        if (error) {
+            throw error;
         }
-        
-        const filtered = allRecords.filter(r =>
-            (r.partNo && r.partNo.toLowerCase().includes(keyword)) ||
-            (r.partName && r.partName.toLowerCase().includes(keyword)) ||
-            (r.customer && r.customer.toLowerCase().includes(keyword)) ||
-            (r.checkedBy && r.checkedBy.toLowerCase().includes(keyword))
-        );
-        renderTable(filtered);
-    }
 
-    // ดูรายละเอียดรายการ
-    function viewRecord(id) {
-        const record = allRecords.find(r => r.id === id);
-        if (!record) return;
-        
-        let detail = `📋 รายละเอียด\n\n`;
-        detail += `วันที่บันทึก: ${record.savedDate || '-'}\n`;
-        detail += `วันที่ตรวจ: ${record.checkDate || '-'}\n`;
-        detail += `Part No: ${record.partNo || '-'}\n`;
-        detail += `Part Name: ${record.partName || '-'}\n`;
-        detail += `ลูกค้า: ${record.customer || '-'}\n`;
-        detail += `Process: ${record.process || '-'}\n`;
-        detail += `เวลาเริ่ม: ${record.startTime || '-'}\n`;
-        detail += `เวลาเสร็จ: ${record.endTime || '-'}\n`;
-        detail += `เวลาทำงาน: ${record.workDuration || '-'}\n`;
-        detail += `จำนวนช็อต: ${record.passedShots || '-'}\n`;
-        detail += `PM ตาม Plan: ${record.pmPlan ? '✅' : '❌'}\n`;
-        detail += `PM ตาม Tool life: ${record.pmTool ? '✅' : '❌'}\n`;
-        detail += `Progressive Die: ${record.dieProg ? '✅' : '❌'}\n`;
-        detail += `Singer Die: ${record.dieSinger ? '✅' : '❌'}\n`;
-        detail += `Compound Die: ${record.dieComp ? '✅' : '❌'}\n`;
-        detail += `แม่พิมพ์ใหม่: ${record.plateNew ? '✅' : '❌'}\n`;
-        detail += `แม่พิมพ์เก่า: ${record.plateOld ? '✅' : '❌'}\n`;
-        detail += `ผู้ตรวจ: ${record.checkedBy || '-'}\n`;
-        detail += `ผู้อนุมัติ: ${record.approvedBy || '-'}\n`;
-        detail += `หมายเหตุ: ${record.remarks || '-'}\n`;
-        
-        alert(detail);
-    }
+        allRecords = Array.isArray(data) ? data : [];
 
-    // ลบรายการเดียว
-    function deleteRecord(id) {
-        if (!confirm('⚠️ ต้องการลบรายการนี้ใช่หรือไม่?')) return;
-        
-        allRecords = allRecords.filter(r => r.id !== id);
-        localStorage.setItem('pmHistory', JSON.stringify(allRecords));
-        loadRecords();
-    }
+        render();
 
-    // ล้างข้อมูลทั้งหมด
-    function clearAllData() {
-        if (!confirm('⚠️ แน่ใจหรือไม่? จะลบข้อมูลทั้งหมด ไม่สามารถกู้คืนได้!')) return;
-        if (!confirm('⚠️ ยืนยันอีกครั้ง ต้องการลบทั้งหมด?')) return;
-        
-        localStorage.removeItem('pmHistory');
+    } catch (error) {
+
+        console.error("Supabase Error:", error);
+
         allRecords = [];
-        loadRecords();
-        alert('✅ ล้างข้อมูลเรียบร้อย');
+        visibleRecords = [];
+
+        updateStats();
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="14" class="empty">
+                    โหลดข้อมูลไม่สำเร็จ
+                </td>
+            </tr>
+        `;
+
+        showError(
+            "โหลดข้อมูลจาก Supabase ไม่สำเร็จ: " +
+            (error.message || "Unknown error")
+        );
+
     }
 
-    // ส่งออกเป็น CSV (เปิดใน Excel ได้เลย)
-        // ส่งออกเป็น CSV ตามรูปแบบบริษัท
-    function exportToCSV() {
-        if (allRecords.length === 0) { alert('ไม่มีข้อมูลที่จะส่งออก'); return; }
-        
-        let csv = '\uFEFF'; // UTF-8 BOM ให้ภาษาไทยแสดงถูกใน Excel
-        
-        // หัวคอลัมน์ ตามรูปแบบของคุณ
-        const headers = [
-            'Date',
-            'Customer',
-            'Part No.',
-            'ประเภทของการซ่อม',
-            'สถานที่ซ่อม',
-            'สาเหตุ',
-            'M/C',
-            'Die Step',
-            'Repair of cause',
-            'สถานะ',
-            'Cause of problem',
-            'Details of repair',
-            'เวลาซ่อม_เริ่ม',
-            'เวลาซ่อม_เสร็จ',
-            'เวลารวมซ่อม',
-            'ซ่อมโดย'
-        ];
-        csv += headers.join(',') + '\n';
-        
-        // ข้อมูลแต่ละแถว
-        allRecords.forEach(r => {
-            const row = [
-                `"${r.checkDate || ''}"`,
-                `"${r.customer || ''}"`,
-                `"${r.partNo || ''}"`,
-                // ประเภทของการซ่อม
-                `"${(r.pmPlan ? 'PM ตาม Plan' : '')}${(r.pmPlan && r.pmTool ? ' / ' : '')}${(r.pmTool ? 'PM ตาม Tool life' : '')}"`,
-                // สถานที่ซ่อม — แสดงชนิดแม่พิมพ์
-                `"${(r.dieProg ? 'Progressive Die' : '')}${(r.dieProg && r.dieSinger ? ' / ' : '')}${(r.dieSinger ? 'Singer Die' : '')}${((r.dieProg || r.dieSinger) && r.dieComp ? ' / ' : '')}${(r.dieComp ? 'Compound Die' : '')}"`,
-                // สาเหตุ — แสดงประเภทแม่พิมพ์
-                `"${r.plateNew ? 'แม่พิมพ์ใหม่' : ''}${r.plateNew && r.plateOld ? ' / ' : ''}${r.plateOld ? 'แม่พิมพ์เก่า' : ''}"`,
-                `"${r.process || ''}"`,
-                `"${r.passedShots || ''}"`,
-                `"${''}"`, // Repair of cause — เพิ่มเองได้ถ้ามี
-                `"${''}"`, // สถานะ — เพิ่มเองได้ถ้ามี
-                `"${''}"`, // Cause of problem — เพิ่มเองได้ถ้ามี
-                `"${(r.remarks || '').replace(/"/g, '""')}"`,
-                `"${r.startTime || ''}"`,
-                `"${r.endTime || ''}"`,
-                `"${r.workDuration || ''}"`,
-                `"${r.checkedBy || ''}"`
-            ];
-            csv += row.join(',') + '\n';
-        });
-        
-        // สร้างไฟล์และดาวน์โหลด
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        const today = new Date().toLocaleDateString('th-TH').replace(/\//g, '-');
-        a.download = `PM_Repair_Report_${today}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        alert(`✅ ส่งออกข้อมูลเรียบร้อย! ทั้งหมด ${allRecords.length} รายการ\nเปิดไฟล์ด้วย Excel ได้เลยครับ`);
+}
+
+
+/* =====================================
+   FILTER AND RENDER
+===================================== */
+
+function render() {
+
+    const q = document
+        .getElementById("search")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const from = document.getElementById("fromDate").value;
+    const to = document.getElementById("toDate").value;
+
+    visibleRecords = allRecords.filter(record => {
+
+        const haystack = [
+
+            record.customer,
+            record.part_no,
+            record.process,
+            record.cause_repair,
+            record.cause_problem,
+            record.repair_detail,
+            record.repaired_by,
+            record.remarks
+
+        ].join(" ").toLowerCase();
+
+        const date = normalizeDate(record.report_date);
+
+        const matchSearch =
+            !q || haystack.includes(q);
+
+        const matchFrom =
+            !from || (date && date >= from);
+
+        const matchTo =
+            !to || (date && date <= to);
+
+        return matchSearch && matchFrom && matchTo;
+
+    });
+
+    updateStats();
+
+    if (!visibleRecords.length) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="14" class="empty">
+                    ไม่พบข้อมูลประวัติ
+                </td>
+            </tr>
+        `;
+
+        return;
+
     }
-    </script>
+
+    body.innerHTML = visibleRecords.map((record,index) => `
+
+        <tr>
+
+            <td>${index + 1}</td>
+
+            <td>${safe(displayDate(record.report_date))}</td>
+
+            <td>${safe(record.customer)}</td>
+
+            <td>${safe(record.part_no)}</td>
+
+            <td>${safe(record.process)}</td>
+
+            <td>${safe(record.cause_repair)}</td>
+
+            <td>${safe(record.cause_problem)}</td>
+
+            <td>${safe(record.repair_detail)}</td>
+
+            <td>${safe(record.repaired_by)}</td>
+
+            <td>${safe(record.start_time)}</td>
+
+            <td>${safe(record.end_time)}</td>
+
+            <td>${safe(record.work_duration)}</td>
+
+            <td class="${record.status_done ? "done" : "pending"}">
+                ${record.status_done ? "เสร็จแล้ว" : "ยังไม่เสร็จ"}
+            </td>
+
+            <td>${safe(record.remarks)}</td>
+
+        </tr>
+
+    `).join("");
+
+}
+
+
+/* =====================================
+   UPDATE STATISTICS
+===================================== */
+
+function updateStats() {
+
+    document.getElementById("count").textContent =
+        visibleRecords.length;
+
+    document.getElementById("doneCount").textContent =
+        visibleRecords.filter(record => record.status_done === true).length;
+
+    document.getElementById("pendingCount").textContent =
+        visibleRecords.filter(record => record.status_done !== true).length;
+
+}
+
+
+/* =====================================
+   RESET FILTER
+===================================== */
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+
+    document.getElementById("search").value = "";
+    document.getElementById("fromDate").value = "";
+    document.getElementById("toDate").value = "";
+
+    render();
+
+});
+
+
+/* =====================================
+   SEARCH
+===================================== */
+
+document.getElementById("filterBtn").addEventListener(
+    "click",
+    render
+);
+
+document.getElementById("search").addEventListener(
+    "input",
+    render
+);
+
+
+/* =====================================
+   BACK TO DAILY REPORT
+===================================== */
+
+document.getElementById("backBtn").addEventListener("click", () => {
+
+    location.href = "daily-report.html";
+
+});
+
+
+/* =====================================
+   REFRESH DATA
+===================================== */
+
+document.getElementById("refreshBtn").addEventListener(
+    "click",
+    loadHistory
+);
+
+
+/* =====================================
+   EXPORT CSV
+===================================== */
+
+function csvCell(value) {
+
+    return '"' +
+        String(value ?? "").replace(/"/g,'""') +
+        '"';
+
+}
+
+
+document.getElementById("exportBtn").addEventListener("click", () => {
+
+    if (!visibleRecords.length) {
+
+        alert("ไม่มีข้อมูลสำหรับส่งออก");
+
+        return;
+
+    }
+
+    const headers = [
+
+        "วันที่",
+        "ลูกค้า",
+        "Part No.",
+        "Process",
+        "สาเหตุการซ่อม",
+        "สาเหตุปัญหา",
+        "รายละเอียดการซ่อม",
+        "ผู้ซ่อม",
+        "เวลาเริ่ม",
+        "เวลาเสร็จ",
+        "รวมเวลา",
+        "สถานะ",
+        "หมายเหตุ"
+
+    ];
+
+    const keys = [
+
+        "report_date",
+        "customer",
+        "part_no",
+        "process",
+        "cause_repair",
+        "cause_problem",
+        "repair_detail",
+        "repaired_by",
+        "start_time",
+        "end_time",
+        "work_duration",
+        "status_done",
+        "remarks"
+
+    ];
+
+    const rows = [
+
+        headers,
+
+        ...visibleRecords.map(record => {
+
+            return keys.map(key => {
+
+                if (key === "status_done") {
+                    return record.status_done
+                        ? "เสร็จแล้ว"
+                        : "ยังไม่เสร็จ";
+                }
+
+                if (key === "report_date") {
+                    return displayDate(record.report_date);
+                }
+
+                return record[key] ?? "";
+
+            });
+
+        })
+
+    ];
+
+    const csv =
+        "\uFEFF" +
+        rows.map(row =>
+            row.map(csvCell).join(",")
+        ).join("\r\n");
+
+    const blob = new Blob(
+        [csv],
+        { type:"text/csv;charset=utf-8;" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+        `TNC_Daily_Report_${new Date().toISOString().slice(0,10)}.csv`;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    URL.revokeObjectURL(url);
+
+});
+
+
+/* =====================================
+   START
+===================================== */
+
+loadHistory();
+
+</script>
+
 </body>
 </html>
